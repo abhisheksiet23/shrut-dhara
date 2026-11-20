@@ -26,3 +26,11 @@ test('restore rejects malformed state rather than applying partial data', () => 
 test('bookmark toggling is reversible', () => {
   assert.deepEqual(toggleBookmark(toggleBookmark(initialState(), 1), 1).bookmarks, []);
 });
+
+test('old backups receive a reading-font default and chosen fonts survive restore', () => {
+  const old = initialState();
+  delete old.fontFamily;
+  assert.equal(validateState(old).fontFamily, 'noto');
+  assert.equal(validateState({ ...old, fontFamily: 'hind' }).fontFamily, 'hind');
+  assert.equal(validateState({ ...old, fontFamily: '<invalid>' }).fontFamily, 'noto');
+});

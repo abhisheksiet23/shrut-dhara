@@ -1,6 +1,10 @@
 # ShrutDhara — use-case specification
 
-Version: draft 0.1 · Date: 2026-11-20 · Platform decision: Android phones first
+Version: draft 0.3 · Date: 2026-11-20 · Platform decision: Angular web app/PWA, Android phones first
+
+Change 2026-11-20: owner confirmed web delivery without an APK or store-publishing dependency (D-02). Android remains the primary device target, rather than a native implementation commitment. Technical proposals and validation gates: [app design](app-design.md). Existing prototype evidence does not establish production readiness.
+
+Change 2026-11-20: owner selected Angular (D-03). Framework-specific architecture and build changes are recorded in app design draft 0.2; use-case behavior and acceptance gates are unchanged.
 
 Depth: Standard for the proposed first increment, with lifecycle/environment gaps retained. Long-term capabilities receive sketches only. Source and rationale: [analysis findings](analysis-findings.md). No software or content has been verified by this specification.
 
@@ -152,7 +156,9 @@ Single authoritative register. Owner is the product owner unless a reviewer/spec
 | ID / severity | Question and origin | Affected work / recommended resolution | Standing |
 | --- | --- | --- | --- |
 | D-01 | First platform, environment | Android phones first; owner reply 2026-11-20 | Confirmed |
-| G-01 / H | What Android versions/devices, installation path, and external controls must work? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: declare a supported range and representative device routes, then verify actual background behavior; no framework choice yet | Open |
+| D-02 | Delivery platform, owner correction 2026-11-20 | Web app/PWA; no APK, unknown-source installation step, or app-store publication dependency. D-01 continues to identify the primary devices | Confirmed |
+| D-03 | Frontend framework, owner instruction 2026-11-20 | Angular replaces the React proposal. See app-design.md for standalone components, signals, service ownership, and custom service-worker/build integration | Confirmed |
+| G-01 / H | Which Android browsers/versions/devices must support offline installation, background listening, and external media controls? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: declare a supported browser/device range and verify actual background behavior in tab and installed modes. Web delivery is settled by D-02; guarantees remain open | Open |
 | G-02 / H | Which complete first chapter, edition, canonical ordering, and reference scheme? BRD §§2,11; data/rules | UC-01–03: recommend one complete chapter shared by both journeys; obtain authoritative sources and record textual differences. Confirm first-release scope separately | Proposed boundary; sources open |
 | G-03 / H | Who verifies each component, using which review evidence, and what exact licenses/permissions apply? BRD §§6–7; rules/compliance | UC-01, C-01: name qualified review responsibility; establish source/rights and chapter-coverage review before publication. No license status assumed | Open publication gate |
 | G-04 / H | What means exact reading/audio resume; how do within-sutra scrolling and swipe navigation coexist; when is progress saved? BRD §§3–5,12; UX/data/quality | UC-03/04: choose behavior for long text, reopen, seek, and termination with measurable tolerance; prototype the gesture interaction | Open |
@@ -164,6 +170,8 @@ Single authoritative register. Owner is the product owner unless a reviewer/spec
 | G-10 / M | Which convenience capabilities belong in v1 and what do topic search/reflection mean? BRD §§3–4,11; scope | UC-08: defer detailed specification until release allocation is confirmed; retain all BRD obligations | Open |
 | G-11 / M | What counts as fast opening, readable/accessible, and beginner understanding? BRD §§10,12; quality | Q-01/05: choose measurement context and acceptance method; avoid invented thresholds | Open |
 | G-12 / H for restore; M otherwise | Export format, compatibility, merge/replace, missing content, failure preservation, privacy, and diagnostics? BRD §8; data/lifecycle | UC-07, Q-02/04: settle restore outcomes and private-state handling before implementing restore; no cloud sync assumed | Open |
+| G-13 / M | How should simultaneous browser tabs and an installed PWA share playback, reading position, and restore ownership? Identified during web design; concurrency/data | UC-03/04/07: technical ownership and restore-epoch safeguards are proposed in app-design.md; explicit user-facing handoff policy needs confirmation | Open web-specific behavior |
+| G-14 / H for web listening claim | What browser suspension/termination, storage eviction, offline preparation, and timer limitations are acceptable within the web-only boundary? D-02 versus BRD §§4,8,12; environment/lifecycle | UC-04/05/07: run the web capability gate in app-design.md. Web delivery does not accept a weaker listening guarantee by implication | Open validation/acceptance gate |
 
 ## Flow tracking and handoff
 

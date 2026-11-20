@@ -2,6 +2,8 @@
 
 Date: 2026-11-20 · Status: requirements evaluation, no implementation
 
+Subsequent owner decision, 2026-11-20: deliver a web app/PWA without an APK or app-store dependency, retaining Android phones as the primary device audience. See D-02 in the specification and the separate [technical design](app-design.md). Earlier Android references identify devices; native delivery is not accepted scope.
+
 Behavioral handoff: [Use-case specification](use-case-specification.md). The specification owns shared rules, acceptance conditions, and the single gap register.
 
 ## Evidence and boundary

@@ -1,0 +1,50 @@
+[
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\app.js",
+    "Hash": "93A9C3B25F0A920768F7E14129D71B8C135F9E1C73CFE8CD31DE0B49A70564B7"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\styles.css",
+    "Hash": "0A60578567D16E141A6F6A8DEB3DFB95C292DD813949935E49B9CE40FC0BDE24"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\state.mjs",
+    "Hash": "16F551604A61A5D102010700564DF69632A140F71DAEAA9F970644235539DD8A"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\state.test.mjs",
+    "Hash": "73DAB4A8B3D7774E6C32418110B1A3FA16813C99DCF78C46883361D4B28E0A3E"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\index.html",
+    "Hash": "2FC20C16AB2BFF5D892E838FF737DA7E86F5B36FD8B868ECED9CD4E8B830A09C"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\server.mjs",
+    "Hash": "611B07D6AF75964FF03834E1F0186ADD2DB2CAEE29A2AA899F19FEEDC9C4B0AD"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts.html",
+    "Hash": "0BB91BC137BE5A9504190326089FF27AF05CD48E297FCD76F855493215B63170"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts\\Mukta-Regular.ttf",
+    "Hash": "2958E4AF564507DF2A856164DF6F9978DACB03F999A4F34A0C269DC8A4DE9688"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts\\Mukta-Medium.ttf",
+    "Hash": "4DB18BD8F19582607E8A6AF0C4BF158B4B3378B426E42AD39D444D216C70074C"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts\\Mukta-SemiBold.ttf",
+    "Hash": "F437FB098F8F29ACB8628617CB2682F0780EF22FA8B0443DE1F66090C36E510A"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts\\Hind-Regular.ttf",
+    "Hash": "01DE158022F53077B52303E46DE3B0AB5FB245222A7FFE25A2A57FDD9E969162"
+  },
+  {
+    "Path": "E:\\aj\\experiments\\shrut-dhara\\prototype\\fonts\\NotoSerifDevanagari.ttf",
+    "Hash": "1191E07BFEB062D80E252EB85B0EAFDFBDA1E350707A2A60628668E8F677DBBB"
+  }
+]

@@ -1,0 +1,128 @@
+[
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#home",
+    "width": 360
+  },
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#library",
+    "width": 360
+  },
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#reader",
+    "width": 360
+  },
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#listen",
+    "width": 360
+  },
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#bookmarks",
+    "width": 360
+  },
+  {
+    "documentWidth": 345,
+    "headings": 1,
+    "overflow": false,
+    "route": "#settings",
+    "width": 360
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#home",
+    "width": 768
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#library",
+    "width": 768
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#reader",
+    "width": 768
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#listen",
+    "width": 768
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#bookmarks",
+    "width": 768
+  },
+  {
+    "documentWidth": 753,
+    "headings": 1,
+    "overflow": false,
+    "route": "#settings",
+    "width": 768
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#home",
+    "width": 1440
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#library",
+    "width": 1440
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#reader",
+    "width": 1440
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#listen",
+    "width": 1440
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#bookmarks",
+    "width": 1440
+  },
+  {
+    "documentWidth": 1425,
+    "headings": 1,
+    "overflow": false,
+    "route": "#settings",
+    "width": 1440
+  }
+]

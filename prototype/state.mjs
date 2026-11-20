@@ -1,4 +1,4 @@
-export const initialState = () => ({ version: 1, reading: 0, readingOffsets: {}, listening: 0, bookmarks: [], font: 21, meaning: true, explanation: true, theme: 'paper', speed: 1, queue: true });
+export const initialState = () => ({ version: 1, reading: 0, readingOffsets: {}, listening: 0, bookmarks: [], font: 21, fontFamily: 'noto', meaning: true, explanation: true, theme: 'paper', speed: 1, queue: true });
 
 export function validateState(value) {
   if (!value || value.version !== 1 || !Number.isInteger(value.reading) || value.reading < 0 || value.reading > 2 || !Number.isFinite(value.listening) || value.listening < 0 || value.listening > 1320) {
@@ -12,6 +12,7 @@ export function validateState(value) {
   clean.listening = value.listening;
   clean.bookmarks = [...new Set(value.bookmarks)];
   clean.font = [19, 21, 24, 27].includes(value.font) ? value.font : 21;
+  clean.fontFamily = ['noto', 'mukta', 'hind'].includes(value.fontFamily) ? value.fontFamily : 'noto';
   clean.theme = value.theme === 'night' ? 'night' : 'paper';
   clean.speed = [0.75, 1, 1.25, 1.5].includes(value.speed) ? value.speed : 1;
   for (const key of ['meaning', 'explanation', 'queue']) {
