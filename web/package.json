@@ -8,7 +8,8 @@
     "build": "node scripts/prepare-assets.mjs && ng build && node scripts/build-worker.mjs",
     "preview": "node scripts/serve.mjs",
     "watch": "ng build --watch --configuration development",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "node --test e2e/listen.e2e.mjs"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -35,6 +36,7 @@
     "@angular/compiler-cli": "^22.3.0",
     "esbuild": "0.28.2",
     "fake-indexeddb": "6.2.8",
+    "playwright-core": "^1.56.1",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "5.1.1"

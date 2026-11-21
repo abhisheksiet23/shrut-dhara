@@ -9,99 +9,93 @@ import { Art } from '../shared/art';
 @Component({
   imports: [FormsModule, RouterLink, Icon, Art],
   template: ` <div class="page-title">
-      <div class="eyebrow">पठन और श्रवण</div>
-      <h1>आगम संग्रह</h1>
-      <p>जो उपलब्ध है, उसे जानकर अपनी यात्रा चुनें।</p>
-      <a class="button" routerLink="/acharanga">आचारांग के २४ अध्ययन देखें</a>
+      <div class="eyebrow">Read and listen</div>
+      <h1>Library</h1>
+      <p>Here’s what’s available today. More will arrive as sources are reviewed.</p>
+      <a class="button" routerLink="/acharanga">See all 24 studies of the Ācārāṅga</a>
     </div>
     <label class="search-box"
       ><app-icon name="search" /><input
         type="search"
-        aria-label="संग्रह में खोजें"
-        placeholder="आगम या नमूना अंश खोजें"
+        aria-label="Search the library"
+        placeholder="Search the library"
         [ngModel]="query()"
         (ngModelChange)="query.set($event)"
     /></label>
     <div class="library-tabs">
-      <span class="selected">आचारांग से शुरुआत</span><span>दीर्घकालीन लक्ष्य · ३२ आगम</span>
+      <span class="selected">Starting with the Ācārāṅga</span><span>Goal: all 32 Āgamas</span>
     </div>
     @if (content.error()) {
       <div class="empty">
-        <h2>सामग्री load नहीं हुई</h2>
+        <h2>Couldn’t load the library</h2>
         <p>{{ content.error() }}</p>
-        <button class="button secondary" (click)="content.load()">फिर कोशिश करें</button>
+        <button class="button secondary" (click)="content.load()">Try again</button>
       </div>
     } @else if (!matches()) {
       <div class="empty">
         <app-icon name="search" />
-        <h2>कोई परिणाम नहीं मिला</h2>
-        <p>यह खोज केवल इस build की उपलब्ध नमूना सामग्री में है।</p>
-        <button class="button secondary" (click)="query.set('')">खोज साफ़ करें</button>
+        <h2>Nothing found for “{{ query().trim() }}”</h2>
+        <p>For now the library holds only the Ācārāṅga Sūtra and a reading preview.</p>
+        <button class="button secondary" (click)="query.set('')">Clear search</button>
       </div>
     } @else {
       <article class="scripture-card">
         <div class="scripture-art">
-          <app-art /><span>आचारांग<br /><small>सूत्र</small></span>
+          <app-art /><span lang="hi">आचारांग<br /><small>सूत्र</small></span>
         </div>
         <div class="scripture-details">
-          <span class="pill amber">स्रोत और समीक्षा चयन शेष</span>
-          <h2>आचारांग सूत्र</h2>
-          <p>प्रस्तावित पहला आगम। मूल पाठ और प्रामाणिक अनुवाद अभी प्रकाशित नहीं हैं।</p>
+          <span class="pill amber">Awaiting source and review</span>
+          <h2><span lang="hi">आचारांग सूत्र</span></h2>
+          <p class="gloss">Ācārāṅga Sūtra · the proposed first Āgama</p>
+          <p>The original text and a reviewed translation aren’t published here yet.</p>
           <div class="availability">
-            <span><app-icon name="book" />३ interface samples</span
-            ><span><app-icon name="headphones" />शस्त्रपरिज्ञा श्रवण</span>
+            <span><app-icon name="book" />3 reading passages</span
+            ><span><app-icon name="headphones" />Study 1 narration</span>
           </div>
         </div>
       </article>
       <div class="section-heading">
-        <h2>अनुभव का नमूना</h2>
-        <span>शास्त्रीय अध्याय-संरचना नहीं</span>
+        <h2>What you can try</h2>
       </div>
       <article class="chapter-row">
-        <span class="chapter-index">01</span>
+        <span class="chapter-index">1</span>
         <div>
-          <h3>ठहरें, पढ़ें, मनन करें।</h3>
-          <p>स्थानीय नमूना लेखन · कोई मूल सूत्र नहीं</p>
+          <h3><span lang="hi">शस्त्रपरिज्ञा</span> · Listen</h3>
+          <p>Seven sections of Hindi explanation in an AI voice.</p>
           <div class="availability">
-            <span class="status-dot">Reader fixture</span
-            ><span>{{
-              offline.assets().length && offline.saved().length === offline.assets().length ? 'श्रवण ऑफ़लाइन सहेजा हुआ' : 'श्रवण ऑफ़लाइन सहेजना शेष'
+            <span>{{
+              offline.assets().length && offline.saved().length === offline.assets().length
+                ? 'Saved for offline'
+                : 'Not saved for offline yet'
             }}</span>
           </div>
         </div>
         <div class="chapter-actions">
-          <a class="button secondary" routerLink="/read"><app-icon name="book" />पढ़ें</a
-          ><a class="button" routerLink="/listen"
-            ><app-icon name="headphones" />शस्त्रपरिज्ञा सुनें</a
-          >
+          <a class="button" routerLink="/listen"><app-icon name="headphones" />Listen</a>
         </div>
       </article>
-      @for (passage of passages(); track passage.id) {
-        <article class="chapter-row">
-          <span class="chapter-index">{{ passage.reference }}</span>
-          <div>
-            <h3>{{ passage.title }}</h3>
-            <p>इंटरफ़ेस नमूना · प्रामाणिक सूत्र-संदर्भ नहीं</p>
-          </div>
-          <a class="text-button" [routerLink]="['/read', passage.id]"
-            >पढ़ें <app-icon name="arrow"
-          /></a>
-        </article>
-      }
+      <article class="chapter-row">
+        <span class="chapter-index">2</span>
+        <div>
+          <h3>Reading preview</h3>
+          <p>Placeholder text for testing the reading layout. Not scripture.</p>
+        </div>
+        <div class="chapter-actions">
+          <a class="button secondary" routerLink="/read"><app-icon name="book" />Read</a>
+        </div>
+      </article>
       <article class="chapter-row unavailable">
         <span class="chapter-index">—</span>
         <div>
-          <h3>सत्यापित अध्याय</h3>
-          <p>स्रोत, पुनर्वितरण अधिकार और योग्य समीक्षा के बाद उपलब्ध होगा।</p>
+          <h3>Verified chapters</h3>
+          <p>Coming once the source, redistribution rights and a qualified review are in place.</p>
         </div>
-        <span class="pill amber">अभी उपलब्ध नहीं</span>
+        <span class="pill amber">Not available yet</span>
       </article>
     }
     <div class="content-note">
       <app-icon name="info" />
-      <p>
-        प्रामाणिक canonical क्रम और स्रोत-संस्करण का सत्यापन शेष है। अनुपलब्ध सामग्री अपने आप नहीं छोड़ी जाएगी।
-      </p>
+      <p>We haven’t yet verified the source edition or chapter order. Nothing is skipped silently.</p>
     </div>`,
 })
 export class Library {
@@ -111,9 +105,8 @@ export class Library {
   readonly matches = computed(
     () =>
       !this.query().trim() ||
-      'आचारांग acharanga नमूना ठहरकर देखना ध्यान सुनना व्यवहार चिंतन'.includes(
+      'आचारांग acharanga ācārāṅga sutra sūtra shastraparijna शस्त्रपरिज्ञा reading preview listen read library'.includes(
         this.query().trim().toLowerCase(),
       ),
   );
-  readonly passages = computed(() => this.content.chapter()?.passages ?? []);
 }

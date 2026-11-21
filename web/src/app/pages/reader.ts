@@ -24,7 +24,7 @@ import { Preferences } from '../shared/preferences';
   imports: [RouterLink, Icon, Preferences],
   template: ` @if (passage(); as current) {
       <div class="reader-top">
-        <a routerLink="/library" class="text-button"><app-icon name="back" />संग्रह</a>
+        <a routerLink="/library" class="text-button"><app-icon name="back" />Library</a>
         <div class="reader-tools">
           <button
             class="icon-button"
@@ -35,7 +35,7 @@ import { Preferences } from '../shared/preferences';
           ><button
             class="icon-button"
             [class.is-saved]="bookmarked()"
-            [attr.aria-label]="bookmarked() ? 'बुकमार्क हटाएँ' : 'बुकमार्क जोड़ें'"
+            [attr.aria-label]="bookmarked() ? 'Remove bookmark' : 'Bookmark this passage'"
             [attr.aria-pressed]="bookmarked()"
             (click)="bookmark()"
           >
@@ -44,58 +44,58 @@ import { Preferences } from '../shared/preferences';
         </div>
       </div>
       <div class="reader-heading">
-        <span class="eyebrow">नमूना लेखन · शास्त्रीय अध्याय नहीं</span>
-        <h1>पठन यात्रा</h1>
-        <p>अंश {{ index() + 1 }} / {{ passages().length }} · {{ current.reference }}</p>
+        <span class="eyebrow">Placeholder text · not scripture</span>
+        <h1>Reading preview</h1>
+        <p>Passage {{ index() + 1 }} of {{ passages().length }} · {{ current.reference }}</p>
       </div>
       <div class="reading-layout">
         <aside class="reading-outline">
-          <span class="eyebrow">इस नमूने में</span>
+          <span class="eyebrow">In this preview</span>
           @for (item of passages(); track item.id; let i = $index) {
             <button (click)="go(i)" [class.current]="i === index()">
               <span>0{{ i + 1 }}</span
-              >{{ item.title }}
+              ><span lang="hi">{{ item.title }}</span>
             </button>
           }
-          <div class="outline-note">मूल सूत्र और प्रामाणिक क्रम अभी शामिल नहीं हैं।</div>
+          <div class="outline-note">The original sūtras and their proper order aren’t included yet.</div>
         </aside>
         <article
           class="reading-paper"
           [style.--reading-size]="study.state().preferences.size + 'px'"
         >
-          <div class="sample-banner">इंटरफ़ेस नमूना · यह मूल सूत्र या उसका अनुवाद नहीं है</div>
+          <div class="sample-banner">Layout preview · this is not the original sūtra or a translation</div>
           <span class="passage-number">0{{ index() + 1 }}</span>
-          <h2>{{ current.title }}</h2>
+          <h2 lang="hi">{{ current.title }}</h2>
           <section class="original-placeholder" data-block="original">
-            <span class="eyebrow">मूल पाठ</span>
-            <p>सत्यापित मूल सूत्र यहाँ प्रस्तुत होगा।</p>
-            <p class="small-note">स्रोत चयन और समीक्षा शेष है।</p>
+            <span class="eyebrow">Original text</span>
+            <p>The verified original will appear here.</p>
+            <p class="small-note">We still need to choose a source and have it reviewed.</p>
           </section>
           @if (study.state().preferences.meaning) {
             <section class="passage-section" data-block="meaning">
-              <h3>अर्थ का स्थान <small>नमूना लेखन</small></h3>
-              <p>{{ current.meaning }}</p>
+              <h3>Meaning <small>placeholder</small></h3>
+              <p lang="hi">{{ current.meaning }}</p>
             </section>
           }
           @if (study.state().preferences.explanation) {
             <section class="passage-section explanation" data-block="explanation">
-              <h3><app-icon name="leaf" /> सरल व्याख्या का स्थान</h3>
+              <h3><app-icon name="leaf" /> Simple explanation <small>placeholder</small></h3>
               @for (paragraph of current.paragraphs; track $index) {
-                <p>{{ paragraph }}</p>
+                <p lang="hi">{{ paragraph }}</p>
               }
             </section>
           }
           @if (!study.state().preferences.meaning && !study.state().preferences.explanation) {
-            <p class="muted">अर्थ और व्याख्या छिपे हैं। Aa विकल्प से फिर दिखाएँ।</p>
+            <p class="muted">Meaning and explanation are hidden. Turn them back on with the Aa button.</p>
           }
           <div class="reading-end">
-            <span>एक पल ठहरें। फिर अपनी गति से आगे बढ़ें।</span><app-icon name="leaf" />
+            <span>Pause for a moment, then carry on.</span><app-icon name="leaf" />
           </div>
           <div class="passage-navigation">
             <button class="button secondary" (click)="go(index() - 1)" [disabled]="index() === 0">
-              <app-icon name="back" />पिछला अंश</button
+              <app-icon name="back" />Previous</button
             ><button class="button" (click)="next()">
-              {{ index() + 1 === passages().length ? 'आगे की उपलब्धता' : 'अगला अंश'
+              {{ index() + 1 === passages().length ? 'What’s next' : 'Next'
               }}<app-icon name="arrow" />
             </button>
           </div>
@@ -104,15 +104,15 @@ import { Preferences } from '../shared/preferences';
     } @else {
       <div class="empty">
         <app-icon name="book" />
-        <h1>यह saved reference उपलब्ध नहीं है</h1>
-        <p>आपकी मूल reference सुरक्षित है। कोई दूसरा अंश अपने आप नहीं खोला गया।</p>
-        <a class="button secondary" routerLink="/library">संग्रह में जाएँ</a>
+        <h1>We couldn’t find your saved place</h1>
+        <p>Your saved place hasn’t been changed, and we haven’t opened a different passage for you.</p>
+        <a class="button secondary" routerLink="/library">Go to the library</a>
       </div>
     }
     <dialog #preferences aria-labelledby="preferences-title">
       <div class="dialog-heading">
-        <h2 id="preferences-title" lang="en">Reading preferences</h2>
-        <button class="icon-button" aria-label="Close preferences" (click)="preferences.close()">
+        <h2 id="preferences-title">Reading settings</h2>
+        <button class="icon-button" aria-label="Close" (click)="preferences.close()">
           <app-icon name="close" />
         </button>
       </div>
@@ -120,14 +120,14 @@ import { Preferences } from '../shared/preferences';
     </dialog>
     <dialog #boundary aria-labelledby="boundary-title">
       <div class="dialog-heading">
-        <h2 id="boundary-title">नमूने का अंत</h2>
+        <h2 id="boundary-title">That’s the end of the preview</h2>
         <button class="icon-button" aria-label="Close" (click)="boundary.close()">
           <app-icon name="close" />
         </button>
       </div>
-      <p>आगे की सत्यापित सामग्री उपलब्ध नहीं है। यह वास्तविक अध्याय की पूर्णता का संकेत नहीं है।</p>
-      <p>एक पल ठहरें। कौन-सा विचार आपके साथ रहा?</p>
-      <button class="button" (click)="boundary.close()">पठन में लौटें</button>
+      <p>There’s no verified content after this yet. This isn’t the end of a real chapter.</p>
+      <p>Take a moment. Which thought is staying with you?</p>
+      <button class="button" (click)="boundary.close()">Back to reading</button>
     </dialog>`,
 })
 export class Reader implements AfterViewInit, OnDestroy {
@@ -256,7 +256,7 @@ export class Reader implements AfterViewInit, OnDestroy {
     if (!current) return;
     try {
       await this.study.toggleBookmark(current.id, current.title, 'fixture-v1');
-      this.ui.notify(this.bookmarked() ? 'बुकमार्क सहेजा गया।' : 'बुकमार्क हटाया गया।');
+      this.ui.notify(this.bookmarked() ? 'Bookmark saved.' : 'Bookmark removed.');
     } catch (error) {
       this.ui.error(error);
     }

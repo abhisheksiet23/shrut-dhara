@@ -63,7 +63,7 @@ export class SessionService {
     if (await this.tryAcquire()) return true;
     if (!this.supported())
       throw new Error(
-        'इस browser में सुरक्षित study session समर्थित नहीं है। Firefox या Chrome का नवीनतम संस्करण आज़माएँ।',
+        'This browser can’t keep your progress safe. Please use the latest Firefox or Chrome.',
       );
     this.acquiring.set(true);
     this.channel?.postMessage({ type: 'handoff' });
@@ -72,7 +72,7 @@ export class SessionService {
         finish: resolve,
         timer: setTimeout(() => {
           this.ui.notify(
-            'दूसरी ShrutDhara window बंद करके Retry करें। इस window में कोई बदलाव नहीं किया गया।',
+            'ShrutDhara is open in another window. Close it and try again. Nothing was changed here.',
           );
           this.finishRequest(false);
         }, 10000),
@@ -94,9 +94,9 @@ export class SessionService {
   }
 
   assertOwner(internal = false): void {
-    if (!this.owned()) throw new Error('पहले “इस विंडो में अध्ययन करें” चुनें।');
+    if (!this.owned()) throw new Error('Choose “Use this window” first.');
     if (this.maintenance() && !internal)
-      throw new Error('Backup या update की तैयारी चल रही है। कृपया प्रतीक्षा करें।');
+      throw new Error('A backup or update is in progress. Please wait a moment.');
   }
 
   async release(): Promise<void> {

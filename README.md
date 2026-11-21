@@ -8,11 +8,11 @@ npm run build
 npm start
 ```
 
-Open [the Angular preview](http://127.0.0.1:4174/). Use this build for service-worker and offline checks. `npm run dev` starts Angular's development server. `npm test` runs the prototype and Angular state tests.
+Open [the Angular preview](http://127.0.0.1:4174/). Use this build for service-worker and offline checks. `npm run dev` starts Angular's development server. `npm test` runs the prototype and Angular state tests. `npm --prefix web run e2e` runs real-browser checks of the listening journey against a production build (needs Chrome; set `E2E_CHROME` to a Chrome/Chromium path if the default channel is missing).
 
-The app keeps reading and listening progress, bookmarks, and preferences in IndexedDB. The offline worker caches the app and bundled reader content. **Listen → Save audio** verifies and saves two 15-minute calibration files for offline playback. **Settings → Export backup / Restore backup** transfers personal progress between browser profiles. The Vercel configuration builds a static site.
+The app keeps reading and listening progress, bookmarks, and preferences in IndexedDB. The offline worker caches the app and bundled reader content. **Listen → ऑफ़लाइन सहेजें** verifies and saves the seven *Śastraparijñā* narration sections for offline playback; Driving mode requires all seven saved. The generated calibration tones remain under Listen → डेवलपर जाँच for phone and browser checks. **Settings → Export backup / Restore backup** transfers personal progress between browser profiles. The Vercel configuration builds a static site.
 
-The development candidate uses Hindi sample text and generated audio tones. Approved chapter text and narration, and physical Android checks in Firefox and Chrome, are required for daily use. See the [web validation plan](docs/web-validation-plan.md).
+The development candidate uses Hindi sample text for reading. Listening plays the AI-voice review narration of Śastraparijñā (seven sections, with transcripts); the generated tones are a developer fixture. Approved chapter text and narration, and physical Android checks in Firefox and Chrome, are required for daily use. See the [web validation plan](docs/web-validation-plan.md).
 
 ## Earlier prototype
 

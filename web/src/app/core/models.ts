@@ -131,7 +131,7 @@ export function validatePersonalState(value: unknown): PersonalState {
     !isRecord(value['listening']) ||
     !isRecord(value['preferences'])
   ) {
-    throw new Error('बैकअप में आवश्यक journey डेटा नहीं है।');
+    throw new Error('This backup is missing your reading and listening progress.');
   }
 
   const reading = value['reading'];
@@ -143,7 +143,7 @@ export function validatePersonalState(value: unknown): PersonalState {
     !isIdentifier(reading['revision']) ||
     !finitePosition(reading['offset'])
   ) {
-    throw new Error('Reading position मान्य नहीं है।');
+    throw new Error('The reading place in this backup couldn’t be understood.');
   }
   if (
     !isIdentifier(listening['recordingId']) ||
@@ -151,7 +151,7 @@ export function validatePersonalState(value: unknown): PersonalState {
     (listening['part'] as number) < 0 ||
     !finitePosition(listening['seconds'])
   ) {
-    throw new Error('Listening position मान्य नहीं है।');
+    throw new Error('The listening place in this backup couldn’t be understood.');
   }
 
   const bookmarks = value['bookmarks'];
@@ -166,10 +166,10 @@ export function validatePersonalState(value: unknown): PersonalState {
         item['title'].length > 500,
     )
   ) {
-    throw new Error('Bookmarks मान्य नहीं हैं।');
+    throw new Error('The bookmarks in this backup couldn’t be understood.');
   }
   if (new Set(bookmarks.map((item) => item.sutraId)).size !== bookmarks.length) {
-    throw new Error('बैकअप में duplicate bookmarks हैं।');
+    throw new Error('This backup lists the same bookmark twice.');
   }
   if (
     !['noto', 'mukta', 'hind'].includes(preferences['font'] as string) ||
@@ -179,7 +179,7 @@ export function validatePersonalState(value: unknown): PersonalState {
     typeof preferences['explanation'] !== 'boolean' ||
     ![0.75, 1, 1.25, 1.5].includes(preferences['speed'] as number)
   ) {
-    throw new Error('Reading preferences मान्य नहीं हैं।');
+    throw new Error('The reading settings in this backup couldn’t be understood.');
   }
 
   // Rebuild the payload: never copy imported epochs, locks or unknown properties.
@@ -213,13 +213,13 @@ export function validatePersonalState(value: unknown): PersonalState {
 
 export function parseBackup(text: string): Backup {
   if (new TextEncoder().encode(text).byteLength > MAX_BACKUP_BYTES) {
-    throw new Error('बैकअप 5 MiB से बड़ा है।');
+    throw new Error('This file is larger than 5 MB, so it can’t be a ShrutDhara backup.');
   }
   let value: unknown;
   try {
     value = JSON.parse(text);
   } catch {
-    throw new Error('यह मान्य JSON फ़ाइल नहीं है।');
+    throw new Error('This doesn’t look like a ShrutDhara backup file.');
   }
   if (
     !isRecord(value) ||
@@ -228,7 +228,7 @@ export function parseBackup(text: string): Backup {
     typeof value['exportedAt'] !== 'string' ||
     !Number.isFinite(Date.parse(value['exportedAt']))
   ) {
-    throw new Error('यह backup version समर्थित नहीं है।');
+    throw new Error('This backup comes from a different version of ShrutDhara and can’t be restored here.');
   }
   return {
     format: 'shrutdhara-progress',
@@ -244,7 +244,7 @@ export function formatTime(seconds: number): string {
 
 /** Validate the narration manifest at the trust boundary; throws a Hindi message on any defect. */
 export function parseNarrationManifest(value: unknown): Recording {
-  const bad = () => new Error('श्रवण सूची मान्य नहीं है। ऑनलाइन होकर फिर कोशिश करें।');
+  const bad = () => new Error('The listening list couldn’t be read. Connect to the internet and try again.');
   if (!isRecord(value) || value['recordingId'] !== NARRATION_ID || !Array.isArray(value['parts']))
     throw bad();
   const parts = value['parts'];
@@ -285,7 +285,7 @@ export function parseNarrationManifest(value: unknown): Recording {
     id: NARRATION_ID,
     kind: 'narration',
     title: typeof value['title'] === 'string' ? value['title'] : 'शस्त्रपरिज्ञा',
-    label: 'एआई आवाज़ · समीक्षा प्रति',
+    label: 'AI voice · unreviewed draft',
     parts: result,
   };
 }

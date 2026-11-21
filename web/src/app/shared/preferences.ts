@@ -9,7 +9,7 @@ import { UiService } from '../core/ui.service';
   selector: 'app-preferences',
   imports: [FormsModule],
   template: ` <div class="setting-row">
-      <label for="reading-font">Reading font · पठन का फ़ॉन्ट</label>
+      <label for="reading-font">Reading font</label>
       <select
         id="reading-font"
         [ngModel]="study.state().preferences.font"
@@ -21,13 +21,13 @@ import { UiService } from '../core/ui.service';
         <option value="hind">Hind</option>
       </select>
     </div>
-    <p class="font-sample">ज्ञान की एक शांत यात्रा। पढ़ें, समझें और स्वयं चिंतन करें।</p>
+    <p class="font-sample"><span lang="hi">ज्ञान की एक शांत यात्रा। पढ़ें, समझें और स्वयं चिंतन करें।</span></p>
     <div class="setting-row">
-      <span>Text size · अक्षर आकार</span>
+      <span>Text size</span>
       <div class="segmented">
         @for (size of [19, 21, 24, 27]; track size) {
           <button
-            [attr.aria-label]="'अक्षर आकार ' + size"
+            [attr.aria-label]="'Text size ' + size"
             [attr.aria-pressed]="study.state().preferences.size === size"
             [class.selected]="study.state().preferences.size === size"
             (click)="change({ size })"
@@ -38,7 +38,7 @@ import { UiService } from '../core/ui.service';
       </div>
     </div>
     <label class="switch-row"
-      ><span>अर्थ दिखाएँ</span
+      ><span>Show meaning</span
       ><input
         type="checkbox"
         [ngModel]="study.state().preferences.meaning"
@@ -46,7 +46,7 @@ import { UiService } from '../core/ui.service';
         [disabled]="!session.owned() || session.maintenance()"
     /></label>
     <label class="switch-row"
-      ><span>सरल व्याख्या दिखाएँ</span
+      ><span>Show simple explanation</span
       ><input
         type="checkbox"
         [ngModel]="study.state().preferences.explanation"
@@ -54,11 +54,10 @@ import { UiService } from '../core/ui.service';
         [disabled]="!session.owned() || session.maintenance()"
     /></label>
     <div class="setting-row">
-      <span lang="en">Reading theme</span>
+      <span>Theme</span>
       <div class="segmented">
         @for (theme of themes; track theme.id) {
           <button
-            lang="en"
             [attr.aria-pressed]="study.state().preferences.theme === theme.id"
             [class.selected]="study.state().preferences.theme === theme.id"
             (click)="change({ theme: theme.id })"

@@ -23,24 +23,25 @@ export class App {
   readonly url = signal('/');
   readonly isListening = computed(() => this.url().startsWith('/listen'));
   readonly title = computed(() => {
-    if (this.url() === '/acharanga') return 'आचारांग सूत्र';
-    if (this.url().startsWith('/read')) return 'पठन यात्रा';
-    if (this.url().startsWith('/listen')) return 'श्रवण यात्रा';
-    return this.links.find((link) => link.path === this.url())?.label ?? 'सेटिंग';
+    if (this.url() === '/acharanga') return 'Ācārāṅga Sūtra';
+    if (this.url().startsWith('/read')) return 'Read';
+    if (this.url().startsWith('/listen')) return 'Listen';
+    return this.links.find((link) => link.path === this.url())?.label ?? 'Settings';
   });
   readonly time = formatTime;
+  readonly devBuild = ['localhost', '127.0.0.1'].includes(location.hostname);
   readonly links = [
-    { path: '/', label: 'मेरी यात्रा', icon: 'home' },
-    { path: '/library', label: 'आगम संग्रह', icon: 'book' },
-    { path: '/listen', label: 'श्रवण यात्रा', icon: 'headphones' },
-    { path: '/bookmarks', label: 'बुकमार्क', icon: 'bookmark' },
+    { path: '/', label: 'Home', icon: 'home' },
+    { path: '/library', label: 'Library', icon: 'book' },
+    { path: '/listen', label: 'Listen', icon: 'headphones' },
+    { path: '/bookmarks', label: 'Bookmarks', icon: 'bookmark' },
   ];
   readonly mobileLinks = [
-    { path: '/', label: 'होम', icon: 'home' },
-    { path: '/library', label: 'संग्रह', icon: 'book' },
-    { path: '/listen', label: 'सुनें', icon: 'headphones' },
-    { path: '/bookmarks', label: 'बुकमार्क', icon: 'bookmark' },
-    { path: '/settings', label: 'सेटिंग', icon: 'settings' },
+    { path: '/', label: 'Home', icon: 'home' },
+    { path: '/library', label: 'Library', icon: 'book' },
+    { path: '/listen', label: 'Listen', icon: 'headphones' },
+    { path: '/bookmarks', label: 'Bookmarks', icon: 'bookmark' },
+    { path: '/settings', label: 'Settings', icon: 'settings' },
   ];
   @ViewChild('sources') private sources?: ElementRef<HTMLDialogElement>;
 
@@ -82,7 +83,7 @@ export class App {
 
   async takeControl(): Promise<void> {
     try {
-      if (await this.app.useThisWindow()) this.ui.notify('Study session इस window में तैयार है।');
+      if (await this.app.useThisWindow()) this.ui.notify('This window is now active.');
     } catch (error) {
       this.ui.error(error);
     }

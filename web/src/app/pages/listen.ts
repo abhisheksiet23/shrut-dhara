@@ -50,17 +50,18 @@ import { Art } from '../shared/art';
     }
   `,
   template: ` <div class="page-title">
-      <div class="eyebrow">आँखों को आराम, विचारों को विस्तार</div>
-      <h1>श्रवण यात्रा</h1>
-      <p>आचारांग सूत्र · प्रथम अध्ययन · शस्त्रपरिज्ञा की हिन्दी व्याख्या</p>
-      <a class="button secondary" routerLink="/acharanga">सभी २४ अध्ययन देखें</a>
+      <div class="eyebrow">Listen</div>
+      <h1>Shastra-parijnā</h1>
+      <p>Ācārāṅga Sūtra, Study 1 · a Hindi explanation in seven sections</p>
+      <p class="small-note">AI voice, not yet reviewed by a scholar.</p>
+      <a class="button secondary" routerLink="/acharanga">See all 24 studies</a>
     </div>
 
     @if (content.narrationError() && !recording()) {
       <section class="settings-panel">
-        <h2>श्रवण सूची load नहीं हुई</h2>
+        <h2>Couldn’t load the narration</h2>
         <p role="alert">{{ content.narrationError() }}</p>
-        <button class="button secondary" (click)="content.loadNarration()">फिर कोशिश करें</button>
+        <button class="button secondary" (click)="content.loadNarration()">Try again</button>
       </section>
     } @else if (recording(); as rec) {
       <div class="listening-layout">
@@ -68,23 +69,23 @@ import { Art } from '../shared/art';
           <div class="audio-art">
             <app-art />
             <div class="audio-art-title">
-              <span>{{ rec.kind === 'narration' ? 'आचारांग सूत्र · प्रथम अध्ययन' : 'TEST TONES' }}</span>
-              <h2>{{ rec.title }}</h2>
+              <span>{{ rec.kind === 'narration' ? 'Ācārāṅga Sūtra · Study 1' : 'Test tones' }}</span>
+              <h2 lang="hi">{{ rec.title }}</h2>
               <p>{{ rec.label }}</p>
             </div>
           </div>
           <div class="player-body">
             <div class="player-title">
               <div>
-                <span class="eyebrow">{{ part()?.reference ?? 'भाग ' + (player.part() + 1) }}</span>
-                <h2>{{ part()?.title ?? 'भाग ' + (player.part() + 1) }}</h2>
+                <span class="eyebrow">{{ part()?.reference ?? 'Section ' + (player.part() + 1) }}</span>
+                <h2 lang="hi">{{ part()?.title ?? 'Section ' + (player.part() + 1) }}</h2>
               </div>
               <app-icon name="headphones" />
             </div>
             <p class="player-status" role="status">
-              {{ player.status() }} · भाग {{ player.part() + 1 }} / {{ rec.parts.length }}
+              {{ player.status() }} · Section {{ player.part() + 1 }} of {{ rec.parts.length }}
             </p>
-            <label class="sr-only" for="audio-seek">सुनने की जगह</label>
+            <label class="sr-only" for="audio-seek">Position in this section</label>
             <input
               id="audio-seek"
               class="seek"
@@ -98,18 +99,18 @@ import { Art } from '../shared/art';
             />
             <div class="time-labels">
               <span>{{ time(player.position()) }}</span
-              ><span>{{ time(player.duration() - player.position()) }} शेष</span>
+              ><span>{{ time(player.duration() - player.position()) }} left</span>
             </div>
             <div class="playback-controls">
-              <button class="icon-button speed" aria-label="Playback speed" (click)="speed()">
+              <button class="icon-button speed" [attr.aria-label]="'Playback speed ' + study.state().preferences.speed + '×. Tap to change.'" (click)="speed()">
                 {{ study.state().preferences.speed }}×
               </button>
               <button
                 class="skip-control"
-                aria-label="15 seconds back"
+                aria-label="Back 15 seconds"
                 (click)="seek(player.position() - 15)"
               >
-                ↶<small>15</small>
+                <app-icon name="back15" />
               </button>
               <button
                 class="play-button"
@@ -121,44 +122,46 @@ import { Art } from '../shared/art';
               </button>
               <button
                 class="skip-control"
-                aria-label="15 seconds forward"
+                aria-label="Forward 15 seconds"
                 (click)="seek(player.position() + 15)"
               >
-                ↷<small>15</small>
+                <app-icon name="fwd15" />
               </button>
-              <button class="icon-button" aria-label="इस भाग को शुरू से सुनें" (click)="restart()">
-                <app-icon name="back" />
+              <button class="icon-button" aria-label="Restart this section" (click)="restart()">
+                <app-icon name="restart" />
               </button>
             </div>
             @if (rec.kind === 'narration') {
               <p class="small-note">
-                यह कृत्रिम आवाज़ में बनी समीक्षा प्रति है। मूल प्राकृत से अर्थ और उच्चारण का मिलान बाकी है।
+                This is an AI voice and hasn’t been reviewed yet. Pronunciation and meaning haven’t been checked against the Prakrit original.
               </p>
             }
-            <div class="player-footer"><app-icon name="lock" /> श्रवण प्रगति पठन से अलग सहेजी जाती है</div>
+            <div class="player-footer"><app-icon name="lock" /> Your listening place is saved separately from reading.</div>
           </div>
         </section>
         <aside class="listening-aside">
           <section class="queue-panel">
             <div class="section-heading">
-              <h2>{{ rec.kind === 'narration' ? 'सात उद्देशक' : 'परीक्षण भाग' }}</h2>
-              <span>{{ offline.saved().length }} / {{ rec.parts.length }} सहेजे</span>
+              <h2>{{ rec.kind === 'narration' ? 'Seven sections' : 'Test sections' }}</h2>
+              <span>{{ offline.saved().length }} of {{ rec.parts.length }} saved</span>
             </div>
             @for (item of rec.parts; track item.id; let i = $index) {
               <div class="queue-item" [class.dim]="player.part() !== i">
                 <span class="queue-number">0{{ i + 1 }}</span>
                 <div class="grow">
-                  <b>{{ item.title ?? 'भाग ' + (i + 1) }}</b>
+                  <b lang="hi">{{ item.title ?? 'Section ' + (i + 1) }}</b>
                   <p>
                     {{ item.reference ? item.reference + ' · ' : '' }}{{ time(item.duration) }} ·
-                    {{
-                      offline.saved().includes(item.id) ? 'ऑफ़लाइन सहेजा हुआ' : 'इंटरनेट से चलेगा'
-                    }}
+                    <span class="queue-status"
+                      ><app-icon [name]="offline.saved().includes(item.id) ? 'saved' : 'stream'" />{{
+                        offline.saved().includes(item.id) ? 'Saved on this device' : 'Streams online'
+                      }}</span
+                    >
                   </p>
                 </div>
                 <button
                   class="icon-button"
-                  [attr.aria-label]="'भाग ' + (i + 1) + ' सुनें'"
+                  [attr.aria-label]="(player.running() && player.part() === i ? 'Pause' : 'Play') + ' section ' + (i + 1)"
                   (click)="playPart(i)"
                   [disabled]="busy() || (rec.kind === 'calibration' && !allSaved())"
                 >
@@ -166,16 +169,16 @@ import { Art } from '../shared/art';
                 </button>
                 @if (item.paragraphs?.length) {
                   <details class="transcript">
-                    <summary>लिखित व्याख्या पढ़ें</summary>
+                    <summary>Read the transcript</summary>
                     @for (paragraph of item.paragraphs; track $index) {
-                      <p>{{ paragraph }}</p>
+                      <p lang="hi">{{ paragraph }}</p>
                     }
                   </details>
                 }
               </div>
             }
             <p class="small-note">
-              भाग एक के बाद एक अपने आप चलते हैं। अंत में सब रुक जाता है, आगे कुछ अपने आप नहीं चलता।
+              Sections play one after another. When the last one ends, playback stops.
             </p>
             <button
               class="button full"
@@ -184,89 +187,91 @@ import { Art } from '../shared/art';
             >
               <app-icon name="down" />{{
                 offline.downloading()
-                  ? 'सहेजा जा रहा है…'
+                  ? 'Saving…'
                   : allSaved()
-                    ? 'ऑफ़लाइन सहेजा गया'
-                    : 'ऑफ़लाइन सहेजें · ' + megabytes() + ' MB'
+                    ? 'Saved for offline'
+                    : 'Save for offline · ' + megabytes() + ' MB'
               }}
             </button>
             @if (offline.downloading()) {
               <p class="small-note" role="status">{{ offline.progress() }}</p>
-              <button class="text-button" (click)="offline.cancel()">रद्द करें</button>
+              <button class="text-button" (click)="offline.cancel()">Cancel</button>
             }
           </section>
           <section class="driving-panel">
             <app-icon name="car" />
-            <h2>सफ़र से पहले तैयार करें।</h2>
+            <h2>Get ready for the road.</h2>
             <p>
-              सभी भाग ऑफ़लाइन सहेजें, फिर ड्राइविंग मोड खोलें। असली सफ़र में भरोसा करने से पहले अपने फ़ोन के
-              Firefox/Chrome में स्क्रीन बंद करके जाँच लें।
+              Save every section for offline, then open Driving mode. Before you rely on it, try it with the
+              screen off in Firefox or Chrome on your phone.
             </p>
             <button class="button secondary" (click)="openDriving()">
-              ड्राइविंग मोड <app-icon name="arrow" /></button
-            ><small>Firefox / Chrome · फ़ोन पर जाँच बाकी</small>
+              Driving mode <app-icon name="arrow" /></button
+            ><small>Not yet tested on real phones</small>
           </section>
         </aside>
       </div>
       @if (rec.kind === 'narration') {
         <p class="small-note credits-line">
-          <a href="/narration/shastraparijna-hi-v1.mp3" download>पूरा MP3 डाउनलोड करें</a> ·
-          <a href="/narration/shastraparijna-hi-v1.txt">पूरी लिखित व्याख्या (.txt)</a> ·
-          <a href="/narration/credits.txt">श्रेय और उपयोग की शर्तें</a>
+          <a href="/narration/shastraparijna-hi-v1.mp3" download>Download the full MP3</a> ·
+          <a href="/narration/shastraparijna-hi-v1.txt">Full transcript (.txt)</a> ·
+          <a href="/narration/credits.txt">Credits and terms of use</a>
         </p>
       }
     }
 
+    @if (devTools) {
     <details class="dev-tools">
-      <summary>डेवलपर जाँच · परीक्षण ध्वनि</summary>
+      <summary>Developer tools</summary>
       <p class="small-note">
-        ये केवल बनाई हुई टोन हैं, कोई आवाज़ या आगम नहीं। फ़ोन पर स्क्रीन-बंद और ऑफ़लाइन जाँच के लिए।
+        Generated test tones, not a voice or an Āgama. For screen-off and offline checks on a phone.
       </p>
       <button class="button secondary" (click)="swapRecording()" [disabled]="busy()">
         {{
           player.selectedId() === NARRATION
-            ? 'परीक्षण ध्वनि चुनें'
-            : 'शस्त्रपरिज्ञा श्रवण पर लौटें'
+            ? 'Switch to test tones'
+            : 'Back to Shastra-parijnā'
         }}
       </button>
     </details>
+    }
 
     <dialog #driving aria-labelledby="driving-title">
       <div class="dialog-heading">
-        <h2 id="driving-title">ड्राइविंग मोड</h2>
-        <button class="icon-button" aria-label="Close driving mode" (click)="driving.close()">
+        <h2 id="driving-title">Driving mode</h2>
+        <button class="icon-button" aria-label="Close" (click)="driving.close()">
           <app-icon name="close" />
         </button>
       </div>
       <div class="drive-view">
-        <app-icon name="car" /><span class="eyebrow">रुककर तैयार करें · सभी भाग ऑफ़लाइन</span>
-        <h3>{{ part()?.title ?? recording()?.title }}</h3>
+        <app-icon name="car" /><span class="eyebrow">Set up while parked · all sections offline</span>
+        <h3 lang="hi">{{ part()?.title ?? recording()?.title }}</h3>
         <p>{{ recording()?.label }}</p>
         <span id="drive-time">{{ time(player.position()) }} / {{ time(player.duration()) }}</span>
         <div class="drive-controls">
           <button
             class="button secondary"
-            aria-label="Driving 15 seconds back"
+            aria-label="Back 15 seconds"
             (click)="seek(player.position() - 15)"
           >
             −15</button
           ><button
             class="play-button"
-            [attr.aria-label]="player.running() ? 'Pause driving audio' : 'Play driving audio'"
+            [attr.aria-label]="player.running() ? 'Pause' : 'Play'"
             (click)="toggle()"
             [disabled]="busy()"
           >
             <app-icon [name]="player.running() ? 'pause' : 'play'" /></button
           ><button
             class="button secondary"
-            aria-label="Driving 15 seconds forward"
+            aria-label="Forward 15 seconds"
             (click)="seek(player.position() + 15)"
           >
             +15
           </button>
         </div>
         <p class="small-note">
-          फ़ोन पर स्क्रीन-बंद और कॉल आने की जाँच बाकी है। Controls की उपलब्धता browser पर निर्भर है।
+          Screen-off and incoming-call behaviour hasn’t been tested on real phones yet. Lock-screen controls depend on your browser.
         </p>
       </div>
     </dialog>`,
@@ -279,6 +284,7 @@ export class Listen {
   private ui = inject(UiService);
   readonly time = formatTime;
   readonly NARRATION = NARRATION_ID;
+  readonly devTools = ['localhost', '127.0.0.1'].includes(location.hostname) || location.search.includes('dev');
   readonly busy = signal(false);
   readonly recording = this.player.recording;
   readonly part = computed(() => this.player.parts()[this.player.part()]);
@@ -344,10 +350,10 @@ export class Listen {
     } catch (error) {
       this.ui.notify(
         error instanceof DOMException && error.name === 'AbortError'
-          ? 'Download रद्द हुआ। पूरे सहेजे हुए भाग सुरक्षित हैं।'
+          ? 'Saving cancelled. Sections already saved are safe.'
           : error instanceof Error
             ? error.message
-            : 'Download विफल हुआ। फिर कोशिश करें।',
+            : 'Couldn’t save the audio. Please try again.',
       );
     }
   }

@@ -44,25 +44,25 @@ type Study = (typeof chapters)[number];
   `,
   template: `
     <div class="page-title">
-      <a class="text-button" routerLink="/library">← आगम संग्रह</a>
-      <h1>आचारांग सूत्र</h1>
-      <p>दो श्रुतस्कन्ध · २४ उपलब्ध अध्ययन</p>
-      <p>हर अध्ययन का हिन्दी परिचय, उसकी एआई आवाज़ और प्रकाशित स्रोत का संदर्भ। ये परिचय संक्षिप्त हैं।</p>
+      <a class="text-button" routerLink="/library">← Library</a>
+      <h1><span lang="hi">आचारांग सूत्र</span></h1>
+      <p class="gloss">Ācārāṅga Sūtra · two books · 24 studies</p>
+      <p>Each study has a short Hindi introduction, an AI-voiced recording and a link to a published source.</p>
     </div>
 
     @for (book of books; track book.number) {
       <section class="book" [attr.aria-labelledby]="'book-' + book.number">
-        <h2 [id]="'book-' + book.number">{{ book.title }}</h2>
+        <h2 [id]="'book-' + book.number"><span lang="hi">{{ book.title }}</span> <small>Book {{ book.number }}</small></h2>
         <p class="catalog-sources small-note">
-          <a [href]="book.hindiSource">प्राकृत मूल और हिन्दी अर्थ का ऑनलाइन संस्करण</a>
+          <a [href]="book.hindiSource">Prakrit original with Hindi meaning (external site)</a>
         </p>
 
         @for (chapter of book.chapters; track chapter.id) {
           @if (book.number === 1 && chapter.study === 8) {
-            <p class="small-note">अध्ययन ७ · महापरिज्ञा का पाठ उपलब्ध नहीं है।</p>
+            <p class="small-note">Study 7, Mahāparijñā, has no surviving text, so it is skipped.</p>
           }
           <details #panel class="chapter" (toggle)="onChapterToggle(chapter, panel)">
-            <summary>{{ chapter.study }}. {{ chapter.title }}</summary>
+            <summary>{{ chapter.study }}. <span lang="hi">{{ chapter.title }}</span></summary>
             <div class="chapter-content">
               @for (
                 paragraph of chapter.text.split(
@@ -72,20 +72,20 @@ type Study = (typeof chapters)[number];
                 );
                 track $index
               ) {
-                <p>{{ paragraph }}</p>
+                <p lang="hi">{{ paragraph }}</p>
               }
               <p class="catalog-sources small-note">
-                <a [href]="scanUrl(chapter)">जैकोबी का अंग्रेज़ी संस्करण · पृष्ठ {{ chapter.page }}</a>
+                <a [href]="scanUrl(chapter)">Jacobi’s English translation, page {{ chapter.page }}</a>
               </p>
               @if (chapter.id === 'shastraparijna') {
-                <a class="button" routerLink="/listen">विस्तृत हिन्दी व्याख्या सुनें</a>
+                <a class="button" routerLink="/listen">Listen to the full explanation</a>
               } @else {
                 <button
                   class="button secondary"
                   [attr.aria-expanded]="selected() === chapter.id"
                   (click)="toggleAudio(chapter)"
                 >
-                  {{ selected() === chapter.id ? 'ऑडियो परिचय बंद करें' : 'ऑडियो परिचय खोलें' }}
+                  {{ selected() === chapter.id ? 'Hide audio introduction' : 'Play audio introduction' }}
                 </button>
                 @if (selected() === chapter.id) {
                   <audio
@@ -93,17 +93,17 @@ type Study = (typeof chapters)[number];
                     controls
                     preload="none"
                     [src]="audioUrl(chapter)"
-                    [attr.aria-label]="chapter.title + ' का हिन्दी ऑडियो परिचय'"
+                    [attr.aria-label]="'Hindi audio introduction: ' + chapter.title"
                     (play)="onPlay(player, panel)"
                     (error)="error.set(true)"
                   ></audio>
                   @if (error()) {
-                    <p role="alert">ऑडियो नहीं खुला। इंटरनेट जाँचें या MP3 डाउनलोड करें।</p>
+                    <p role="alert">Couldn’t play this audio. Check your connection, or download the MP3.</p>
                   }
                   @if (!session.owned()) {
-                    <p class="small-note">यहाँ चलाने के लिए ऊपर “इस विंडो में अध्ययन करें” चुनें।</p>
+                    <p class="small-note">To play here, choose “Use this window” at the top.</p>
                   }
-                  <a class="text-button" [href]="audioUrl(chapter)" download>MP3 डाउनलोड करें</a>
+                  <a class="text-button" [href]="audioUrl(chapter)" download>Download MP3</a>
                 }
               }
             </div>
@@ -112,7 +112,7 @@ type Study = (typeof chapters)[number];
       </section>
     }
     <p class="catalog-sources small-note">
-      <a href="/narration/acharanga/credits.txt">स्रोत, आवाज़ और उपयोग की शर्तें</a>
+      <a href="/narration/acharanga/credits.txt">Sources, voice and terms of use</a>
     </p>
   `,
 })

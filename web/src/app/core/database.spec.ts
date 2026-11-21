@@ -49,7 +49,7 @@ describe('durable personal state', () => {
     await db.replace(0, imported);
     await expect(
       db.update(0, (state) => ({ ...state, listening: { ...state.listening, seconds: 99 } })),
-    ).rejects.toThrow('State');
+    ).rejects.toThrow('progress changed');
     expect((await db.read()).data).toEqual(imported);
   });
 

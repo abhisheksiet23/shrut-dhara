@@ -6,7 +6,7 @@ import { UiService } from './core/ui.service';
 
 const studyGuard: CanActivateFn = () => {
   if (inject(SessionService).owned() && inject(StudyService).ready()) return true;
-  inject(UiService).notify('अध्ययन के लिए पहले “इस विंडो में अध्ययन करें” चुनें।');
+  inject(UiService).notify('To read or listen, choose “Use this window” first.');
   return inject(Router).createUrlTree(['/library']);
 };
 

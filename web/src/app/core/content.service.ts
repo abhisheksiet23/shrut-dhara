@@ -25,11 +25,11 @@ export class ContentService {
     this.narrationError.set('');
     try {
       const response = await fetch('/narration/shastraparijna/manifest.json');
-      if (!response.ok) throw new Error('श्रवण सूची उपलब्ध नहीं है। ऑनलाइन होकर फिर कोशिश करें।');
+      if (!response.ok) throw new Error('The listening list isn’t available right now. Connect to the internet and try again.');
       this.narration.set(parseNarrationManifest(await response.json()));
     } catch (error) {
       this.narrationError.set(
-        error instanceof Error ? error.message : 'श्रवण सूची load नहीं हुई। फिर कोशिश करें।',
+        error instanceof Error ? error.message : 'Couldn’t load the listening list. Please try again.',
       );
     }
   }
@@ -40,7 +40,7 @@ export class ContentService {
     this.error.set('');
     try {
       const response = await fetch('/content/fixture-v1/chapter.json');
-      if (!response.ok) throw new Error('नमूना सामग्री उपलब्ध नहीं है। ऑनलाइन होकर Retry करें।');
+      if (!response.ok) throw new Error('The sample content isn’t available right now. Connect to the internet and try again.');
       const value: Chapter = await response.json();
       if (
         value.status !== 'interface-fixture' ||
@@ -49,7 +49,7 @@ export class ContentService {
         value.passages.some((passage, index) => passage.id !== FIXTURE_IDS[index]) ||
         !Array.isArray(value.audio)
       ) {
-        throw new Error('Content manifest का version मान्य नहीं है।');
+        throw new Error('This content was made for a different version of the app. Please reload to update.');
       }
       for (const asset of value.audio) {
         if (
@@ -59,12 +59,12 @@ export class ContentService {
           asset.bytes <= 0 ||
           asset.duration <= 0
         ) {
-          throw new Error('Audio manifest मान्य नहीं है।');
+          throw new Error('The audio list couldn’t be read. Please reload and try again.');
         }
       }
       this.chapter.set(value);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Content load नहीं हुआ। Retry करें।';
+      const message = error instanceof Error ? error.message : 'Couldn’t load the content. Please try again.';
       this.error.set(message);
       this.ui.notify(message);
     } finally {

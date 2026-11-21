@@ -1,4 +1,5 @@
 @import './prototype-tokens.css';
+@import './ui.css';
 
 .narration-feature {
   margin: 0 0 24px;

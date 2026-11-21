@@ -1,0 +1,129 @@
+/* ShrutDhara UI layer — type scale, contrast and tap targets.
+   Loaded after prototype-tokens.css (which is regenerated from prototype/ on build), so these win.
+   Rules: nothing under 14px except bottom-nav labels (13px); body 16px; Devanagari content 17px+;
+   text contrast >= 4.5:1; every control >= 44x44px. */
+:root {
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --muted: #5a6453;
+}
+:root:not([data-theme=night]) { --saffron: #8a5a2b; }
+body { font: var(--fs-body)/1.6 var(--sans); }
+
+/* ---- Type scale: lift every small style to the floor ---- */
+.eyebrow, .prototype-label, .pill, .journey-position, .journey-position b, .section-heading > span,
+.availability, .content-note, .small-note, .nav-label, .breadcrumb, .time-labels, .queue-item p,
+.player-footer, .simulation-note, .driving-panel small, .sample-banner, .hero-foot, .hero-number,
+.audio-art p, .audio-art-title > span, .outline-note, .privacy-line, .quiet-note, .reading-outline button span,
+.book-spine small, .library-tabs span, .scripture-details .pill, .passage-number, .toast, #toast,
+.reading-outline .eyebrow, .welcome p, .page-title p, .journey > p, .field-error, .source-list dt, .source-list dd,
+.footer, footer, .chapter-row p, .hero .eyebrow, .reader-heading .eyebrow, .reader-heading p {
+  font-size: var(--fs-small);
+}
+.eyebrow { letter-spacing: .6px; text-transform: none; font-weight: 600; }
+.prototype-label { font-size: var(--fs-small); padding: 4px 12px; }
+.queue-item b { font-size: 17px; font-weight: 600; }
+.mobile-nav a { font-size: 13px; }
+h1 { line-height: 1.3; }
+.welcome h1 { font-size: 28px; line-height: 1.35; }
+.page-title h1 { font-size: 30px; line-height: 1.3; }
+.gloss { color: var(--muted); font-size: var(--fs-small); margin: 2px 0 10px; letter-spacing: .1px; }
+.journey > .gloss { margin-top: 0; }
+
+/* Devanagari content: larger, more generous */
+[lang=hi] { line-height: 1.75; }
+p[lang=hi] { font-size: 17px; }
+h1[lang=hi], h2[lang=hi], h3[lang=hi] { font-family: var(--serif); }
+b[lang=hi], span[lang=hi] { font-size: inherit; }
+.queue-item b[lang=hi] { font-size: 18px; }
+.transcript p[lang=hi] { font-size: 18px; line-height: 1.95; }
+
+/* ---- Contrast: replace pale greys with accessible ones ---- */
+.nav-label, .breadcrumb, .breadcrumb span, .prototype-label, .time-labels, .player-footer,
+.queue-number, .chapter-index, .privacy-line, .reading-outline button span, .journey-position b,
+.audio-art p, .audio-art-title > span, .book-spine small, .outline-note, .footer, footer, .speed,
+.library-tabs span, .hero-foot, .small-note, .availability, .chapter-row p, .content-note { color: var(--muted); }
+.breadcrumb b, .journey-position b { color: var(--ink); font-weight: 600; }
+.pill { color: #4d5a3f; border-color: #b9c1aa; }
+.pill.amber { color: #7a5226; background: #f4eddf; border-color: #d9c39f; }
+.hero .eyebrow, .hero-foot, .hero-number { color: #e6e0c4; }
+[data-theme=night] .pill { color: #c9d3b6; border-color: #566048; }
+[data-theme=night] .pill.amber { background: #3d3626; color: #e3c892; border-color: #6a5a38; }
+[data-theme=night] .breadcrumb b, [data-theme=night] .journey-position b { color: var(--ink); }
+
+/* ---- Tap targets: 44px minimum ---- */
+.icon-button { min-width: 44px; min-height: 44px; }
+.top-actions .icon-button { min-width: 44px; }
+.skip-control { width: 52px; height: 52px; font: inherit; color: var(--olive); display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; }
+.skip-control .icon { width: 36px; height: 36px; }
+.skip-control:hover, .icon-button:hover { background: var(--soft); }
+.speed { min-width: 52px; font: 600 15px var(--sans); color: var(--olive); }
+.segmented button { min-width: 48px; height: 48px; font-size: var(--fs-small); }
+.button, .text-button { min-height: 44px; }
+.text-button { display: inline-flex; align-items: center; gap: 6px; }
+summary, .transcript summary, .dev-tools summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 16px; }
+.seek { height: 44px; margin: 0; }
+.switch-row { min-height: 56px; font-size: 16px; }
+.setting-row { font-size: 16px; }
+input[type=checkbox] { width: 48px; height: 28px; border-radius: 28px; }
+input[type=checkbox]::before { top: 4px; left: 4px; width: 20px; height: 20px; }
+input[type=checkbox]:checked::before { left: 24px; }
+.mobile-nav a { min-width: 64px; min-height: 56px; justify-content: center; }
+.mobile-nav .icon { width: 24px; height: 24px; }
+.queue-item { padding: 14px 12px; }
+.queue-item .icon-button { background: var(--soft); }
+.library-tabs span { padding: 10px 14px; }
+.reading-outline button { min-height: 44px; font-size: 16px; }
+input[type=search] { min-height: 48px; font-size: 16px; }
+select { min-height: 48px; font-size: 16px; }
+.play-button { width: 68px; height: 68px; }
+
+/* Fonts that don't ship with the app: use the app's own */
+.chapter-index, .queue-number, .reading-outline button span, .journey-position b { font-family: var(--sans); }
+.chapter-index { font-size: 20px; }
+.queue-number { font-size: 15px; font-weight: 600; }
+
+/* ---- Home: listening first ---- */
+.home-first .featured { grid-column: 1 / -1; }
+.home-first .featured .button { margin: 12px 0 6px; }
+.home-first .featured h3 { font-size: 30px; }
+.welcome { margin-bottom: 22px; }
+
+/* ---- Listen: compact, sticky player on small screens ---- */
+@media (max-width: 820px) {
+  .player-card { position: sticky; top: 0; z-index: 6; box-shadow: 0 6px 16px -10px rgba(40, 50, 30, .45); }
+  .player-card .audio-art, .player-card .player-footer, .player-card .small-note, .player-card .player-title > .icon { display: none; }
+  .player-body { padding: 14px 16px 6px; }
+  .player-title h2 { font-size: 21px; line-height: 1.5; }
+  .playback-controls { padding: 4px 0 8px; }
+  .time-labels { line-height: 1.5; }
+  .play-button { width: 60px; height: 60px; }
+  .skip-control { width: 48px; height: 48px; }
+}
+.listen-note { color: var(--muted); font-size: var(--fs-small); margin-top: 6px; }
+.queue-status { display: inline-flex; align-items: center; gap: 6px; }
+.queue-status .icon { width: 16px; height: 16px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* ---- Floor enforcement ----
+   prototype-tokens.css has small-screen rules with higher specificity that shrink text again.
+   These !important rules are the guarantee: nothing below 14px, nothing below AA contrast. */
+.breadcrumb, .breadcrumb b, .page-footer, .page-footer span, .page-footer button, .availability, .availability span,
+.scripture-details p, .scripture-details .gloss, .driving-panel p, .driving-panel small, .passage-navigation .button,
+.passage-section h3, .reading-end span, small, .settings-panel p, .settings-panel .small-note, .eyebrow,
+.collection-preview p, .journey-position span, .journey > p, .sample-banner, .original-placeholder p, .reader-heading p,
+.content-note p, .chapter-row p, .time-labels span { font-size: 14px !important; }
+.transcript summary, summary { font-size: 16px !important; }
+.page-footer, .page-footer span, .page-footer button, .driving-panel p, .driving-panel small, .journey-position span,
+.sample-banner, .original-placeholder .eyebrow, .original-placeholder p, .reading-end span, .passage-number,
+.passage-section.explanation h3, .availability span { color: var(--muted) !important; }
+.page-footer button { min-height: 44px; text-decoration: underline; }
+.breadcrumb b { color: var(--ink) !important; }
+.credits-line a, .catalog-sources a, .page-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.passage-section h3 { font-weight: 600; }
+.hero-number, .hero-foot { font-size: 14px !important; }
+input[type=checkbox] { width: 48px !important; height: 28px !important; }
+input[type=checkbox]::before { width: 20px !important; height: 20px !important; top: 4px !important; left: 4px !important; }
+input[type=checkbox]:checked::before { left: 24px !important; }
+.passage-number, .hero-number, .reading-outline button span, .chapter-index, .queue-number { font-family: var(--sans) !important; }
+.queue-item.dim { opacity: 1; background: transparent; }

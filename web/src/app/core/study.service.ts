@@ -25,7 +25,7 @@ export class StudyService {
 
   async load(): Promise<void> {
     this.database ??= new StudyDatabaseStore('shrutdhara-v1', () =>
-      this.ui.notify('दूसरी पुरानी window बंद करके फिर खोलें। Database upgrade रुका है।'),
+      this.ui.notify('An older ShrutDhara window is still open. Close it and reopen the app to finish updating.'),
     );
     try {
       this.apply(await this.database.read());
@@ -47,7 +47,7 @@ export class StudyService {
   async mutate(mutation: (state: PersonalState) => PersonalState, internal = false): Promise<void> {
     this.session.assertOwner(internal);
     if (!this.ready() || !this.envelope || !this.database)
-      throw new Error('स्थानीय storage तैयार नहीं है। फिर प्रयास करें।');
+      throw new Error('Storage on this device isn’t ready yet. Please try again.');
     const epoch = this.envelope.epoch;
     await this.coordinator.run(async () => {
       this.session.assertOwner(true);

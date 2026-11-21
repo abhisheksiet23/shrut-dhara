@@ -2,6 +2,8 @@
 
 Version: draft 0.4 · Date: 2026-11-21 · Platform decision: Angular web app/PWA, Android phones first
 
+Change 2026-11-21 (b): listening flows UC-04/UC-05 now run the AI-voice review narration of शस्त्रपरिज्ञा as seven sections with transcripts; the tone fixture is a developer-only check. R-02 and R-06 still govern, and the narration is unreviewed (G-03). Streaming while unsaved is allowed for ordinary listening; hands-free (Driving) use still requires the whole sequence saved locally. Observed only on desktop Chrome headless; G-01/G-14 remain open.
+
 Change 2026-11-21: owner authorized implementation of the design-review recommendations. Selected v1 behavior now includes backup before daily use, replace-after-preview restore, one active study window, explicit update preparation/close/reopen, and bounded media retention. App design draft 0.4 owns the mechanisms; [web validation plan](web-validation-plan.md) owns planned fixtures/engineering targets. None of these changes establishes executed proof. Reading gestures, exact source/reviewer selection, and browser/device validation remain open.
 
 Change 2026-11-20: owner confirmed web delivery without an APK or store-publishing dependency (D-02). Android remains the primary device target, rather than a native implementation commitment. Technical proposals and validation gates: [app design](app-design.md). Existing prototype evidence does not establish production readiness.

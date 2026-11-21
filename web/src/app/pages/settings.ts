@@ -12,18 +12,18 @@ import { Icon } from '../shared/icon';
 @Component({
   imports: [Preferences, Icon],
   template: ` <div class="page-title">
-      <div class="eyebrow">अपनी सुविधा से</div>
-      <h1>अपनी सुविधा से चलाएँ।</h1>
-      <p>सरल विकल्प। आपका नियंत्रण।</p>
+      <div class="eyebrow">Settings</div>
+      <h1>Make it comfortable.</h1>
+      <p>Reading options, your saved data and offline audio.</p>
     </div>
     <section class="settings-panel">
-      <h2>पढ़ने की पसंद</h2>
+      <h2>Reading</h2>
       <app-preferences />
-      <h2>आपकी प्रगति, सिर्फ़ आपके पास</h2>
+      <h2>Your progress stays with you</h2>
       <p>
-        पठन, श्रवण और bookmarks इसी browser में रहते हैं। Firefox और Chrome की प्रगति अलग है; दूसरे browser में
-        जाने के लिए backup export/restore करें। Site data हटाने या device खोने पर backup के बिना प्रगति वापस
-        नहीं आएगी।
+        Your reading place, listening place and bookmarks are saved in this browser only. Firefox and Chrome keep
+        separate progress, so make a backup to move between them. If you clear site data or lose this device,
+        progress can’t be recovered without a backup.
       </p>
       <div class="settings-actions">
         <button
@@ -31,32 +31,32 @@ import { Icon } from '../shared/icon';
           (click)="exportBackup()"
           [disabled]="!session.owned() || busy()"
         >
-          <app-icon name="down" />बैकअप सहेजें</button
+          <app-icon name="down" />Save a backup</button
         ><button
           class="button secondary"
           (click)="fileInput.click()"
           [disabled]="!session.owned() || busy()"
         >
-          बैकअप वापस लाएँ
+          Restore from backup
         </button>
       </div>
       <label class="file-label sr-only"
-        >बैकअप फ़ाइल<input
+        >Backup file<input
           #fileInput
           type="file"
           accept=".json,application/json"
           (change)="selectBackup($event)"
       /></label>
       <p class="small-note">
-        केवल supported JSON v1 · अधिकतम 5 MiB · restore से पहले preview और confirmation।
+        Use a backup file made by ShrutDhara (up to 5 MB). You’ll see a preview before anything changes.
       </p>
       @if (importError()) {
         <p class="field-error" role="alert">{{ importError() }}</p>
       }
-      <h2>ऑफ़लाइन भंडारण</h2>
+      <h2>Offline audio</h2>
       <p>
-        {{ offline.saved().length }} / {{ offline.assets().length }} audio भाग ऑफ़लाइन सहेजे हैं। App shell:
-        {{ offline.shellReady() ? 'तैयार' : 'अभी तैयार नहीं (development server)' }}.
+        {{ offline.saved().length }} of {{ offline.assets().length }} sections saved on this device. Offline
+        mode: {{ offline.shellReady() ? 'ready' : 'not ready yet' }}.
       </p>
       <p class="small-note">{{ offline.storageStatus() }}</p>
       <div class="settings-actions">
@@ -65,45 +65,41 @@ import { Icon } from '../shared/icon';
           (click)="persist()"
           [disabled]="!session.owned()"
         >
-          स्थायी भंडारण माँगें</button
+          Protect saved audio</button
         ><button
           class="button secondary"
           (click)="remove.showModal()"
           [disabled]="!session.owned() || busy() || !offline.saved().length"
         >
-          सहेजा audio हटाएँ
+          Remove saved audio
         </button>
       </div>
-      <h2>ऐप का नया संस्करण</h2>
+      @if (offline.updateWaiting()) {
+        <h2>App update</h2>
+        <p>A new version is ready. Updating won’t interrupt what you’re listening to.</p>
+        <button
+          class="button secondary"
+          (click)="prepareUpdate()"
+          [disabled]="!session.owned() || busy()"
+        >
+          Get ready to update
+        </button>
+        <p class="small-note">
+          Once it’s ready, pause, then close every ShrutDhara tab and window and open the app again.
+        </p>
+      }
+      <h2>About this content</h2>
       <p>
-        {{
-          offline.updateWaiting() ? 'नया app version तैयार है।' : 'अभी कोई waiting update नहीं मिला।'
-        }}
-        Update अपने आप playback नहीं रोकेगा।
-      </p>
-      <button
-        class="button secondary"
-        (click)="prepareUpdate()"
-        [disabled]="!session.owned() || busy()"
-      >
-        अपडेट के लिए तैयार करें
-      </button>
-      <p class="small-note">
-        Pause और save के बाद सभी ShrutDhara tabs/installed windows बंद करके फिर खोलें।
-      </p>
-      <h2>सामग्री और browser की स्थिति</h2>
-      <p>
-        मूल सूत्र अभी उपलब्ध नहीं हैं। श्रवण यात्रा में कृत्रिम आवाज़ में हिन्दी व्याख्या की समीक्षा प्रति है। Reading samples
-        development fixtures हैं। Firefox और Chrome पर वास्तविक phone validation
-        बाकी है।
+        The original sūtras aren’t included yet. Listen has Hindi explanations in an AI voice, awaiting review.
+        Read has placeholder text. We still need to test on real phones in Firefox and Chrome.
       </p>
     </section>
     <dialog #preview aria-labelledby="restore-title">
       <div class="dialog-heading">
-        <h2 id="restore-title">निजी प्रगति बदलें?</h2>
+        <h2 id="restore-title">Replace your progress?</h2>
         <button
           class="icon-button"
-          aria-label="Close restore preview"
+          aria-label="Close"
           (click)="cancelRestore()"
           [disabled]="busy()"
         >
@@ -112,19 +108,19 @@ import { Icon } from '../shared/icon';
       </div>
       @if (pending(); as incoming) {
         <p>
-          इस browser की वर्तमान journeys, bookmarks और preferences की जगह यह backup आएगा।
-          Audio/content files नहीं बदले जाएँगे।
+          This backup will replace the reading and listening places, bookmarks and reading settings in this
+          browser. Saved audio isn’t affected.
         </p>
         <dl class="source-list">
           <div>
-            <dt>Reading</dt>
+            <dt>Reading place</dt>
             <dd>{{ study.state().reading.sutraId }} → {{ incoming.data.reading.sutraId }}</dd>
           </div>
           <div>
-            <dt>Listening</dt>
+            <dt>Listening place</dt>
             <dd>
               {{ time(study.state().listening.seconds) }} →
-              {{ time(incoming.data.listening.seconds) }} · Part
+              {{ time(incoming.data.listening.seconds) }} · Section
               {{ incoming.data.listening.part + 1 }}
             </dd>
           </div>
@@ -133,40 +129,40 @@ import { Icon } from '../shared/icon';
             <dd>{{ study.state().bookmarks.length }} → {{ incoming.data.bookmarks.length }}</dd>
           </div>
           <div>
-            <dt>Unavailable references</dt>
-            <dd>{{ unresolved() }} · references सुरक्षित रहेंगी; download अपने आप नहीं होगा</dd>
+            <dt>Places not in this version</dt>
+            <dd>{{ unresolved() }} · kept in your backup, but not downloaded</dd>
           </div>
         </dl>
         <p class="small-note">
-          Preview के दौरान सामान्य प्रगति save हो सकती है। Confirm पर playback paused रहेगा।
+          Playback will pause when you confirm. Progress made while this is open may be replaced.
         </p>
         <div class="settings-actions">
           <button class="button" (click)="confirmRestore()" [disabled]="busy()">
-            {{ busy() ? 'वापस लाया जा रहा है…' : 'बदलें और वापस लाएँ' }}</button><button
+            {{ busy() ? 'Restoring…' : 'Replace and restore' }}</button><button
             class="button secondary"
             (click)="cancelRestore()"
             [disabled]="busy()"
           >
-            रद्द करें
+            Cancel
           </button>
         </div>
       }
     </dialog>
     <dialog #remove aria-labelledby="remove-title">
       <div class="dialog-heading">
-        <h2 id="remove-title">सहेजा audio हटाएँ?</h2>
-        <button class="icon-button" aria-label="Close remove preview" (click)="remove.close()">
+        <h2 id="remove-title">Remove saved audio?</h2>
+        <button class="icon-button" aria-label="Close" (click)="remove.close()">
           <app-icon name="close" />
         </button>
       </div>
       <p>
-        Playback रुक जाएगा और सहेजे हुए सभी audio भाग इस browser से हट जाएँगे। आपकी reading/listening
-        positions और bookmarks सुरक्षित रहेंगे। Offline सुनने के लिए audio फिर save करना होगा।
+        Playback will stop and all saved sections will be removed from this device. Your places and bookmarks stay.
+        You’ll need to save the audio again to listen offline.
       </p>
       <div class="settings-actions">
         <button class="button" (click)="removeAudio()" [disabled]="busy()">
-          रोककर हटाएँ</button
-        ><button class="button secondary" (click)="remove.close()">रद्द करें</button>
+          Stop and remove</button
+        ><button class="button secondary" (click)="remove.close()">Cancel</button>
       </div>
     </dialog>`,
 })
@@ -197,7 +193,7 @@ export class Settings {
       link.download = 'shrutdhara-progress-v1.json';
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      this.ui.notify('Backup फ़ाइल तैयार है। इसे सुरक्षित जगह रखें।');
+      this.ui.notify('Backup saved. Keep it somewhere safe.');
     } catch (error) {
       this.ui.error(error);
     }
@@ -210,12 +206,12 @@ export class Settings {
     this.importError.set('');
     try {
       this.session.assertOwner();
-      if (file.size > MAX_BACKUP_BYTES) throw new Error('बैकअप 5 MiB से बड़ा है।');
+      if (file.size > MAX_BACKUP_BYTES) throw new Error('This file is larger than 5 MB, so it can’t be a ShrutDhara backup.');
       this.pending.set(parseBackup(await file.text()));
       this.preview?.nativeElement.showModal();
     } catch (error) {
       this.importError.set(
-        `${error instanceof Error ? error.message : 'फ़ाइल पढ़ी नहीं जा सकी।'} कोई imported data लागू नहीं किया गया।`,
+        `${error instanceof Error ? error.message : 'Couldn’t read that file.'} Nothing was changed.`,
       );
     } finally {
       input.value = '';
@@ -246,7 +242,7 @@ export class Settings {
       await this.app.restore(backup);
       this.pending.set(null);
       this.preview?.nativeElement.close();
-      this.ui.notify('दोनों journeys, bookmarks और preferences restore हुए। Playback paused है।');
+      this.ui.notify('Backup restored. Playback is paused.');
     } catch (error) {
       this.ui.error(error);
     } finally {
@@ -280,7 +276,7 @@ export class Settings {
     try {
       await this.app.removeAudio();
       this.remove?.nativeElement.close();
-      this.ui.notify('Saved audio हट गया। Journeys और bookmarks सुरक्षित हैं।');
+      this.ui.notify('Saved audio removed. Your places and bookmarks are safe.');
     } catch (error) {
       this.ui.error(error);
     } finally {

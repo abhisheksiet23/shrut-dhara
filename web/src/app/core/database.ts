@@ -32,7 +32,7 @@ export class StudyDatabaseStore {
       !Number.isSafeInteger(stored.revision) ||
       stored.revision < 0
     ) {
-      throw new Error('स्थानीय data version पढ़ा नहीं जा सका। मूल डेटा सुरक्षित रखा गया है।');
+      throw new Error('Couldn’t read your saved data, so nothing was changed. Your original data is untouched.');
     }
     return { ...stored, data: validatePersonalState(stored.data) };
   }
@@ -52,7 +52,7 @@ export class StudyDatabaseStore {
     if (stored.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
-      throw new Error('State बदली है। कृपया फिर खोलें; पुरानी save लागू नहीं की गई।');
+      throw new Error('Your progress changed in another window, so this save was skipped. Reopen ShrutDhara and try again.');
     }
     let updated: Envelope;
     try {
@@ -88,7 +88,7 @@ export class StudyDatabaseStore {
     if (previous.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
-      throw new Error('Restore से पहले state बदल गई है। फिर प्रयास करें।');
+      throw new Error('Your progress changed before the restore finished, so nothing was replaced. Please try again.');
     }
     const next: Envelope = {
       id: 'personal',

@@ -13,6 +13,6 @@ export class UiService {
   }
 
   error(error: unknown): void {
-    this.notify(error instanceof Error ? error.message : 'यह काम पूरा नहीं हुआ। फिर प्रयास करें।');
+    this.notify(error instanceof Error ? error.message : 'That didn’t work. Please try again.');
   }
 }

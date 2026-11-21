@@ -36,13 +36,13 @@ export class PlaybackService {
     this.audio.addEventListener('play', () => {
       if (this.audio.paused) return;
       this.running.set(true);
-      this.status.set('लोड हो रहा है…');
+      this.status.set('Loading…');
     });
-    this.audio.addEventListener('playing', () => this.status.set(this.streaming() ? 'चल रहा है · इंटरनेट से' : 'चल रहा है'));
-    this.audio.addEventListener('waiting', () => this.status.set('इंतज़ार…'));
+    this.audio.addEventListener('playing', () => this.status.set(this.streaming() ? 'Playing · streaming' : 'Playing'));
+    this.audio.addEventListener('waiting', () => this.status.set('Buffering…'));
     this.audio.addEventListener('pause', () => {
       this.running.set(false);
-      this.status.set('रुका हुआ');
+      this.status.set('Paused');
       if (!this.session.maintenance())
         void this.checkpoint().catch((error) => this.ui.error(error));
       this.updateMediaSession();
@@ -65,8 +65,8 @@ export class PlaybackService {
     });
     this.audio.addEventListener('error', () => {
       this.running.set(false);
-      this.status.set('Audio चल नहीं सका');
-      this.ui.notify('Audio नहीं चल सका। Offline availability जाँचकर Retry करें।');
+      this.status.set('Couldn’t play audio');
+      this.ui.notify('Couldn’t play this audio. Check your connection or save it for offline, then try again.');
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden' && this.prepared() && !this.session.maintenance()) {
@@ -85,19 +85,19 @@ export class PlaybackService {
     const recording = this.recording();
     this.referenceUnavailable.set(false);
     if (!recording) {
-      this.status.set('श्रवण सूची उपलब्ध नहीं');
+      this.status.set('Listening list unavailable');
       return;
     }
     const start = resolveListeningStart(this.study.state().listening, recording);
     if (start.kind === 'unavailable') {
       this.referenceUnavailable.set(true);
-      this.status.set('सहेजी हुई जगह अब उपलब्ध नहीं · “शुरू से” चुनें');
+      this.status.set('Your saved place is no longer available · choose “Start over”');
       return;
     }
     this.part.set(start.part);
     this.position.set(start.seconds);
     this.duration.set(recording.parts[start.part].duration);
-    this.status.set(start.kind === 'resume' ? 'रुका हुआ · सहेजी जगह से' : 'तैयार');
+    this.status.set(start.kind === 'resume' ? 'Paused · ready to resume' : 'Ready');
   }
 
   /** Switch which recording the player runs. Pauses and unloads the current one first. */
@@ -149,7 +149,7 @@ export class PlaybackService {
   async toggle(): Promise<void> {
     this.session.assertOwner();
     if (this.referenceUnavailable())
-      throw new Error('सहेजी हुई जगह उपलब्ध नहीं है। “शुरू से” चुनें।');
+      throw new Error('Your saved place isn’t available. Choose “Start over”.');
     if (!this.audio.paused) {
       this.audio.pause();
       await this.checkpoint();
@@ -160,8 +160,8 @@ export class PlaybackService {
         await this.playAudio();
       } catch {
         this.running.set(false);
-        this.status.set('फिर Play दबाएँ');
-        throw new Error('Browser ने playback शुरू नहीं किया। Play फिर चुनें।');
+        this.status.set('Press play again');
+        throw new Error('Your browser didn’t start playback. Press play again.');
       }
     }
   }
@@ -169,7 +169,7 @@ export class PlaybackService {
   private async prepare(part: number, seconds: number): Promise<void> {
     this.session.assertOwner();
     const assets = this.parts();
-    if (!assets[part]) throw new Error('यह recording उपलब्ध नहीं है।');
+    if (!assets[part]) throw new Error('This recording isn’t available.');
     const generation = ++this.generation;
     // Tone fixture keeps the strict rule (every part saved before it runs). The real narration
     // may also stream online; Driving mode still requires every part to be saved offline.
@@ -177,12 +177,12 @@ export class PlaybackService {
     this.streaming.set(this.offline.saved().length !== assets.length);
     if (this.recording()?.kind === 'calibration')
       for (const asset of assets) await this.offline.assertSaved(asset);
-    if (generation !== this.generation) throw new Error('पुरानी playback तैयारी रद्द की गई।');
+    if (generation !== this.generation) throw new Error('Playback was interrupted by a newer request.');
     this.session.assertOwner();
     this.audio.pause();
     this.prepared.set(false);
     this.part.set(part);
-    this.status.set('तैयार हो रहा है…');
+    this.status.set('Getting ready…');
     this.audio.src = assets[part].url;
     await new Promise<void>((resolve, reject) => {
       const cleanup = () => {
@@ -196,19 +196,19 @@ export class PlaybackService {
       };
       const failed = () => {
         cleanup();
-        reject(new Error('Audio load नहीं हुआ। इंटरनेट या सहेजी फ़ाइल जाँचें।'));
+        reject(new Error('Couldn’t load the audio. Check your connection or the saved copy.'));
       };
       const timeout = setTimeout(() => {
         cleanup();
-        reject(new Error('Audio load का समय समाप्त। फिर कोशिश करें।'));
+        reject(new Error('Loading the audio took too long. Please try again.'));
       }, 15000);
       this.audio.addEventListener('loadedmetadata', loaded);
       this.audio.addEventListener('error', failed);
       this.audio.load();
     });
-    if (generation !== this.generation) throw new Error('पुरानी playback तैयारी रद्द की गई।');
+    if (generation !== this.generation) throw new Error('Playback was interrupted by a newer request.');
     if (!Number.isFinite(this.audio.duration) || seconds > this.audio.duration + 2) {
-      throw new Error('सहेजी हुई जगह इस recording से मेल नहीं खाती। “शुरू से” चुनें।');
+      throw new Error('Your saved place doesn’t match this recording. Choose “Start over”.');
     }
     this.duration.set(this.audio.duration);
     this.audio.currentTime = Math.min(seconds, this.audio.duration);
@@ -222,7 +222,7 @@ export class PlaybackService {
   async seek(seconds: number): Promise<void> {
     this.session.assertOwner();
     if (this.referenceUnavailable())
-      throw new Error('सहेजी हुई जगह उपलब्ध नहीं है। पहले “शुरू से” चुनें।');
+      throw new Error('Your saved place isn’t available. Choose “Start over” first.');
     if (!this.prepared()) await this.prepare(this.part(), this.position());
     this.audio.currentTime = Math.max(0, Math.min(this.audio.duration, seconds));
     this.position.set(this.audio.currentTime);
@@ -251,8 +251,8 @@ export class PlaybackService {
     await this.checkpoint();
     const next = this.part() + 1;
     if (next >= this.parts().length) {
-      this.status.set('सभी भाग पूरे हुए');
-      this.ui.notify('सभी भाग पूरे हुए। आगे कुछ अपने आप नहीं चलेगा।');
+      this.status.set('All sections finished');
+      this.ui.notify('All sections finished. Nothing else will play on its own.');
       return;
     }
     try {
@@ -261,7 +261,7 @@ export class PlaybackService {
       if (!this.chapterAudio) await this.playAudio();
     } catch (error) {
       this.audio.pause();
-      this.status.set('अगला भाग उपलब्ध नहीं · रुका हुआ');
+      this.status.set('Next section isn’t available · Paused');
       throw error;
     }
   }
@@ -294,7 +294,7 @@ export class PlaybackService {
     this.audio.removeAttribute('src');
     this.audio.load();
     this.running.set(false);
-    this.status.set('रुका हुआ');
+    this.status.set('Paused');
     ++this.generation;
   }
 
@@ -353,8 +353,8 @@ export class PlaybackService {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: this.recording()?.parts[this.part()]?.title
           ? `${this.recording()!.title} · ${this.recording()!.parts[this.part()].title}`
-          : `${this.recording()?.title ?? 'ShrutDhara'} · भाग ${this.part() + 1}`,
-        artist: `श्रुतधारा · ${this.recording()?.label ?? ''}`,
+          : `${this.recording()?.title ?? 'ShrutDhara'} · Section ${this.part() + 1}`,
+        artist: `ShrutDhara · ${this.recording()?.label ?? ''}`,
       });
     navigator.mediaSession.playbackState = this.running() ? 'playing' : 'paused';
     try {

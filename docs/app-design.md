@@ -4,6 +4,8 @@ Draft 0.4 · 2026-11-21 · Design only, no production implementation or publicat
 
 Implementation status lives in the [local verification report](implementation-checks.md). The `web/` Angular development build now runs alongside the original prototype. Firefox Android on the owner's CMF Phone 1 is the primary target, with Chrome Android also required.
 
+Revision 0.5 (2026-11-21): introduced a `Recording` (ordered parts, validated manifest) so one player, offline installer and media session serve the real narration; the tone fixture is a second Recording. Policy change from 0.4: a recording of kind narration may stream when not saved (the service worker falls through to the network), but Driving mode and the fixture still require every part saved and verified. Saved listening position is still a single record keyed by recording id; a position saved against another recording is never reused. Per-recording positions are deferred and are required before other audio (for example the catalogue introductions) can share the player without overwriting this position.
+
 Revision 0.4: implemented the authorized design-review recommendations. Bounded the first release, added an executable validation plan, simplified cross-window ownership, specified restore/update recovery, bounded media retention, moved backup into the first usable increment, and selected Vercel static hosting. These are design changes, not executed production or device evidence.
 
 Revision 0.3: evaluated browser SQLite following the owner's request and delegated the storage choice to engineering. Retain IndexedDB for the first implementation, for the reasons below. No persistence implementation or comparative benchmark has been executed.

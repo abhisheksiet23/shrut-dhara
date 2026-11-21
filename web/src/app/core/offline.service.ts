@@ -39,7 +39,7 @@ export class OfflineService {
         });
       });
     } catch {
-      this.ui.notify('Offline shell तैयार नहीं हुआ। ऑनलाइन उपयोग जारी रख सकते हैं; build/serve जाँचें।');
+      this.ui.notify('Offline mode isn’t ready yet. You can keep using the app while online.');
     }
   }
 
@@ -62,19 +62,19 @@ export class OfflineService {
   async assertSaved(asset: AudioAsset): Promise<void> {
     await this.reconcile();
     if (!this.saved().includes(asset.id))
-      throw new Error('यह पूरा audio भाग offline नहीं है। पहले “ऑफ़लाइन सहेजें” चुनें।');
+      throw new Error('This section isn’t saved for offline yet. Choose “Save for offline” first.');
   }
 
   async saveAudio(): Promise<void> {
     this.session.assertOwner();
     if (this.downloading()) return;
-    if (!('caches' in window)) throw new Error('इस browser में offline media storage उपलब्ध नहीं है।');
+    if (!('caches' in window)) throw new Error('This browser can’t save audio for offline use.');
     this.controller = new AbortController();
     this.downloading.set(true);
     this.task = this.download(this.controller.signal);
     try {
       await this.task;
-      this.ui.notify('सभी audio भाग इस browser में सहेजे गए।');
+      this.ui.notify('All sections are saved on this device.');
     } finally {
       this.downloading.set(false);
       this.progress.set('');
@@ -84,22 +84,22 @@ export class OfflineService {
 
   private async download(signal: AbortSignal): Promise<void> {
     const assets = this.assets();
-    if (!assets.length) throw new Error('पहले सामग्री load होने दें।');
+    if (!assets.length) throw new Error('Wait for the content to finish loading first.');
     const cache = await caches.open(MEDIA_CACHE);
     for (const [index, asset] of assets.entries()) {
-      this.progress.set(`भाग ${index + 1} / ${assets.length} · पूरी फ़ाइल जाँची जा रही है`);
+      this.progress.set(`Saving section ${index + 1} of ${assets.length}…`);
       await this.reconcile();
       if (this.saved().includes(asset.id)) continue;
       const response = await fetch(asset.url, { signal, cache: 'no-store' });
-      if (response.status !== 200) throw new Error('पूरा audio download नहीं हुआ। Retry करें।');
+      if (response.status !== 200) throw new Error('Couldn’t download the full section. Please try again.');
       const bytes = await response.arrayBuffer();
       if (bytes.byteLength !== asset.bytes)
-        throw new Error('Audio अधूरा है। पुरानी उपलब्ध सामग्री सुरक्षित है।');
+        throw new Error('The download was incomplete. Sections you already saved are safe.');
       const digest = Array.from(
         new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
         (item) => item.toString(16).padStart(2, '0'),
       ).join('');
-      if (digest !== asset.sha256) throw new Error('Audio की integrity जाँच विफल हुई। Retry करें।');
+      if (digest !== asset.sha256) throw new Error('The downloaded audio didn’t match what was expected, so it wasn’t saved. Please try again.');
       signal.throwIfAborted();
       this.session.assertOwner(true);
       await cache.put(
@@ -138,8 +138,8 @@ export class OfflineService {
     );
     this.ui.notify(
       persistent
-        ? 'Persistent storage मिला। Site data हटाने पर यह भी मिट सकता है।'
-        : 'Browser ने persistence नहीं दिया। Backup निर्यात करके रखें।',
+        ? 'Storage is protected. Clearing this site’s data in browser settings will still remove it.'
+        : 'Your browser may clear saved data when space runs low. Keep a backup.',
     );
   }
 }
