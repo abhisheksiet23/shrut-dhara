@@ -98,8 +98,9 @@ import { Icon } from '../shared/icon';
       </p>
       <h2 lang="en">Content & browser status</h2>
       <p>
-        मूल सूत्र और वास्तविक हिन्दी narration अभी उपलब्ध नहीं हैं। Reading samples और generated audio tones
-        development fixtures हैं। Firefox और Chrome पर वास्तविक phone validation बाकी है।
+        मूल सूत्र अभी उपलब्ध नहीं हैं। श्रवण यात्रा में हिन्दी व्याख्या की समीक्षा प्रति है। Reading samples और
+        generated audio tones development fixtures हैं। Firefox और Chrome पर वास्तविक phone validation
+        बाकी है।
       </p>
     </section>
     <dialog #preview aria-labelledby="restore-title">
@@ -146,8 +147,12 @@ import { Icon } from '../shared/icon';
         </p>
         <div class="settings-actions">
           <button class="button" (click)="confirmRestore()" [disabled]="busy()" lang="en">
-            {{ busy() ? 'Restoring…' : 'Replace and restore' }}</button
-          ><button class="button secondary" (click)="cancelRestore()" [disabled]="busy()" lang="en">
+            {{ busy() ? 'Restoring…' : 'Replace and restore' }}</button><button
+            class="button secondary"
+            (click)="cancelRestore()"
+            [disabled]="busy()"
+            lang="en"
+          >
             Cancel
           </button>
         </div>

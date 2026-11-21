@@ -1,0 +1,20 @@
+ShrutDhara — शस्त्रपरिज्ञा, Hindi review edition, version 1
+
+Source: Ācārāṅga Sūtra, first book, first lecture, lessons 1–7, in Hermann Jacobi,
+Gaina Sūtras, Part I, Sacred Books of the East 22, Clarendon Press, 1884.
+https://en.wikisource.org/wiki/Index:Sacred_Books_of_the_East_-_Volume_22.djvu
+ShrutDhara wrote a new Hindi explanatory script and synthesized the recording.
+The recording is a review copy and the voice is synthetic.
+
+Speech synthesis: Piper; hi_IN-pratham-medium, trained by PravalX.
+The model card credits AI4Bharat Indic NLP Corpus training data and identifies
+its licence as CC BY-NC-SA 4.0.
+https://huggingface.co/rhasspy/piper-voices/blob/1af0d6b/hi/hi_IN/pratham/medium/MODEL_CARD
+https://github.com/AI4Bharat/indicnlp_corpus
+
+This Hindi review recording and transcript are shared for noncommercial use
+with attribution and share-alike under CC BY-NC-SA 4.0.
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Changes: an original Hindi explanation, synthetic-voice disclosure, added
+pauses between lessons, and MP3 encoding. Credits imply no endorsement.

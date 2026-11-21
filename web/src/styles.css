@@ -1,5 +1,9 @@
 @import './prototype-tokens.css';
 
+.narration-feature {
+  margin: 0 0 24px;
+}
+
 app-root {
   display: block;
 }

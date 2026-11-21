@@ -6,6 +6,18 @@ Subsequent owner decision, 2026-11-20: deliver a web app/PWA without an APK or a
 
 Behavioral handoff: [Use-case specification](use-case-specification.md). The specification owns shared rules, acceptance conditions, and the single gap register.
 
+## First chapter source review · 2026-11-21
+
+The owner selected the first chapter of the Ācārāṅga Sūtra for both journeys. The chapter is **शस्त्रपरिज्ञा (Satthapariṇṇā)**, first श्रुतस्कन्ध, first अध्ययन, all seven उद्देशक. It opens with the question of the self and previous births, then considers restraint in relation to earth, water, fire, plants, mobile beings, and air, in that order. These are coverage labels, not edition-specific section titles. [Printed Prakrit/Hindi edition index, pp. 3–37 of the book](https://jainqq.org/explore/003469/45) · [Jacobi 1884 chapter index](https://sacred-texts.com/book/jaina-sutras-part-i)
+
+| Input | Evidence and current standing |
+| --- | --- |
+| Original Prakrit | Jacobi's 1882 printed edition is a candidate base text. Transcribe and proof against the printed pages and identify the chosen script. The modern GRETIL transcription identifies itself as reference-only, so its availability does not establish permission to reuse that file. [Printed edition catalog](https://www.granthsanjeevani.com/jspui/handle/123456789/89469) · [GRETIL](https://gretil.sub.uni-goettingen.de/gretil/2_prakrt/ayarangu.htm) |
+| Hindi meaning | The Jain eLibrary edition locates the entire chapter and provides a source to compare during review. Its scan says private and personal use only. Use an edition with documented redistribution terms, or prepare a new Hindi rendering for review. Jacobi's public-domain 1884 English translation can cross-check meaning for a new rendering. [Hindi edition index](https://jainqq.org/explore/003469/45) · [1884 facsimile](https://en.wikisource.org/wiki/Index:Sacred_Books_of_the_East_-_Volume_22.djvu) · [Public-domain source note](https://pustakalaya-org.github.io/rare-books/gaina-sutras-jacobi-1/index.html) |
+| Audio | The preferred experience from BRD §4 is a connected Hindi explanation that covers the whole chapter. The Jain Education and Research Foundation publishes a recorded chapter teaching series. The inspected listings do not establish downloadable redistribution terms, language throughout, or exact alignment to a selected edition. An existing recording needs permission and a coverage check. A new recording needs a reviewed script, pronunciation check, and terms covering offline distribution. [Publisher's first recording](https://www.youtube.com/watch?v=aasC1_uP520) |
+
+The owner selected original Hindi narration synthesized with an AI voice and requested detailed chapter coverage. The [Hindi narration script](shastraparijna-hindi-narration.md) covers the seven sections in Jacobi's sequence. The [published review copy](https://shrutdhara.vercel.app/listen/shastraparijna) uses the Pratham voice and includes credits, MP3 download, and transcript. The edition for the reader and final editorial and pronunciation review remain open under G-02/G-03.
+
 ## Evidence and boundary
 
 Primary source: the supplied *ShrutDhara Business Requirements Document*, sections 1–13, from `C:/Users/Abhishek/.codex/attachments/367ed153-3c47-431e-a892-091c1f003bb7/Pasted text.txt`. No source revision was supplied. Owner decision in this chat, 2026-11-20: **Android phones first**.

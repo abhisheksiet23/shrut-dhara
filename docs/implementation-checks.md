@@ -1,5 +1,11 @@
 # ShrutDhara local verification
 
+21 November 2026, Hindi narration update. [The public review page](https://shrutdhara.vercel.app/listen/shastraparijna) serves the 10:28 Pratham MP3, transcript, and noncommercial credits. Public HTTPS smoke checks verified the route, asset digest, byte-range response, transcript, credits, and worker. Desktop in-app browser decoded 628.27 seconds and started and paused playback. All 12 tests and the build passed. The app streams this review copy and offers a file download. Phone screen-off playback and editorial review remain open. [Vercel deployment](https://vercel.com/abhishek-9299/shrutdhara/2GScf2FC2WnNjjWvqsjYrKwSHnUW)
+
+The development candidate is live at [shrutdhara.vercel.app](https://shrutdhara.vercel.app/). On 21 November 2026 Vercel assigned its first deployment to the project's production domain. The hosted site remains a phone test candidate with sample content. [Vercel deployment record](https://vercel.com/abhishek-9299/shrutdhara/9yCiik95MZUssqiFKgyqkd2zyBtF)
+
+Public HTTPS checks passed for Home, direct reader, Listen, Settings, the service worker and the manifest. Both complete WAVs matched the chapter manifest's byte lengths and SHA-256 digests. A byte-range request returned 206 for each WAV and a missing script returned 404. The desktop in-app browser opened the hosted reader, saved both parts, played the first part, sought forward and paused. Phone and installed-mode checks remain open.
+
 21 November 2026. Angular 22.3, database schema 1, backup version 1, localhost port 4174. Browser observations use the desktop in-app browser, including a 390 × 844 viewport for mobile layout. The final build uses `main-XWCW7JMF.js`.
 
 | Check | Observed result |

@@ -12,6 +12,7 @@ import { Art } from '../shared/art';
       <div class="eyebrow">पठन और श्रवण</div>
       <h1>आगम संग्रह</h1>
       <p>जो उपलब्ध है, उसे जानकर अपनी यात्रा चुनें।</p>
+      <a class="button" routerLink="/acharanga">आचारांग के २४ अध्ययन देखें</a>
     </div>
     <label class="search-box"
       ><app-icon name="search" /><input

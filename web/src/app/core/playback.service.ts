@@ -14,6 +14,7 @@ export class PlaybackService {
   private study = inject(StudyService);
   private ui = inject(UiService);
   private audio = new Audio();
+  private chapterAudio?: HTMLAudioElement;
   readonly running = signal(false);
   readonly status = signal('Ready when you are');
   readonly part = signal(0);
@@ -29,6 +30,7 @@ export class PlaybackService {
     this.audio.crossOrigin = 'anonymous';
     this.audio.preload = 'metadata';
     this.audio.addEventListener('play', () => {
+      if (this.audio.paused) return;
       this.running.set(true);
       this.status.set('Loading audio…');
     });
@@ -93,18 +95,52 @@ export class PlaybackService {
     }
   }
 
+  playChapter(player: HTMLAudioElement): void {
+    if (player.paused) return;
+    if (!this.session.owned() || this.session.maintenance()) {
+      player.pause();
+      return;
+    }
+    if (this.chapterAudio === player) return;
+    this.chapterAudio?.pause();
+    this.chapterAudio = player;
+    this.audio.pause();
+    // Let the browser's native media controls target the chapter player.
+    this.configureMediaSession();
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.playbackState = 'none';
+      navigator.mediaSession.setPositionState?.();
+    }
+  }
+
+  pauseChapter(player: HTMLAudioElement | undefined): void {
+    if (!player) return;
+    player.pause();
+    if (this.chapterAudio !== player) return;
+    this.chapterAudio = undefined;
+    this.configureMediaSession();
+    this.updateMediaSession();
+  }
+
+  private playCalibration(): Promise<void> {
+    this.session.assertOwner();
+    this.pauseChapter(this.chapterAudio);
+    return this.audio.play();
+  }
+
   async toggle(): Promise<void> {
     this.session.assertOwner();
     if (this.referenceUnavailable())
       throw new Error('Saved recording उपलब्ध नहीं है। परीक्षण audio के लिए Restart चुनें।');
-    if (this.running()) {
+    if (!this.audio.paused) {
       this.audio.pause();
       await this.checkpoint();
     } else {
       if (!this.prepared()) await this.prepare(this.part(), this.position());
       if (this.audio.ended) await this.seek(0);
       try {
-        await this.audio.play();
+        await this.playCalibration();
       } catch {
         this.running.set(false);
         this.status.set('Press Play to retry');
@@ -186,7 +222,7 @@ export class PlaybackService {
     await this.checkpoint();
     await this.prepare(index, 0);
     await this.checkpoint();
-    if (resume) await this.audio.play();
+    if (resume && !this.chapterAudio) await this.playCalibration();
   }
 
   private async nextPart(): Promise<void> {
@@ -201,7 +237,7 @@ export class PlaybackService {
     try {
       this.session.assertOwner();
       await this.prepare(next, 0);
-      await this.audio.play();
+      if (!this.chapterAudio) await this.playCalibration();
     } catch (error) {
       this.audio.pause();
       this.status.set('Paused at missing or unavailable part');
@@ -221,6 +257,7 @@ export class PlaybackService {
   }
 
   async suspend(): Promise<void> {
+    this.pauseChapter(this.chapterAudio);
     this.audio.pause();
     this.running.set(false);
     ++this.generation;
@@ -231,6 +268,7 @@ export class PlaybackService {
 
   detach(): void {
     this.prepared.set(false);
+    this.pauseChapter(this.chapterAudio);
     this.audio.pause();
     this.audio.removeAttribute('src');
     this.audio.load();
@@ -275,7 +313,7 @@ export class PlaybackService {
     ];
     for (const [action, handler] of handlers) {
       try {
-        navigator.mediaSession.setActionHandler(action, handler);
+        navigator.mediaSession.setActionHandler(action, this.chapterAudio ? null : handler);
       } catch {
         /* Unsupported action keeps in-app controls. */
       }
@@ -283,7 +321,13 @@ export class PlaybackService {
   }
 
   private updateMediaSession(): void {
-    if (!('mediaSession' in navigator) || !this.prepared() || !this.session.owned()) return;
+    if (
+      this.chapterAudio ||
+      !('mediaSession' in navigator) ||
+      !this.prepared() ||
+      !this.session.owned()
+    )
+      return;
     if (typeof MediaMetadata !== 'undefined')
       navigator.mediaSession.metadata = new MediaMetadata({
         title: `Calibration · Part ${this.part() + 1}`,

@@ -1,0 +1,9 @@
+# Ācārāṅga Sūtra coverage
+
+The chapter catalogue maps 24 surviving studies to the [1884 printed contents](https://en.wikisource.org/wiki/Index:Sacred_Books_of_the_East_-_Volume_22.djvu) and the Sthānakavāsī editions for [Book I](https://jainqq.org/booktext/Agam_01_Ang_01_Acharanga_Sutra_Stahanakvasi/003469) and [Book II](https://jainqq.org/booktext/Agam_01_Ang_01_Acharanga_Sutra_Part_02_Stahanakvasi/003437). Book I keeps traditional numbers 1–6 and 8–9. Mahāparijñā occupies the lost seventh place. Jacobi's lectures 7 and 8 correspond to traditional 8 and 9. Book II runs 1–16 across four cūlikās. Book II studies 8 and 9 both start on printed page 179.
+
+The [catalogue data](../web/src/app/core/acharanga-chapters.json) includes the names, printed opening pages and newly authored Hindi introductions. Modern Prakrit and Hindi editions are linked to their online host. Their digitizations do not establish redistribution permission, so their body text is not copied into the app. Printed Jacobi pages are an English source, not an assertion that a complete Hindi rendering is available. The existing first study retains its seven-part narration. The other 23 tracks are short local Pratham audio introductions and share the matching Hindi text in the catalogue.
+
+Full in-app reading and detailed listening require a chosen redistributable original edition, an independently checked Hindi rendering, a verse and section coverage map, and a listening check for each full recording. This catalogue is an interim review build. It does not close those checks.
+
+Local verification used `http://127.0.0.1:4175/acharanga`. The build and 12 existing tests passed. The preview served all 24 MP3s with byte-range support, and the in-app browser displayed all 24 entries and played and paused Lokavijaya. The new catalogue was not deployed. The chapter introductions do not add offline audio or saved playback positions to the app.

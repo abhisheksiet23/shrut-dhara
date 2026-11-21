@@ -1,0 +1,23 @@
+ShrutDhara — आचारांग सूत्र, Hindi chapter introductions, version 1
+
+The chapter introductions and synthetic Hindi recordings are review material.
+They are concise explanations, not the original sutras or complete translations.
+No modern translation or recording is bundled. Modern editions are linked for
+reading at the publisher's library and remain subject to their own terms.
+
+Printed page references: Hermann Jacobi, Gaina Sûtras, Part I, Sacred Books
+of the East 22, Clarendon Press (1884), Ācārāṅga Sūtra, pp. 1–213.
+https://en.wikisource.org/wiki/Index:Sacred_Books_of_the_East_-_Volume_22.djvu
+https://archive.org/details/gainastras01aco
+
+Hindi chapter names and traditional grouping were checked against the published
+Sthānakavāsī editions available at Jain eLibrary, catalogue 003469 and 003437.
+The traditional first-book numbering skips the lost seventh study, Mahāparijñā.
+Jacobi numbers the eight surviving first-book lectures consecutively.
+
+Speech synthesis: Piper hi_IN-pratham-medium, trained by PravalX. The model card
+credits AI4Bharat Indic NLP Corpus training data and lists CC BY-NC-SA 4.0.
+https://huggingface.co/rhasspy/piper-voices/blob/1af0d6b/hi/hi_IN/pratham/medium/MODEL_CARD
+These introductions and their synthesized MP3s are shared by ShrutDhara under
+CC BY-NC-SA 4.0. Credits do not imply endorsement.
+https://creativecommons.org/licenses/by-nc-sa/4.0/

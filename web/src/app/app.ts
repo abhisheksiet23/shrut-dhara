@@ -23,6 +23,7 @@ export class App {
   readonly url = signal('/');
   readonly isListening = computed(() => this.url().startsWith('/listen'));
   readonly title = computed(() => {
+    if (this.url() === '/acharanga') return 'आचारांग सूत्र';
     if (this.url().startsWith('/read')) return 'पठन यात्रा';
     if (this.url().startsWith('/listen')) return 'श्रवण यात्रा';
     return this.links.find((link) => link.path === this.url())?.label ?? 'Settings';

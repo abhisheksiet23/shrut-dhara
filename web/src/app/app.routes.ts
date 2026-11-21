@@ -13,6 +13,10 @@ const studyGuard: CanActivateFn = () => {
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/home').then((module) => module.Home) },
   {
+    path: 'acharanga',
+    loadComponent: () => import('./pages/acharanga').then((module) => module.Acharanga),
+  },
+  {
     path: 'library',
     loadComponent: () => import('./pages/library').then((module) => module.Library),
   },
@@ -25,6 +29,11 @@ export const routes: Routes = [
     path: 'read/:id',
     canActivate: [studyGuard],
     loadComponent: () => import('./pages/reader').then((module) => module.Reader),
+  },
+  {
+    path: 'listen/shastraparijna',
+    canActivate: [studyGuard],
+    loadComponent: () => import('./pages/narration').then((module) => module.Narration),
   },
   {
     path: 'listen',

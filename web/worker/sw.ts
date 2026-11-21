@@ -15,7 +15,9 @@ precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 registerRoute(
   new NavigationRoute(createHandlerBoundToURL('/index.html'), {
-    allowlist: [/^\/(?:read(?:\/[^.]*)?|listen|library|bookmarks|settings)?\/?$/],
+    allowlist: [
+      /^\/(?:read(?:\/[^.]*)?|listen(?:\/shastraparijna)?|library|acharanga|bookmarks|settings)?\/?$/,
+    ],
   }),
 );
 

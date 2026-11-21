@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { PlaybackService } from '../core/playback.service';
 import { OfflineService } from '../core/offline.service';
 import { ContentService } from '../core/content.service';
@@ -10,12 +11,19 @@ import { Icon } from '../shared/icon';
 import { Art } from '../shared/art';
 
 @Component({
-  imports: [FormsModule, Icon, Art],
+  imports: [FormsModule, RouterLink, Icon, Art],
   template: ` <div class="page-title">
       <div class="eyebrow">आँखों को आराम, विचारों को विस्तार</div>
       <h1>श्रवण यात्रा</h1>
-      <p>समीक्षित हिन्दी narration की तैयारी के साथ वास्तविक playback जाँच।</p>
+      <p>आचारांग सूत्र के अध्ययनों का हिन्दी परिचय सुनें।</p>
+      <a class="button" routerLink="/acharanga">सभी २४ अध्ययन देखें</a>
     </div>
+    <section class="settings-panel narration-feature" aria-labelledby="chapter-narration-title">
+      <span class="eyebrow">आचारांग सूत्र · प्रथम अध्ययन</span>
+      <h2 id="chapter-narration-title">शस्त्रपरिज्ञा</h2>
+      <p>सातों उद्देशकों की हिन्दी व्याख्या। एआई आवाज़ में समीक्षा प्रति।</p>
+      <a class="button" routerLink="/listen/shastraparijna">अध्याय सुनें <app-icon name="arrow" /></a>
+    </section>
     <div class="listening-layout">
       <section class="player-card">
         <div class="audio-art">
@@ -23,7 +31,7 @@ import { Art } from '../shared/art';
           <div class="audio-art-title">
             <span lang="en">LOCAL AUDIO · CALIBRATION</span>
             <h2>श्रवण की तैयारी</h2>
-            <p>हिन्दी अध्याय की narration अभी उपलब्ध नहीं है</p>
+            <p>ऑफ़लाइन प्लेयर की जाँच के लिए परीक्षण ध्वनि</p>
           </div>
         </div>
         <div class="player-body">
@@ -53,8 +61,9 @@ import { Art } from '../shared/art';
             (change)="seekInput($event)"
           />
           <div class="time-labels">
-            <span>{{ time(player.position()) }}</span
-            ><span>{{ time(player.duration() - player.position()) }} शेष</span>
+            <span>{{ time(player.position()) }}</span><span
+              >{{ time(player.duration() - player.position()) }} शेष</span
+            >
           </div>
           <div class="playback-controls">
             <button class="icon-button speed" aria-label="Playback speed" (click)="speed()">

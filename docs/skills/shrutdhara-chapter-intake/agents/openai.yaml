@@ -1,0 +1,4 @@
+interface:
+  display_name: "ShrutDhara Chapter Intake"
+  short_description: "Prepare sourced Jain chapters and Hindi narration"
+  default_prompt: "Use $shrutdhara-chapter-intake to prepare the next approved chapter for reading and listening with the lowest-cost voice that meets the quality bar."

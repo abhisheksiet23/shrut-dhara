@@ -55,7 +55,7 @@ import { Art } from '../shared/art';
           ><span class="pill">श्रवण यात्रा</span>
         </div>
         <h3>सुनें। समझें। मनन करें।</h3>
-        <p>अध्याय की वास्तविक narration तैयार होने तक<br />playback और offline audio का परीक्षण करें।</p>
+        <p>शस्त्रपरिज्ञा की हिन्दी समीक्षा प्रति सुनें<br />या ऑफ़लाइन प्लेयर की जाँच करें।</p>
         <div class="journey-position">
           <span lang="en">Audio calibration · generated tones</span
           ><b

@@ -9,3 +9,6 @@ web/server.log
 web/server-error.log
 web/shrutdhara-preview.jpg
 .vercel/
+
+.vercel
+.env*
