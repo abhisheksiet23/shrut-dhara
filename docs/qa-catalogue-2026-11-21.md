@@ -1,6 +1,18 @@
 # ShrutDhara QA · 21 November 2026
 
-The catalogue is usable for desktop review. It should stay a review build until the chapter player enforces one active audio source and the full chapter reading and listening checks pass.
+## Fix verification
+
+All three defects below passed regression checks on local build `main-PIMGLHBM.js` in the Windows in-app browser at 360 × 800 CSS px. The Angular production build and all 12 existing tests passed.
+
+- Playing Lokavijaya paused calibration, and restarting calibration from the mini-player paused Lokavijaya. The dedicated Shastraparijna recording also paused calibration, which could be resumed from Listen after leaving the narration.
+- Closing the Lokavijaya study by pointer or keyboard paused its audio. Reopening the study showed the same paused position.
+- Enter left focus on the expanded audio button. Tab moved to the native audio player within the same study.
+
+Android Firefox and Chrome hardware media controls were outside this desktop run. The chapter reading, offline listening, and content acceptance gaps below remain open.
+
+## Original QA run
+
+The catalogue was usable for desktop review. The original run found a playback conflict and gaps in full chapter reading and listening verification.
 
 Candidate: workspace at Git `ba7e27e` plus the local changes, including the 24-study catalogue. Tested built entry `main-2TQCIDRM.js`. `index.html` SHA-256 `686a704e0491643ce029b46f71c43c53ee24b8b3cafe35b66b6261444906a6c5`. `sw.js` SHA-256 `2903bf56b7b819ac167403414113e47b89b975c9c771b81a9b67c1362ea88a93`. HTTP asset checks used port 4175. Browser tests used a fresh origin on port 4176 in the Windows in-app browser, including a 360 × 800 viewport. The QA server was stopped for the offline run. This assessment made no app changes or deployment.
 
