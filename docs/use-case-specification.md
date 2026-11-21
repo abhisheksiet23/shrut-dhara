@@ -1,6 +1,8 @@
 # ShrutDhara — use-case specification
 
-Version: draft 0.3 · Date: 2026-11-20 · Platform decision: Angular web app/PWA, Android phones first
+Version: draft 0.4 · Date: 2026-11-21 · Platform decision: Angular web app/PWA, Android phones first
+
+Change 2026-11-21: owner authorized implementation of the design-review recommendations. Selected v1 behavior now includes backup before daily use, replace-after-preview restore, one active study window, explicit update preparation/close/reopen, and bounded media retention. App design draft 0.4 owns the mechanisms; [web validation plan](web-validation-plan.md) owns planned fixtures/engineering targets. None of these changes establishes executed proof. Reading gestures, exact source/reviewer selection, and browser/device validation remain open.
 
 Change 2026-11-20: owner confirmed web delivery without an APK or store-publishing dependency (D-02). Android remains the primary device target, rather than a native implementation commitment. Technical proposals and validation gates: [app design](app-design.md). Existing prototype evidence does not establish production readiness.
 
@@ -26,6 +28,10 @@ Entities: collection/Agama/chapter/sutra with authentic references; separately a
 | R-04 Private offline use | No account, registration, ads, subscription, mandatory cloud database, or paid API dependency. Installed reading and audio work offline. Personal state is stored privately. Optional online features cannot prevent offline use. Distribution and privacy details: G-06/G-12. Applies throughout. |
 | R-05 Independent preservation | Reading and listening positions remain separate; switching modes does not overwrite the other position. Bookmarks and both journeys survive compatible content expansion. Corrections are traceable. Incompatible reference/recording changes require an explicit preservation policy (G-05). Applies to UC-03/04/06/07. |
 | R-06 Safe listening interaction | Prepare listening before driving; no reading content or interactive notifications encouraging visual attention in Driving Mode. No screen interaction is required to continue a valid prepared local queue on supported devices. Handle supported external controls and audio interruptions under a declared policy; unsupported capabilities must be disclosed. Applies to UC-04/05; G-01/G-07 define unresolved boundaries. |
+| R-07 Personal backup and restore | Required before first daily-use release. Export both journeys, bookmarks, preferences and selected chapter/part references in supported JSON v1, without content/audio bytes or transient locks/jobs. Restore previews replacement of current personal state and requires explicit confirmation. Cancel/invalid input/failed transaction applies no imported data; preserve current records and legitimate ordinary progress commits. Success replaces the selected personal stores together and remains paused. Preserve unresolved content references without automatic download. Merge and unsupported future versions are not accepted. Applies to UC-07; app design owns schema/protocol. |
+| R-08 Single active study window | V1 allows one study owner per origin/browser storage context. Secondary windows may browse the catalog but cannot advance personal journeys, mutate bookmarks/preferences, play, restore, or install/remove content until actual ownership succeeds. Use this window requests cooperative pause/save/handoff. An unresponsive owner leaves the requester read-only with Retry/Cancel/close-other-window recovery; no forced takeover. Applies to UC-03/04/07/09 and content management. |
+| R-09 Download retention/removal | Personal references survive removal of downloaded audio. A bookmark does not require retaining old media bytes. Removing playing/prepared media offers Stop and remove or Cancel; do not delete the active source underneath playback. Failed replacement preserves usable old media unless the user explicitly removed it first. Show current saved revision/size and unavailable state after removal. Applies to UC-02/04/06; app design owns cache reconciliation. |
+| R-10 User-directed app updates | Updates do not force reload or interrupt active study/driving. Update later leaves current use intact. Prepare update pauses/saves and settles work before safe-close instructions. User closes all ShrutDhara tabs/installed windows and reopens; another open window can leave the new worker waiting. Failed save/Busy offers recovery and never reports safe preparation. Reopen preserves personal state and remains paused. Applies to UC-10; incompatible DB/content versions cannot write until compatible. |
 
 ## Coverage index
 
@@ -39,6 +45,7 @@ This is a sparse index, not an implied CRUD baseline. No cloud accounts or in-ap
 | Personal positions and bookmarks | Save/resume UC-03/04; bookmark/revisit UC-03; export/restore UC-07; bookmark removal G-08 |
 | Completion, queue, preferences | Status meaning G-08; prepared session UC-05; extended behavior UC-08 |
 | Content installation and backup | Local availability UC-02/04; delivery failure G-06; state restore UC-07 |
+| Window ownership and app updates | Handoff/read-only secondary state UC-09; safe update preparation and recovery UC-10; R-08/R-10 |
 
 ## Selected use cases
 
@@ -94,7 +101,7 @@ Done when: the local narration plays without network or paid service access, con
 
 **UC-04.A2 Audio corrupted or playback fails:** show that playback cannot continue and do not mark the chapter completed. Repair/redownload and saved-position behavior require G-06/G-08.
 
-**UC-04.A3 Complete playback:** read/listened/both status follows G-08; end-of-queue/autoplay behavior follows UC-05.
+**UC-04.A3 Complete playback:** v1 stops at the prepared chapter's end under UC-05 and does not infer chapter-understood/completed status. Later read/listened/both labels remain G-08.
 
 ### UC-05 Prepare and use hands-free listening · Actor: listener · Must, support-dependent
 
@@ -104,9 +111,9 @@ Precondition: stopped/pre-drive preparation; supported Android/device route; cho
 
 Done when: the declared supported-device scenarios allow the prepared session to run and respond to supported controls without requiring screen attention. This does not promise every vehicle integration; G-01/G-07 define the testable support boundary.
 
-**UC-05.A1 Call, audio interruption, or route disconnect:** respect the agreed interruption/resumption policy while preserving position. Auto-resume versus remaining paused is unresolved G-07; never infer that all interruptions allow automatic resume.
+**UC-05.A1 Call, audio interruption, or route disconnect:** preserve position and remain paused until the user explicitly resumes. Browser enforcement on actual interruptions must pass G-01/G-14; a simulated call button is not sufficient proof.
 
-**UC-05.A2 Missing next chapter or exhausted queue:** no fabricated content or silent gap crossing; stopping/announcing/skipping rules require G-07. The user must not need screen interaction while driving.
+**UC-05.A2 Missing next part or exhausted chapter:** stop without silent skipping. V1 prepares consecutive parts of one chapter only; there is no cross-chapter autoplay. The user must not need screen interaction to continue between successfully prepared parts. Editable multi-chapter queues remain later scope in G-07/G-10.
 
 **UC-05.A3 Unsupported control/background capability:** limitation is disclosed before relying on that session; fallback behavior must be settled in G-01.
 
@@ -122,21 +129,49 @@ Done when: a previously saved position and bookmark still resolve to their inten
 
 **UC-06.A2 Update fails partway:** installed usable content and personal state must not be silently replaced by incomplete material. Recovery contract requires G-06.
 
-### UC-07 Export and restore personal state · Actor: learner · Required; first-release inclusion proposed
+### UC-07 Export and restore personal state · Actor: learner · Must before first daily-use release
 
 Precondition: local progress/bookmarks exist; no account required.
 
-**UC-07.M Main:** Learner requests export of reading/listening state and bookmarks, retains the export, then selects it for restoration. App validates it and reports the outcome. Restored references resolve independently in both journeys.
+**UC-07.M Main:** Learner requests export under R-07 and retains the prepared file. Later the learner selects a supported backup. App validates it and previews incoming/existing positions, bookmark counts and unresolved references. Learner confirms replacement or cancels. On confirmation the app pauses/settles current work and replaces the personal state atomically, then reports the committed outcome and stays paused.
 
-Done when: a supported export restores both positions and bookmarks to the intended references. Format compatibility, privacy, conflict policy, and missing-content treatment remain G-05/G-12.
+Done when: a supported export restores both positions, bookmarks, preferences and selected chapter/part references together, following R-07. Missing/incompatible content follows A2 rather than dropping references or inventing a timestamp mapping. The app reports export prepared, not that the user necessarily retained the file successfully.
 
-**UC-07.A1 Invalid/incompatible backup:** report inability to restore; do not claim success. Whether any state may be changed during failure must be decided in G-12.
+**UC-07.A1 Invalid/unsupported backup or failed restore transaction:** report the failure and allow another file/retry; no imported state is applied. Preserve current personal records, including legitimate checkpoints committed during pause/drain before the restore transaction. A pre-restore pause may already have occurred, and the app does not automatically restart playback.
 
-**UC-07.A2 Existing local state or absent content:** merge/replace behavior and unresolved-reference recovery are G-12; no default is accepted here.
+**UC-07.A2 Existing local state or absent/incompatible content:** require replace confirmation; Cancel applies no backup data or maintenance pause. Normal ongoing study may still save its own progress while the preview is open. Preserve unresolved IDs/revision/display snapshots, label the missing content, and do not download automatically. A replaced recording never inherits an old timestamp without an accepted mapping (G-05). Merge is deferred.
+
+**UC-07.A3 Another active study window owns the session:** follow UC-09 before restoration. Busy/failed handoff changes no personal records.
 
 ### UC-08 Deferred learning conveniences · Actor: learner · Long-term scope sketch
 
 Learner searches by text/topic/Agama/chapter/reference, adjusts fonts/themes/component visibility, reflects after a chapter, changes speed, chooses previous/next chapters, manages a queue/autoplay, and sets a sleep timer. Outcomes: relevant installed material is findable; presentation remains readable; listening follows explicit user choices. Detailed behavior, offline search boundaries, completion semantics, and release allocation are G-08/G-10. Reflection does not imply private notes. Optional reliable voice commands remain optional.
+
+### UC-09 Continue in another window · Actor: learner · Must web recovery behavior
+
+Precondition: another tab/installed window owns the study session; this window can only browse the catalog (R-08).
+
+**UC-09.M Main:** Learner chooses Use this window. Existing owner pauses, saves and settles work, then releases ownership. Requester acquires ownership and loads the committed state. It enables study controls and remains paused until explicit Play.
+
+Done when: only the new window can write/play, both journeys/bookmarks reflect committed state, and no simultaneous player or stale writer remains.
+
+**UC-09.A1 Owner unresponsive or preparation fails:** requester remains read-only and offers Retry/Cancel plus close-other-window guidance. It does not force the old player to stop or steal ownership. After actual owner termination, a new acquisition attempt may succeed.
+
+**UC-09.A2 Restore/update preparation is in progress:** return Busy with Retry/Cancel, preserving the current operation and all personal records.
+
+### UC-10 Prepare an application update · Actor: learner · Must before daily-use release
+
+Precondition: a compatible new app version is waiting; current content and personal state are usable.
+
+**UC-10.M Main:** App indicates an update without interrupting study. Learner selects Prepare update in the owning window. App pauses/saves and settles work under R-10, then instructs the learner to close all ShrutDhara tabs/installed windows and reopen. Reopened compatible version loads preserved state and remains paused.
+
+Done when: the new compatible version loads with retained journeys/bookmarks/preferences after safe preparation and browser-controlled activation.
+
+**UC-10.A1 Update later:** current version and playback remain usable; no reload is forced.
+
+**UC-10.A2 Other window remains open/suspended:** update may remain waiting. Show close-other-windows instructions; the user may cancel preparation and explicitly resume the old version after ownership is reacquired.
+
+**UC-10.A3 Save/upgrade failure or another maintenance operation:** do not report safe preparation/success. Offer Retry/Cancel or compatible-version recovery without deleting personal records. Never reload a committing restore transaction.
 
 ## Quality and constraint verification obligations
 
@@ -158,19 +193,21 @@ Single authoritative register. Owner is the product owner unless a reviewer/spec
 | D-01 | First platform, environment | Android phones first; owner reply 2026-11-20 | Confirmed |
 | D-02 | Delivery platform, owner correction 2026-11-20 | Web app/PWA; no APK, unknown-source installation step, or app-store publication dependency. D-01 continues to identify the primary devices | Confirmed |
 | D-03 | Frontend framework, owner instruction 2026-11-20 | Angular replaces the React proposal. See app-design.md for standalone components, signals, service ownership, and custom service-worker/build integration | Confirmed |
-| G-01 / H | Which Android browsers/versions/devices must support offline installation, background listening, and external media controls? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: declare a supported browser/device range and verify actual background behavior in tab and installed modes. Web delivery is settled by D-02; guarantees remain open | Open |
+| D-04 | Review changes authorized, owner instruction 2026-11-21 | Implement review recommendations in the design. R-07–10 and app design 0.4 record selected v1 defaults; numeric validation targets are engineering baselines, not observed capability or a release guarantee | Authorized revision; implementation defaults selected |
+| D-05 | Hosting arrangement, Vercel discussion and follow-up 2026-11-21 | Vercel static deployment target with versioned content JSON/initial audio; private progress stays browser-local. No server database or paid object store required for v1 | Selected target; no deployment executed |
+| G-01 / H | Which exact Android phone/browser versions pass the selected candidate matrix? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: web-validation-plan.md selects Chrome stable on primary/second physical Android phones, tab and installed modes. Exact hardware/version identities and all required results must be recorded before declaring support | Candidate baseline selected; device evidence open |
 | G-02 / H | Which complete first chapter, edition, canonical ordering, and reference scheme? BRD §§2,11; data/rules | UC-01–03: recommend one complete chapter shared by both journeys; obtain authoritative sources and record textual differences. Confirm first-release scope separately | Proposed boundary; sources open |
 | G-03 / H | Who verifies each component, using which review evidence, and what exact licenses/permissions apply? BRD §§6–7; rules/compliance | UC-01, C-01: name qualified review responsibility; establish source/rights and chapter-coverage review before publication. No license status assumed | Open publication gate |
 | G-04 / H | What means exact reading/audio resume; how do within-sutra scrolling and swipe navigation coexist; when is progress saved? BRD §§3–5,12; UX/data/quality | UC-03/04: choose behavior for long text, reopen, seek, and termination with measurable tolerance; prototype the gesture interaction | Open |
 | G-05 / H for incompatible update; M now | How are edition, numbering, split/merge, and revised-audio positions mapped? BRD §§2,5,8; data/lifecycle | UC-06/07: define identity/preservation guarantees and user-visible unresolved mapping behavior before incompatible releases | Open future dependency |
-| G-06 / H for install/update | What ships installed; how are optional downloads distributed, retried, checked, removed, and recovered under low storage? BRD §§8–9; lifecycle | UC-02/04/06: preserve usable installed content and personal state; clarify ongoing production/distribution costs separately from runtime dependencies | Open |
-| G-07 / H | What happens at content gaps, queue end, calls, disconnects, and resumable interruptions? BRD §§3–4; events/rules | UC-05: recommend prepared local sessions with missing items disclosed before travel; settle whether explicitly acknowledged gaps may be crossed and when audio resumes | Proposal, not accepted |
+| G-06 / H for installation proof | Are independent reading/audio acquisition, bounded retention, retry, quota and update recovery implemented correctly? BRD §§8–9; lifecycle | UC-02/04/06/10: app design 0.4 selects static releases, per-experience readiness, explicit media removal/replacement and simple worker updates. VP-01/07/11/12 must pass; incompatible releases remain G-05 | V1 contract selected; execution/size evidence open |
+| G-07 / M for later queues | How should later editable multi-chapter queues cross acknowledged gaps? BRD §§3–4; events/rules | V1 UC-05 stops at missing parts/chapter end and remains paused after interruption/disconnect. No silent skip or cross-chapter autoplay. Browser enforcement is G-01/G-14; later queue behavior remains deferred | V1 selected; later queue policy open |
 | G-08 / M | What marks read/listened/completed, and how do replay, seek, bookmark removal, and manual changes behave? BRD §§3,5; data/rules | UC-03/04/08: define labels without implying comprehension from a final position | Open |
 | G-09 / H for partial entry | May reviewed original text be read without reviewed translation/explanation; may unverified drafts appear? BRD §§3,6,9,11; rules/access | UC-01/02/03: recommend publishing only reviewed experience components with explicit absent-component labels; determine valid entry combinations | Proposal, not accepted |
-| G-10 / M | Which convenience capabilities belong in v1 and what do topic search/reflection mean? BRD §§3–4,11; scope | UC-08: defer detailed specification until release allocation is confirmed; retain all BRD obligations | Open |
+| G-10 / M | What do later topic search, completion labels and extended queue/reflection features mean? BRD §§3–4,11; scope | App design 0.4 fixes first-release scope. Fonts/themes/component visibility and rate controls are included; editable multi-chapter queues/topic search/completion judgments/sleep timer remain deferred without deleting long-term obligations | V1 scope selected; later detail open |
 | G-11 / M | What counts as fast opening, readable/accessible, and beginner understanding? BRD §§10,12; quality | Q-01/05: choose measurement context and acceptance method; avoid invented thresholds | Open |
-| G-12 / H for restore; M otherwise | Export format, compatibility, merge/replace, missing content, failure preservation, privacy, and diagnostics? BRD §8; data/lifecycle | UC-07, Q-02/04: settle restore outcomes and private-state handling before implementing restore; no cloud sync assumed | Open |
-| G-13 / M | How should simultaneous browser tabs and an installed PWA share playback, reading position, and restore ownership? Identified during web design; concurrency/data | UC-03/04/07: technical ownership and restore-epoch safeguards are proposed in app-design.md; explicit user-facing handoff policy needs confirmation | Open web-specific behavior |
+| G-12 / H for restore proof | Does selected JSON v1 replace-after-preview restore preserve state on every failure? BRD §8; data/lifecycle | R-07/UC-07 and app design 0.4 define included data, cancellation, unresolved references and atomicity. VP-09 validates them. Merge is deferred; no cloud sync assumed | V1 decision resolved; execution open |
+| G-13 / H for ownership proof | Does the coarse single-study-owner protocol prevent stale writes/deadlock and provide recoverable handoff? Identified during web design; concurrency/data | R-08/UC-09 and app design 0.4 specify one owner, read-only secondary windows, no forced takeover, serialized maintenance and Retry/Cancel recovery. VP-10 must pass | V1 decision resolved; execution open |
 | G-14 / H for web listening claim | What browser suspension/termination, storage eviction, offline preparation, and timer limitations are acceptable within the web-only boundary? D-02 versus BRD §§4,8,12; environment/lifecycle | UC-04/05/07: run the web capability gate in app-design.md. Web delivery does not accept a weaker listening guarantee by implication | Open validation/acceptance gate |
 
 ## Flow tracking and handoff
@@ -185,7 +222,9 @@ No flow is Built or Verified. “Draft” below means detailed intended behavior
 | UC-04.M, UC-04.A1, UC-04.A2, UC-04.A3 | Must | Draft; G-01/G-04/G-06/G-08 |
 | UC-05.M, UC-05.A1, UC-05.A2, UC-05.A3 | Must | Draft; G-01/G-07 |
 | UC-06.M, UC-06.A1, UC-06.A2 | Required before applicable updates | Draft; G-05/G-06 |
-| UC-07.M, UC-07.A1, UC-07.A2 | Required; v1 proposed | Draft; G-05/G-12 |
+| UC-07.M, UC-07.A1, UC-07.A2, UC-07.A3 | Must before daily use | V1 behavior selected; unbuilt/unverified; G-05/G-12 execution |
+| UC-09.M, UC-09.A1, UC-09.A2 | Must web recovery | V1 behavior selected; unbuilt/unverified; G-13 execution |
+| UC-10.M, UC-10.A1, UC-10.A2, UC-10.A3 | Must before daily use | V1 behavior selected; unbuilt/unverified; G-06 execution |
 | UC-08 | Long-term; allocation open | Identified; G-08/G-10 |
 | Q-01 | Required readability; accessibility target open | Draft; G-01/G-04/G-11 |
 | Q-02 | Must offline/privacy | Draft; G-06/G-12 |

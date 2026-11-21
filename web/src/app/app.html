@@ -1,0 +1,50 @@
+<a class="skip" href="#main" (click)="skip($event)">मुख्य सामग्री पर जाएँ</a>
+<aside class="sidebar">
+  <a class="brand" routerLink="/" aria-label="श्रुतधारा मुख्य पृष्ठ"><span class="brand-mark"><app-icon name="leaf" /></span><span>श्रुतधारा<small>SHRUTDHARA</small></span></a>
+  <div class="nav-label" lang="en">YOUR SPACE</div>
+  <nav aria-label="मुख्य नेविगेशन">
+    @for (link of links; track link.path) {
+      <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/' }"><app-icon [name]="link.icon" /><span>{{ link.label }}</span>
+        @if (link.path === '/bookmarks' && study.state().bookmarks.length) { <small>{{ study.state().bookmarks.length }}</small> }
+      </a>
+    }
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="quiet-note"><app-icon name="leaf" /><p>थोड़ा पढ़ें। गहरा समझें।<br><span>अपनी गति से आगे बढ़ें।</span></p></div>
+    <a routerLink="/settings" class="nav-link" routerLinkActive="active" lang="en"><app-icon name="settings" />Settings</a>
+    <div class="privacy-line"><app-icon name="lock" /> निजी · बिना विज्ञापन</div>
+  </div>
+</aside>
+<div class="workspace">
+  <header class="topbar"><span class="breadcrumb"><span lang="en">Your space</span> / <b>{{ title() }}</b></span><div class="top-actions"><span class="prototype-label" lang="en">Development build</span><button class="icon-button" (click)="showSources()" aria-label="Sources and review"><app-icon name="info" /></button></div></header>
+  @if (!session.owned()) {
+    <section class="session-banner" aria-label="Study session ownership">
+      @if (app.updatePrepared()) { <div><strong lang="en">Ready to close</strong><p>सभी ShrutDhara tabs और installed windows बंद करके फिर खोलें। Playback paused है।</p></div> }
+      @else { <div><strong lang="en">{{ session.supported() ? 'Read-only window' : 'Browser capability unavailable' }}</strong><p>Study और playback के लिए एक active window रखें। निजी प्रगति हर browser में अलग है।</p></div> }
+      <button class="button secondary" (click)="takeControl()" [disabled]="session.acquiring() || !session.supported()" lang="en">{{ session.acquiring() ? 'Waiting for other window…' : 'Use this window' }}</button>
+      @if (session.acquiring()) { <button class="text-button" (click)="session.cancelRequest()" lang="en">Cancel</button> }
+    </section>
+  }
+  @if (study.failed()) { <div class="session-banner error-banner" role="alert"><p>निजी storage नहीं खुला। Data reset नहीं किया गया है।</p><button class="button secondary" (click)="retryStorage()" lang="en">Retry storage</button></div> }
+  <main id="main" tabindex="-1"><router-outlet /></main>
+  <footer class="page-footer"><span>श्रुतधारा · ज्ञान, अपनी गति से।</span><button (click)="showSources()" lang="en">Sources & review</button></footer>
+</div>
+<nav class="mobile-nav" aria-label="मोबाइल नेविगेशन">
+  @for (link of mobileLinks; track link.path) { <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/' }"><app-icon [name]="link.icon" /><span lang="en">{{ link.label }}</span></a> }
+</nav>
+@if (playback.prepared() && !isListening()) {
+  <section class="mini-player" aria-label="Listening controls"><app-icon name="headphones" /><button class="mini-title" routerLink="/listen"><span lang="en">Audio calibration</span><small>Part {{ playback.part() + 1 }} · {{ time(playback.position()) }}</small></button><button class="icon-button" (click)="togglePlayback()" [attr.aria-label]="playback.running() ? 'Pause audio' : 'Play audio'"><app-icon [name]="playback.running() ? 'pause' : 'play'" /></button></section>
+}
+<dialog #sources aria-labelledby="sources-title" (click)="backdrop($event, sources)">
+  <div class="dialog-heading"><h2 id="sources-title" lang="en">Sources & review</h2><button class="icon-button" (click)="sources.close()" aria-label="Close"><app-icon name="close" /></button></div>
+  <span class="pill amber">Development fixture · अप्रकाशित सामग्री</span>
+  <p>सत्यापित मूल सूत्र, हिन्दी अनुवाद और अध्याय की narration अभी शामिल नहीं हैं। Reader का लेखन केवल इंटरफ़ेस जाँचने के लिए है; इसे आगम की शिक्षा न मानें।</p>
+  <dl class="source-list">
+    <div><dt>मूल संस्करण / प्रामाणिक संदर्भ</dt><dd>स्रोत और canonical sequence चयन शेष</dd></div>
+    <div><dt>हिन्दी अर्थ और व्याख्या</dt><dd>नमूना लेखन · योग्य समीक्षक की समीक्षा शेष</dd></div>
+    <div><dt>Audio calibration</dt><dd>स्थानीय रूप से बने परीक्षण tones · कोई आवाज़, कथा या शास्त्रीय narration नहीं</dd></div>
+    <div><dt>Fonts</dt><dd>Mukta, Hind, Noto Serif Devanagari · bundled SIL OFL notices</dd></div>
+  </dl>
+  <p class="small-note">Firefox और Chrome पर वास्तविक phone, screen-off और interruption जाँच बाकी है। UI में play होना सभी devices पर background playback का प्रमाण नहीं है।</p>
+</dialog>
+<div id="toast" role="status" aria-live="polite" [class.visible]="!!ui.message()">{{ ui.message() }}</div>
