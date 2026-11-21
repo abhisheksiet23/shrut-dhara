@@ -6,8 +6,11 @@ const paths: Record<string, string> = {
   headphones: 'M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H4a1 1 0 0 1-1-1Zm18 0h-4v8h3a1 1 0 0 0 1-1Z',
   bookmark: 'M6 3h12v18l-6-4-6 4Z',
   settings: 'M4 7h16M4 17h16M8 4v6m8 4v6',
-  arrow: 'M4 12h16m-6-6 6 6-6 6', back: 'M20 12H4m6-6-6 6 6 6',
-  play: 'm9 5 11 7-11 7Z', pause: 'M8 5v14m8-14v14', close: 'm6 6 12 12M6 18 18 6',
+  arrow: 'M4 12h16m-6-6 6 6-6 6',
+  back: 'M20 12H4m6-6-6 6 6 6',
+  play: 'm9 5 11 7-11 7Z',
+  pause: 'M8 5v14m8-14v14',
+  close: 'm6 6 12 12M6 18 18 6',
   leaf: 'M20 3C8 2 2 8 5 15c6 8 16 0 15-12ZM3 22 16 9',
   info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 8v6m0-10v1',
   down: 'M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4',
@@ -19,10 +22,30 @@ const paths: Record<string, string> = {
 
 @Component({
   selector: 'app-icon',
-  template: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="path()" /></svg>`,
-  styles: `:host { display:inline-flex; flex-shrink:0; align-items:center; vertical-align:middle; }`,
+  template: `<svg
+    class="icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path [attr.d]="path()" />
+  </svg>`,
+  styles: `
+    :host {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      vertical-align: middle;
+    }
+  `,
 })
 export class Icon {
   readonly name = input('book');
-  path(): string { return paths[this.name()] ?? paths['book']; }
+  path(): string {
+    return paths[this.name()] ?? paths['book'];
+  }
 }

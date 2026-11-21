@@ -1,0 +1,16 @@
+.git
+.vercel
+.env*
+**/.env*
+docs
+**/*.log
+prototype/*.html
+prototype/*.js
+prototype/*.mjs
+web/.angular
+web/.worker
+web/.vscode
+web/dist
+web/node_modules
+web/public/audio
+web/shrutdhara-preview.jpg

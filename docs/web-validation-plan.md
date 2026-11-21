@@ -10,7 +10,7 @@ Record app commit/build hash, Angular/worker build IDs, DB/export schema version
 
 | Candidate environment | Required coverage / support standing |
 | --- | --- |
-| Owner's primary physical Android phone, Chrome stable at test time | All applicable cases, separately in a normal tab and installed PWA. Fill exact identities before execution. Candidate support target, not a supported-device claim yet. |
+| Owner's CMF Phone 1, Firefox Android primary and Chrome Android also required | Run all applicable cases in each browser, in a normal tab and in any home-screen mode that browser offers. Record the mode actually tested, the Android version, and both browser versions. Support depends on the results. |
 | A second physical Android phone with less available memory than the primary | Same audio/offline/restore/update cases in both modes. Record memory and maximum part size; an unspecified emulator or browser resize is not a substitute. Device selection is still pending. |
 | Desktop Chrome and Edge stable at test time | Reader, keyboard/focus, backup, range-seeking, storage errors, two-window ownership and update recovery. Desktop success cannot clear the Android listening gate. |
 | Other browsers, private mode, iPhone/iPad | No v1 background/PWA support claim. Ordinary page reading may work; feature detection must explain unavailable study persistence/playback features rather than fabricate success. Expand the matrix only through an explicit support decision. |

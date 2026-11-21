@@ -1,9 +1,23 @@
-# ShrutDhara prototype
+# ShrutDhara web app
 
-Run `npm start` from this folder, then open http://127.0.0.1:4173.
-Requires Node.js; no package installation is needed. Run `npm test` for state/backup checks.
+From the repository root with Node 24.15+ and npm:
 
-The prototype is plain HTML/CSS/JavaScript, separate from any production Android implementation.
+```sh
+npm --prefix web ci
+npm run build
+npm start
+```
+
+Open [the Angular preview](http://127.0.0.1:4174/). Use this build for service-worker and offline checks. `npm run dev` starts Angular's development server. `npm test` runs the prototype and Angular state tests.
+
+The app keeps reading and listening progress, bookmarks, and preferences in IndexedDB. The offline worker caches the app and bundled reader content. **Listen → Save audio** verifies and saves two 15-minute calibration files for offline playback. **Settings → Export backup / Restore backup** transfers personal progress between browser profiles. The Vercel configuration builds a static site.
+
+The development candidate uses Hindi sample text and generated audio tones. Approved chapter text and narration, and physical Android checks in Firefox and Chrome, are required for daily use. See the [web validation plan](docs/web-validation-plan.md).
+
+## Earlier prototype
+
+Run `npm run prototype` to open [the original prototype](http://127.0.0.1:4173/).
+The prototype is plain HTML/CSS/JavaScript.
 It includes home, collection/search, reader, bookmarks, listening controls, driving preview,
 reading options, local progress, and JSON export/restore.
 

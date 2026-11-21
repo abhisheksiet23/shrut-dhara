@@ -14,7 +14,9 @@ export class StudyDatabaseStore {
         database.createObjectStore('personal', { keyPath: 'id' });
       },
       blocked: onBlocked,
-      blocking: () => { void this.close(); },
+      blocking: () => {
+        void this.close();
+      },
     });
   }
 
@@ -24,16 +26,29 @@ export class StudyDatabaseStore {
     if (!stored) {
       return { id: 'personal', epoch: 0, revision: 0, data: initialPersonalState() };
     }
-    if (!Number.isSafeInteger(stored.epoch) || stored.epoch < 0 || !Number.isSafeInteger(stored.revision) || stored.revision < 0) {
+    if (
+      !Number.isSafeInteger(stored.epoch) ||
+      stored.epoch < 0 ||
+      !Number.isSafeInteger(stored.revision) ||
+      stored.revision < 0
+    ) {
       throw new Error('स्थानीय data version पढ़ा नहीं जा सका। मूल डेटा सुरक्षित रखा गया है।');
     }
     return { ...stored, data: validatePersonalState(stored.data) };
   }
 
-  async update(expectedEpoch: number, mutation: (data: PersonalState) => PersonalState): Promise<Envelope> {
+  async update(
+    expectedEpoch: number,
+    mutation: (data: PersonalState) => PersonalState,
+  ): Promise<Envelope> {
     const database = await this.database;
     const transaction = database.transaction('personal', 'readwrite');
-    const stored = await transaction.store.get('personal') ?? { id: 'personal' as const, epoch: 0, revision: 0, data: initialPersonalState() };
+    const stored = (await transaction.store.get('personal')) ?? {
+      id: 'personal' as const,
+      epoch: 0,
+      revision: 0,
+      data: initialPersonalState(),
+    };
     if (stored.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
@@ -41,11 +56,19 @@ export class StudyDatabaseStore {
     }
     let updated: Envelope;
     try {
-      updated = { ...stored, revision: stored.revision + 1, data: validatePersonalState(mutation(structuredClone(stored.data))) };
+      updated = {
+        ...stored,
+        revision: stored.revision + 1,
+        data: validatePersonalState(mutation(structuredClone(stored.data))),
+      };
       await transaction.store.put(updated);
       await transaction.done;
     } catch (error) {
-      try { transaction.abort(); } catch { /* It may already be aborted. */ }
+      try {
+        transaction.abort();
+      } catch {
+        /* It may already be aborted. */
+      }
       await transaction.done.catch(() => {});
       throw error;
     }
@@ -56,13 +79,23 @@ export class StudyDatabaseStore {
     const validated = validatePersonalState(data);
     const database = await this.database;
     const transaction = database.transaction('personal', 'readwrite');
-    const previous = await transaction.store.get('personal') ?? { id: 'personal' as const, epoch: 0, revision: 0, data: initialPersonalState() };
+    const previous = (await transaction.store.get('personal')) ?? {
+      id: 'personal' as const,
+      epoch: 0,
+      revision: 0,
+      data: initialPersonalState(),
+    };
     if (previous.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
       throw new Error('Restore से पहले state बदल गई है। फिर प्रयास करें।');
     }
-    const next: Envelope = { id: 'personal', epoch: previous.epoch + 1, revision: previous.revision + 1, data: validated };
+    const next: Envelope = {
+      id: 'personal',
+      epoch: previous.epoch + 1,
+      revision: previous.revision + 1,
+      data: validated,
+    };
     await transaction.store.put(next);
     await transaction.done;
     return next;

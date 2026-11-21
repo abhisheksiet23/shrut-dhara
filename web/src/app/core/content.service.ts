@@ -16,11 +16,23 @@ export class ContentService {
       const response = await fetch('/content/fixture-v1/chapter.json');
       if (!response.ok) throw new Error('नमूना सामग्री उपलब्ध नहीं है। ऑनलाइन होकर Retry करें।');
       const value: Chapter = await response.json();
-      if (value.status !== 'interface-fixture' || value.revision !== 'fixture-v1' || value.passages.length !== FIXTURE_IDS.length || value.passages.some((passage, index) => passage.id !== FIXTURE_IDS[index]) || !Array.isArray(value.audio)) {
+      if (
+        value.status !== 'interface-fixture' ||
+        value.revision !== 'fixture-v1' ||
+        value.passages.length !== FIXTURE_IDS.length ||
+        value.passages.some((passage, index) => passage.id !== FIXTURE_IDS[index]) ||
+        !Array.isArray(value.audio)
+      ) {
         throw new Error('Content manifest का version मान्य नहीं है।');
       }
       for (const asset of value.audio) {
-        if (!/^\/audio\/fixture-v1\/[a-z0-9-]+\.wav$/.test(asset.url) || !/^[a-f0-9]{64}$/.test(asset.sha256) || !Number.isSafeInteger(asset.bytes) || asset.bytes <= 0 || asset.duration <= 0) {
+        if (
+          !/^\/audio\/fixture-v1\/[a-z0-9-]+\.wav$/.test(asset.url) ||
+          !/^[a-f0-9]{64}$/.test(asset.sha256) ||
+          !Number.isSafeInteger(asset.bytes) ||
+          asset.bytes <= 0 ||
+          asset.duration <= 0
+        ) {
           throw new Error('Audio manifest मान्य नहीं है।');
         }
       }

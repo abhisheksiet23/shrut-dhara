@@ -1,0 +1,9 @@
+{
+  "id": "/", "name": "श्रुतधारा · ShrutDhara", "short_name": "श्रुतधारा", "lang": "hi",
+  "start_url": "/", "scope": "/", "display": "standalone", "background_color": "#f7f6f0", "theme_color": "#4b593f",
+  "description": "पठन और श्रवण यात्रा · private offline study",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

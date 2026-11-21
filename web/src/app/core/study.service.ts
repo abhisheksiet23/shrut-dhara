@@ -1,6 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { OperationCoordinator, StudyDatabaseStore } from './database';
-import { Backup, Envelope, initialPersonalState, ListeningPosition, PersonalState, Preferences, ReadingPosition } from './models';
+import {
+  Backup,
+  Envelope,
+  initialPersonalState,
+  ListeningPosition,
+  PersonalState,
+  Preferences,
+  ReadingPosition,
+} from './models';
 import { SessionService } from './session.service';
 import { UiService } from './ui.service';
 
@@ -16,7 +24,9 @@ export class StudyService {
   private envelope?: Envelope;
 
   async load(): Promise<void> {
-    this.database ??= new StudyDatabaseStore('shrutdhara-v1', () => this.ui.notify('दूसरी पुरानी window बंद करके फिर खोलें। Database upgrade रुका है।'));
+    this.database ??= new StudyDatabaseStore('shrutdhara-v1', () =>
+      this.ui.notify('दूसरी पुरानी window बंद करके फिर खोलें। Database upgrade रुका है।'),
+    );
     try {
       this.apply(await this.database.read());
       this.ready.set(true);
@@ -36,7 +46,8 @@ export class StudyService {
 
   async mutate(mutation: (state: PersonalState) => PersonalState, internal = false): Promise<void> {
     this.session.assertOwner(internal);
-    if (!this.ready() || !this.envelope || !this.database) throw new Error('स्थानीय storage तैयार नहीं है। फिर प्रयास करें।');
+    if (!this.ready() || !this.envelope || !this.database)
+      throw new Error('स्थानीय storage तैयार नहीं है। फिर प्रयास करें।');
     const epoch = this.envelope.epoch;
     await this.coordinator.run(async () => {
       this.session.assertOwner(true);
@@ -45,28 +56,36 @@ export class StudyService {
   }
 
   saveReading(reading: ReadingPosition, internal = false): Promise<void> {
-    return this.mutate(state => ({ ...state, reading }), internal);
+    return this.mutate((state) => ({ ...state, reading }), internal);
   }
 
   saveListening(listening: ListeningPosition, internal = false): Promise<void> {
-    return this.mutate(state => ({ ...state, listening }), internal);
+    return this.mutate((state) => ({ ...state, listening }), internal);
   }
 
   setPreferences(patch: Partial<Preferences>): Promise<void> {
-    return this.mutate(state => ({ ...state, preferences: { ...state.preferences, ...patch } }));
+    return this.mutate((state) => ({ ...state, preferences: { ...state.preferences, ...patch } }));
   }
 
   toggleBookmark(sutraId: string, title: string, revision: string): Promise<void> {
-    return this.mutate(state => ({ ...state, bookmarks: state.bookmarks.some(item => item.sutraId === sutraId)
-      ? state.bookmarks.filter(item => item.sutraId !== sutraId)
-      : [...state.bookmarks, { sutraId, title, revision }] }));
+    return this.mutate((state) => ({
+      ...state,
+      bookmarks: state.bookmarks.some((item) => item.sutraId === sutraId)
+        ? state.bookmarks.filter((item) => item.sutraId !== sutraId)
+        : [...state.bookmarks, { sutraId, title, revision }],
+    }));
   }
 
   async snapshot(): Promise<Backup> {
     this.session.assertOwner();
     await this.coordinator.drain();
     const envelope = await this.database!.read();
-    return { format: 'shrutdhara-progress', version: 1, exportedAt: new Date().toISOString(), data: envelope.data };
+    return {
+      format: 'shrutdhara-progress',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      data: envelope.data,
+    };
   }
 
   async restore(data: PersonalState): Promise<void> {

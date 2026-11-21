@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "prestart": "node scripts/prepare-assets.mjs",
+    "start": "ng serve --host 127.0.0.1 --port 4200",
+    "build": "node scripts/prepare-assets.mjs && ng build && node scripts/build-worker.mjs",
+    "preview": "node scripts/serve.mjs",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "vitest run"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -35,7 +37,6 @@
     "fake-indexeddb": "6.2.8",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
-    "vitest": "5.1.1",
-    "workbox-build": "7.4.1"
+    "vitest": "5.1.1"
   }
 }

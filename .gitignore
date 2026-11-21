@@ -1,2 +1,11 @@
 prototype/server.log
 prototype/server-error.log
+web/node_modules/
+web/dist/
+web/.angular/
+web/.worker/
+web/public/audio/fixture-v1/*.wav
+web/server.log
+web/server-error.log
+web/shrutdhara-preview.jpg
+.vercel/

@@ -30,7 +30,8 @@ export class OfflineService {
         const installing = registration.installing;
         installing?.addEventListener('statechange', () => {
           if (installing.state === 'activated') this.shellReady.set(true);
-          if (installing.state === 'installed' && registration.waiting) this.updateWaiting.set(true);
+          if (installing.state === 'installed' && registration.waiting)
+            this.updateWaiting.set(true);
         });
       });
     } catch {
@@ -44,14 +45,20 @@ export class OfflineService {
     const ready: string[] = [];
     for (const asset of this.content.chapter()?.audio ?? []) {
       const cached = await cache.match(asset.url);
-      if (cached?.status === 200 && cached.headers.get('x-content-sha256') === asset.sha256 && Number(cached.headers.get('content-length')) === asset.bytes) ready.push(asset.id);
+      if (
+        cached?.status === 200 &&
+        cached.headers.get('x-content-sha256') === asset.sha256 &&
+        Number(cached.headers.get('content-length')) === asset.bytes
+      )
+        ready.push(asset.id);
     }
     this.saved.set(ready);
   }
 
   async assertSaved(asset: AudioAsset): Promise<void> {
     await this.reconcile();
-    if (!this.saved().includes(asset.id)) throw new Error('यह पूरा audio part offline नहीं है। पहले Save audio चुनें।');
+    if (!this.saved().includes(asset.id))
+      throw new Error('यह पूरा audio part offline नहीं है। पहले Save audio चुनें।');
   }
 
   async saveAudio(): Promise<void> {
@@ -82,15 +89,26 @@ export class OfflineService {
       const response = await fetch(asset.url, { signal, cache: 'no-store' });
       if (response.status !== 200) throw new Error('पूरा audio download नहीं हुआ। Retry करें।');
       const bytes = await response.arrayBuffer();
-      if (bytes.byteLength !== asset.bytes) throw new Error('Audio अधूरा है। पुरानी उपलब्ध सामग्री सुरक्षित है।');
-      const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), item => item.toString(16).padStart(2, '0')).join('');
+      if (bytes.byteLength !== asset.bytes)
+        throw new Error('Audio अधूरा है। पुरानी उपलब्ध सामग्री सुरक्षित है।');
+      const digest = Array.from(
+        new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
+        (item) => item.toString(16).padStart(2, '0'),
+      ).join('');
       if (digest !== asset.sha256) throw new Error('Audio की integrity जाँच विफल हुई। Retry करें।');
       signal.throwIfAborted();
       this.session.assertOwner(true);
-      await cache.put(asset.url, new Response(bytes, { headers: {
-        'content-type': 'audio/wav', 'content-length': String(asset.bytes),
-        'x-content-sha256': asset.sha256, 'accept-ranges': 'bytes',
-      } }));
+      await cache.put(
+        asset.url,
+        new Response(bytes, {
+          headers: {
+            'content-type': 'audio/wav',
+            'content-length': String(asset.bytes),
+            'x-content-sha256': asset.sha256,
+            'accept-ranges': 'bytes',
+          },
+        }),
+      );
     }
   }
 
@@ -111,7 +129,13 @@ export class OfflineService {
   async requestPersistence(): Promise<void> {
     this.session.assertOwner();
     const persistent = await navigator.storage?.persist?.();
-    this.storageStatus.set(persistent ? 'Persistent storage granted' : 'Best effort · keep a backup');
-    this.ui.notify(persistent ? 'Persistent storage मिला। Site data हटाने पर यह भी मिट सकता है।' : 'Browser ने persistence नहीं दिया। Backup निर्यात करके रखें।');
+    this.storageStatus.set(
+      persistent ? 'Persistent storage granted' : 'Best effort · keep a backup',
+    );
+    this.ui.notify(
+      persistent
+        ? 'Persistent storage मिला। Site data हटाने पर यह भी मिट सकता है।'
+        : 'Browser ने persistence नहीं दिया। Backup निर्यात करके रखें।',
+    );
   }
 }

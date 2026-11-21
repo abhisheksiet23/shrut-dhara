@@ -195,7 +195,7 @@ Single authoritative register. Owner is the product owner unless a reviewer/spec
 | D-03 | Frontend framework, owner instruction 2026-11-20 | Angular replaces the React proposal. See app-design.md for standalone components, signals, service ownership, and custom service-worker/build integration | Confirmed |
 | D-04 | Review changes authorized, owner instruction 2026-11-21 | Implement review recommendations in the design. R-07–10 and app design 0.4 record selected v1 defaults; numeric validation targets are engineering baselines, not observed capability or a release guarantee | Authorized revision; implementation defaults selected |
 | D-05 | Hosting arrangement, Vercel discussion and follow-up 2026-11-21 | Vercel static deployment target with versioned content JSON/initial audio; private progress stays browser-local. No server database or paid object store required for v1 | Selected target; no deployment executed |
-| G-01 / H | Which exact Android phone/browser versions pass the selected candidate matrix? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: web-validation-plan.md selects Chrome stable on primary/second physical Android phones, tab and installed modes. Exact hardware/version identities and all required results must be recorded before declaring support | Candidate baseline selected; device evidence open |
+| G-01 / H | Which exact Android phone/browser versions pass the selected candidate matrix? BRD §§4,8; environment/quality | UC-04/05, Q-01/03: Firefox Android is primary on the owner's CMF Phone 1. Chrome Android is also required. Record exact versions, available install modes, and results from the physical-device matrix before declaring support | Primary phone and browser targets selected; device evidence open |
 | G-02 / H | Which complete first chapter, edition, canonical ordering, and reference scheme? BRD §§2,11; data/rules | UC-01–03: recommend one complete chapter shared by both journeys; obtain authoritative sources and record textual differences. Confirm first-release scope separately | Proposed boundary; sources open |
 | G-03 / H | Who verifies each component, using which review evidence, and what exact licenses/permissions apply? BRD §§6–7; rules/compliance | UC-01, C-01: name qualified review responsibility; establish source/rights and chapter-coverage review before publication. No license status assumed | Open publication gate |
 | G-04 / H | What means exact reading/audio resume; how do within-sutra scrolling and swipe navigation coexist; when is progress saved? BRD §§3–5,12; UX/data/quality | UC-03/04: choose behavior for long text, reopen, seek, and termination with measurable tolerance; prototype the gesture interaction | Open |
@@ -212,7 +212,7 @@ Single authoritative register. Owner is the product owner unless a reviewer/spec
 
 ## Flow tracking and handoff
 
-No flow is Built or Verified. “Draft” below means detailed intended behavior exists but consequential decisions remain; “Identified” means only an outline exists. Must priorities derive from the BRD's initial release; other release allocations are explicitly provisional.
+The table records release standing. The local Angular development build exercises several flows with fixtures. Release verification remains subject to the content and device gates. “Draft” indicates consequential decisions remain. “Identified” indicates only an outline exists.
 
 | Flow | Priority | Status / blocking gaps |
 | --- | --- | --- |
@@ -222,9 +222,9 @@ No flow is Built or Verified. “Draft” below means detailed intended behavior
 | UC-04.M, UC-04.A1, UC-04.A2, UC-04.A3 | Must | Draft; G-01/G-04/G-06/G-08 |
 | UC-05.M, UC-05.A1, UC-05.A2, UC-05.A3 | Must | Draft; G-01/G-07 |
 | UC-06.M, UC-06.A1, UC-06.A2 | Required before applicable updates | Draft; G-05/G-06 |
-| UC-07.M, UC-07.A1, UC-07.A2, UC-07.A3 | Must before daily use | V1 behavior selected; unbuilt/unverified; G-05/G-12 execution |
-| UC-09.M, UC-09.A1, UC-09.A2 | Must web recovery | V1 behavior selected; unbuilt/unverified; G-13 execution |
-| UC-10.M, UC-10.A1, UC-10.A2, UC-10.A3 | Must before daily use | V1 behavior selected; unbuilt/unverified; G-06 execution |
+| UC-07.M, UC-07.A1, UC-07.A2, UC-07.A3 | Must before daily use | Local export and restore implemented. Full G-05/G-12 execution pending. |
+| UC-09.M, UC-09.A1, UC-09.A2 | Must web recovery | Local single-owner flow implemented. Full G-13 execution pending. |
+| UC-10.M, UC-10.A1, UC-10.A2, UC-10.A3 | Must before daily use | Fixture saving, cache checks and removal implemented. Full G-06 execution pending. |
 | UC-08 | Long-term; allocation open | Identified; G-08/G-10 |
 | Q-01 | Required readability; accessibility target open | Draft; G-01/G-04/G-11 |
 | Q-02 | Must offline/privacy | Draft; G-06/G-12 |

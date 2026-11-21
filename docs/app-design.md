@@ -2,6 +2,8 @@
 
 Draft 0.4 · 2026-11-21 · Design only, no production implementation or publication
 
+Implementation status lives in the [local verification report](implementation-checks.md). The `web/` Angular development build now runs alongside the original prototype. Firefox Android on the owner's CMF Phone 1 is the primary target, with Chrome Android also required.
+
 Revision 0.4: implemented the authorized design-review recommendations. Bounded the first release, added an executable validation plan, simplified cross-window ownership, specified restore/update recovery, bounded media retention, moved backup into the first usable increment, and selected Vercel static hosting. These are design changes, not executed production or device evidence.
 
 Revision 0.3: evaluated browser SQLite following the owner's request and delegated the storage choice to engineering. Retain IndexedDB for the first implementation, for the reasons below. No persistence implementation or comparative benchmark has been executed.
