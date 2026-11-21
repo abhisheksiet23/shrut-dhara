@@ -29,14 +29,14 @@ import { Art } from '../shared/art';
       <div class="empty">
         <h2>सामग्री load नहीं हुई</h2>
         <p>{{ content.error() }}</p>
-        <button class="button secondary" (click)="content.load()" lang="en">Retry</button>
+        <button class="button secondary" (click)="content.load()">फिर कोशिश करें</button>
       </div>
     } @else if (!matches()) {
       <div class="empty">
         <app-icon name="search" />
         <h2>कोई परिणाम नहीं मिला</h2>
         <p>यह खोज केवल इस build की उपलब्ध नमूना सामग्री में है।</p>
-        <button class="button secondary" (click)="query.set('')" lang="en">Clear search</button>
+        <button class="button secondary" (click)="query.set('')">खोज साफ़ करें</button>
       </div>
     } @else {
       <article class="scripture-card">
@@ -49,7 +49,7 @@ import { Art } from '../shared/art';
           <p>प्रस्तावित पहला आगम। मूल पाठ और प्रामाणिक अनुवाद अभी प्रकाशित नहीं हैं।</p>
           <div class="availability">
             <span><app-icon name="book" />३ interface samples</span
-            ><span><app-icon name="headphones" />Calibration only</span>
+            ><span><app-icon name="headphones" />शस्त्रपरिज्ञा श्रवण</span>
           </div>
         </div>
       </article>
@@ -65,14 +65,14 @@ import { Art } from '../shared/art';
           <div class="availability">
             <span class="status-dot">Reader fixture</span
             ><span>{{
-              offline.saved().length === 2 ? 'दोनों audio parts saved' : 'Audio save करना शेष'
+              offline.assets().length && offline.saved().length === offline.assets().length ? 'श्रवण ऑफ़लाइन सहेजा हुआ' : 'श्रवण ऑफ़लाइन सहेजना शेष'
             }}</span>
           </div>
         </div>
         <div class="chapter-actions">
           <a class="button secondary" routerLink="/read"><app-icon name="book" />पढ़ें</a
-          ><a class="button" routerLink="/listen" lang="en"
-            ><app-icon name="headphones" />Audio test</a
+          ><a class="button" routerLink="/listen"
+            ><app-icon name="headphones" />शस्त्रपरिज्ञा सुनें</a
           >
         </div>
       </article>

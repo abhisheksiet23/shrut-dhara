@@ -1,5 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { AudioAsset } from './models';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { AudioAsset, NARRATION_ID } from './models';
 import { ContentService } from './content.service';
 import { SessionService } from './session.service';
 import { UiService } from './ui.service';
@@ -11,6 +11,10 @@ export class OfflineService {
   private content = inject(ContentService);
   private session = inject(SessionService);
   private ui = inject(UiService);
+  /** Which recording the Save / Remove controls act on. The playback service keeps this in step. */
+  readonly activeId = signal(NARRATION_ID);
+  readonly assets = computed<AudioAsset[]>(() => this.content.recording(this.activeId())?.parts ?? []);
+  readonly totalBytes = computed(() => this.assets().reduce((sum, asset) => sum + asset.bytes, 0));
   readonly saved = signal<string[]>([]);
   readonly downloading = signal(false);
   readonly progress = signal('');
@@ -43,7 +47,7 @@ export class OfflineService {
     if (!('caches' in window)) return;
     const cache = await caches.open(MEDIA_CACHE);
     const ready: string[] = [];
-    for (const asset of this.content.chapter()?.audio ?? []) {
+    for (const asset of this.assets()) {
       const cached = await cache.match(asset.url);
       if (
         cached?.status === 200 &&
@@ -58,7 +62,7 @@ export class OfflineService {
   async assertSaved(asset: AudioAsset): Promise<void> {
     await this.reconcile();
     if (!this.saved().includes(asset.id))
-      throw new Error('यह पूरा audio part offline नहीं है। पहले Save audio चुनें।');
+      throw new Error('यह पूरा audio भाग offline नहीं है। पहले “ऑफ़लाइन सहेजें” चुनें।');
   }
 
   async saveAudio(): Promise<void> {
@@ -70,7 +74,7 @@ export class OfflineService {
     this.task = this.download(this.controller.signal);
     try {
       await this.task;
-      this.ui.notify('दोनों audio parts इस browser में सहेजे गए।');
+      this.ui.notify('सभी audio भाग इस browser में सहेजे गए।');
     } finally {
       this.downloading.set(false);
       this.progress.set('');
@@ -79,11 +83,11 @@ export class OfflineService {
   }
 
   private async download(signal: AbortSignal): Promise<void> {
-    const assets = this.content.chapter()?.audio;
-    if (!assets) throw new Error('पहले सामग्री load होने दें।');
+    const assets = this.assets();
+    if (!assets.length) throw new Error('पहले सामग्री load होने दें।');
     const cache = await caches.open(MEDIA_CACHE);
     for (const [index, asset] of assets.entries()) {
-      this.progress.set(`Part ${index + 1} / ${assets.length} · verifying complete file`);
+      this.progress.set(`भाग ${index + 1} / ${assets.length} · पूरी फ़ाइल जाँची जा रही है`);
       await this.reconcile();
       if (this.saved().includes(asset.id)) continue;
       const response = await fetch(asset.url, { signal, cache: 'no-store' });
@@ -102,7 +106,7 @@ export class OfflineService {
         asset.url,
         new Response(bytes, {
           headers: {
-            'content-type': 'audio/wav',
+            'content-type': response.headers.get('content-type') ?? 'audio/mpeg',
             'content-length': String(asset.bytes),
             'x-content-sha256': asset.sha256,
             'accept-ranges': 'bytes',
@@ -122,7 +126,7 @@ export class OfflineService {
     this.session.assertOwner();
     await this.cancel();
     const cache = await caches.open(MEDIA_CACHE);
-    for (const asset of this.content.chapter()?.audio ?? []) await cache.delete(asset.url);
+    for (const asset of this.assets()) await cache.delete(asset.url);
     await this.reconcile();
   }
 

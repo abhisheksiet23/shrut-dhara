@@ -1,5 +1,7 @@
 export const FIXTURE_IDS = ['fixture:reflection:1', 'fixture:reflection:2', 'fixture:reflection:3'];
-export const RECORDING_ID = 'fixture:calibration:v1';
+export const CALIBRATION_ID = 'fixture:calibration:v1';
+export const NARRATION_ID = 'shastraparijna:hi:v1';
+export const RECORDING_ID = NARRATION_ID;
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 
 export interface ReadingPosition {
@@ -67,6 +69,24 @@ export interface AudioAsset {
   duration: number;
 }
 
+export interface NarrationPart extends AudioAsset {
+  title: string;
+  reference: string;
+  paragraphs: string[];
+}
+
+export type RecordingKind = 'narration' | 'calibration';
+
+/** One ordered, prepared sequence of audio parts that the shared player can run. */
+export interface Recording {
+  id: string;
+  kind: RecordingKind;
+  title: string;
+  /** Plain statement of what the listener is hearing, shown with the player. */
+  label: string;
+  parts: Array<AudioAsset & Partial<NarrationPart>>;
+}
+
 export interface Chapter {
   id: string;
   revision: string;
@@ -79,7 +99,7 @@ export interface Chapter {
 export function initialPersonalState(): PersonalState {
   return {
     reading: { sutraId: FIXTURE_IDS[0], blockId: 'meaning', offset: 0, revision: 'fixture-v1' },
-    listening: { recordingId: RECORDING_ID, part: 0, seconds: 0 },
+    listening: { recordingId: NARRATION_ID, part: 0, seconds: 0 },
     bookmarks: [],
     preferences: {
       font: 'noto',
@@ -220,4 +240,76 @@ export function parseBackup(text: string): Backup {
 
 export function formatTime(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+}
+
+/** Validate the narration manifest at the trust boundary; throws a Hindi message on any defect. */
+export function parseNarrationManifest(value: unknown): Recording {
+  const bad = () => new Error('श्रवण सूची मान्य नहीं है। ऑनलाइन होकर फिर कोशिश करें।');
+  if (!isRecord(value) || value['recordingId'] !== NARRATION_ID || !Array.isArray(value['parts']))
+    throw bad();
+  const parts = value['parts'];
+  if (parts.length < 1 || parts.length > 20) throw bad();
+  const seen = new Set<string>();
+  const result: NarrationPart[] = parts.map((item) => {
+    if (
+      !isRecord(item) ||
+      !isIdentifier(item['id']) ||
+      seen.has(item['id'] as string) ||
+      typeof item['url'] !== 'string' ||
+      !/^\/narration\/shastraparijna\/s[0-9]{1,2}\.mp3$/.test(item['url']) ||
+      typeof item['sha256'] !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(item['sha256']) ||
+      !Number.isSafeInteger(item['bytes']) ||
+      (item['bytes'] as number) <= 0 ||
+      typeof item['duration'] !== 'number' ||
+      !(item['duration'] > 0) ||
+      typeof item['title'] !== 'string' ||
+      typeof item['reference'] !== 'string' ||
+      !Array.isArray(item['paragraphs']) ||
+      item['paragraphs'].some((paragraph) => typeof paragraph !== 'string')
+    )
+      throw bad();
+    seen.add(item['id'] as string);
+    return {
+      id: item['id'] as string,
+      url: item['url'],
+      sha256: item['sha256'],
+      bytes: item['bytes'] as number,
+      duration: item['duration'],
+      title: item['title'],
+      reference: item['reference'],
+      paragraphs: item['paragraphs'] as string[],
+    };
+  });
+  return {
+    id: NARRATION_ID,
+    kind: 'narration',
+    title: typeof value['title'] === 'string' ? value['title'] : 'शस्त्रपरिज्ञा',
+    label: 'एआई आवाज़ · समीक्षा प्रति',
+    parts: result,
+  };
+}
+
+export type ListeningStart =
+  | { kind: 'start'; part: number; seconds: number }
+  | { kind: 'resume'; part: number; seconds: number }
+  | { kind: 'unavailable' };
+
+/**
+ * Decide where a recording opens. A position saved against another recording is never
+ * reused (no timestamp inheritance); the recording simply starts at its beginning.
+ * Same recording with a part that no longer exists is reported, never silently reset.
+ */
+export function resolveListeningStart(saved: ListeningPosition, recording: Recording): ListeningStart {
+  if (saved.recordingId !== recording.id) return { kind: 'start', part: 0, seconds: 0 };
+  if (saved.part >= recording.parts.length) return { kind: 'unavailable' };
+  return { kind: 'resume', part: saved.part, seconds: saved.seconds };
+}
+
+/** Whole-recording progress 0..1 from a part index and position. */
+export function recordingProgress(recording: Recording, part: number, seconds: number): number {
+  const total = recording.parts.reduce((sum, item) => sum + item.duration, 0);
+  if (!total) return 0;
+  const before = recording.parts.slice(0, part).reduce((sum, item) => sum + item.duration, 0);
+  return Math.min(1, (before + Math.min(seconds, recording.parts[part]?.duration ?? 0)) / total);
 }

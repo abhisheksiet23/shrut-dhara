@@ -78,7 +78,7 @@ type Study = (typeof chapters)[number];
                 <a [href]="scanUrl(chapter)">जैकोबी का अंग्रेज़ी संस्करण · पृष्ठ {{ chapter.page }}</a>
               </p>
               @if (chapter.id === 'shastraparijna') {
-                <a class="button" routerLink="/listen/shastraparijna">विस्तृत हिन्दी व्याख्या सुनें</a>
+                <a class="button" routerLink="/listen">विस्तृत हिन्दी व्याख्या सुनें</a>
               } @else {
                 <button
                   class="button secondary"
@@ -101,7 +101,7 @@ type Study = (typeof chapters)[number];
                     <p role="alert">ऑडियो नहीं खुला। इंटरनेट जाँचें या MP3 डाउनलोड करें।</p>
                   }
                   @if (!session.owned()) {
-                    <p class="small-note">यहाँ चलाने के लिए ऊपर Use this window चुनें।</p>
+                    <p class="small-note">यहाँ चलाने के लिए ऊपर “इस विंडो में अध्ययन करें” चुनें।</p>
                   }
                   <a class="text-button" [href]="audioUrl(chapter)" download>MP3 डाउनलोड करें</a>
                 }

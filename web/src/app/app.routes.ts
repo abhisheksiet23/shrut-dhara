@@ -6,7 +6,7 @@ import { UiService } from './core/ui.service';
 
 const studyGuard: CanActivateFn = () => {
   if (inject(SessionService).owned() && inject(StudyService).ready()) return true;
-  inject(UiService).notify('Study के लिए पहले Use this window चुनें।');
+  inject(UiService).notify('अध्ययन के लिए पहले “इस विंडो में अध्ययन करें” चुनें।');
   return inject(Router).createUrlTree(['/library']);
 };
 
@@ -30,11 +30,8 @@ export const routes: Routes = [
     canActivate: [studyGuard],
     loadComponent: () => import('./pages/reader').then((module) => module.Reader),
   },
-  {
-    path: 'listen/shastraparijna',
-    canActivate: [studyGuard],
-    loadComponent: () => import('./pages/narration').then((module) => module.Narration),
-  },
+  // Older shared links to the single-chapter page now open the listening journey.
+  { path: 'listen/shastraparijna', redirectTo: 'listen', pathMatch: 'full' },
   {
     path: 'listen',
     canActivate: [studyGuard],

@@ -94,7 +94,7 @@ export class SessionService {
   }
 
   assertOwner(internal = false): void {
-    if (!this.owned()) throw new Error('पहले Use this window चुनकर study session लें।');
+    if (!this.owned()) throw new Error('पहले “इस विंडो में अध्ययन करें” चुनें।');
     if (this.maintenance() && !internal)
       throw new Error('Backup या update की तैयारी चल रही है। कृपया प्रतीक्षा करें।');
   }

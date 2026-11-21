@@ -26,21 +26,21 @@ export class App {
     if (this.url() === '/acharanga') return 'आचारांग सूत्र';
     if (this.url().startsWith('/read')) return 'पठन यात्रा';
     if (this.url().startsWith('/listen')) return 'श्रवण यात्रा';
-    return this.links.find((link) => link.path === this.url())?.label ?? 'Settings';
+    return this.links.find((link) => link.path === this.url())?.label ?? 'सेटिंग';
   });
   readonly time = formatTime;
   readonly links = [
-    { path: '/', label: 'My journey', icon: 'home' },
+    { path: '/', label: 'मेरी यात्रा', icon: 'home' },
     { path: '/library', label: 'आगम संग्रह', icon: 'book' },
     { path: '/listen', label: 'श्रवण यात्रा', icon: 'headphones' },
-    { path: '/bookmarks', label: 'Bookmarks', icon: 'bookmark' },
+    { path: '/bookmarks', label: 'बुकमार्क', icon: 'bookmark' },
   ];
   readonly mobileLinks = [
-    { path: '/', label: 'Home', icon: 'home' },
-    { path: '/library', label: 'Collection', icon: 'book' },
-    { path: '/listen', label: 'Listen', icon: 'headphones' },
-    { path: '/bookmarks', label: 'Bookmarks', icon: 'bookmark' },
-    { path: '/settings', label: 'Settings', icon: 'settings' },
+    { path: '/', label: 'होम', icon: 'home' },
+    { path: '/library', label: 'संग्रह', icon: 'book' },
+    { path: '/listen', label: 'सुनें', icon: 'headphones' },
+    { path: '/bookmarks', label: 'बुकमार्क', icon: 'bookmark' },
+    { path: '/settings', label: 'सेटिंग', icon: 'settings' },
   ];
   @ViewChild('sources') private sources?: ElementRef<HTMLDialogElement>;
 

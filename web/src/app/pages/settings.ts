@@ -13,13 +13,13 @@ import { Icon } from '../shared/icon';
   imports: [Preferences, Icon],
   template: ` <div class="page-title">
       <div class="eyebrow">अपनी सुविधा से</div>
-      <h1 lang="en">Make it your space.</h1>
+      <h1>अपनी सुविधा से चलाएँ।</h1>
       <p>सरल विकल्प। आपका नियंत्रण।</p>
     </div>
     <section class="settings-panel">
-      <h2 lang="en">Reading preferences</h2>
+      <h2>पढ़ने की पसंद</h2>
       <app-preferences />
-      <h2 lang="en">Your progress, kept private</h2>
+      <h2>आपकी प्रगति, सिर्फ़ आपके पास</h2>
       <p>
         पठन, श्रवण और bookmarks इसी browser में रहते हैं। Firefox और Chrome की प्रगति अलग है; दूसरे browser में
         जाने के लिए backup export/restore करें। Site data हटाने या device खोने पर backup के बिना प्रगति वापस
@@ -30,16 +30,14 @@ import { Icon } from '../shared/icon';
           class="button"
           (click)="exportBackup()"
           [disabled]="!session.owned() || busy()"
-          lang="en"
         >
-          <app-icon name="down" />Export backup</button
+          <app-icon name="down" />बैकअप सहेजें</button
         ><button
           class="button secondary"
           (click)="fileInput.click()"
           [disabled]="!session.owned() || busy()"
-          lang="en"
         >
-          Restore backup
+          बैकअप वापस लाएँ
         </button>
       </div>
       <label class="file-label sr-only"
@@ -55,10 +53,10 @@ import { Icon } from '../shared/icon';
       @if (importError()) {
         <p class="field-error" role="alert">{{ importError() }}</p>
       }
-      <h2 lang="en">Offline storage</h2>
+      <h2>ऑफ़लाइन भंडारण</h2>
       <p>
-        {{ offline.saved().length }} / 2 calibration parts सहेजे हैं। App shell:
-        {{ offline.shellReady() ? 'cached' : 'not ready / development server' }}.
+        {{ offline.saved().length }} / {{ offline.assets().length }} audio भाग ऑफ़लाइन सहेजे हैं। App shell:
+        {{ offline.shellReady() ? 'तैयार' : 'अभी तैयार नहीं (development server)' }}.
       </p>
       <p class="small-note">{{ offline.storageStatus() }}</p>
       <div class="settings-actions">
@@ -66,19 +64,17 @@ import { Icon } from '../shared/icon';
           class="button secondary"
           (click)="persist()"
           [disabled]="!session.owned()"
-          lang="en"
         >
-          Request persistent storage</button
+          स्थायी भंडारण माँगें</button
         ><button
           class="button secondary"
           (click)="remove.showModal()"
           [disabled]="!session.owned() || busy() || !offline.saved().length"
-          lang="en"
         >
-          Remove saved audio
+          सहेजा audio हटाएँ
         </button>
       </div>
-      <h2 lang="en">Application updates</h2>
+      <h2>ऐप का नया संस्करण</h2>
       <p>
         {{
           offline.updateWaiting() ? 'नया app version तैयार है।' : 'अभी कोई waiting update नहीं मिला।'
@@ -89,23 +85,22 @@ import { Icon } from '../shared/icon';
         class="button secondary"
         (click)="prepareUpdate()"
         [disabled]="!session.owned() || busy()"
-        lang="en"
       >
-        Prepare update / safe close
+        अपडेट के लिए तैयार करें
       </button>
       <p class="small-note">
         Pause और save के बाद सभी ShrutDhara tabs/installed windows बंद करके फिर खोलें।
       </p>
-      <h2 lang="en">Content & browser status</h2>
+      <h2>सामग्री और browser की स्थिति</h2>
       <p>
-        मूल सूत्र अभी उपलब्ध नहीं हैं। श्रवण यात्रा में हिन्दी व्याख्या की समीक्षा प्रति है। Reading samples और
-        generated audio tones development fixtures हैं। Firefox और Chrome पर वास्तविक phone validation
+        मूल सूत्र अभी उपलब्ध नहीं हैं। श्रवण यात्रा में कृत्रिम आवाज़ में हिन्दी व्याख्या की समीक्षा प्रति है। Reading samples
+        development fixtures हैं। Firefox और Chrome पर वास्तविक phone validation
         बाकी है।
       </p>
     </section>
     <dialog #preview aria-labelledby="restore-title">
       <div class="dialog-heading">
-        <h2 id="restore-title" lang="en">Replace personal progress?</h2>
+        <h2 id="restore-title">निजी प्रगति बदलें?</h2>
         <button
           class="icon-button"
           aria-label="Close restore preview"
@@ -146,33 +141,32 @@ import { Icon } from '../shared/icon';
           Preview के दौरान सामान्य प्रगति save हो सकती है। Confirm पर playback paused रहेगा।
         </p>
         <div class="settings-actions">
-          <button class="button" (click)="confirmRestore()" [disabled]="busy()" lang="en">
-            {{ busy() ? 'Restoring…' : 'Replace and restore' }}</button><button
+          <button class="button" (click)="confirmRestore()" [disabled]="busy()">
+            {{ busy() ? 'वापस लाया जा रहा है…' : 'बदलें और वापस लाएँ' }}</button><button
             class="button secondary"
             (click)="cancelRestore()"
             [disabled]="busy()"
-            lang="en"
           >
-            Cancel
+            रद्द करें
           </button>
         </div>
       }
     </dialog>
     <dialog #remove aria-labelledby="remove-title">
       <div class="dialog-heading">
-        <h2 id="remove-title" lang="en">Remove saved audio?</h2>
+        <h2 id="remove-title">सहेजा audio हटाएँ?</h2>
         <button class="icon-button" aria-label="Close remove preview" (click)="remove.close()">
           <app-icon name="close" />
         </button>
       </div>
       <p>
-        Playback रुक जाएगा और दोनों calibration parts इस browser से हट जाएँगे। आपकी reading/listening
+        Playback रुक जाएगा और सहेजे हुए सभी audio भाग इस browser से हट जाएँगे। आपकी reading/listening
         positions और bookmarks सुरक्षित रहेंगे। Offline सुनने के लिए audio फिर save करना होगा।
       </p>
       <div class="settings-actions">
-        <button class="button" (click)="removeAudio()" [disabled]="busy()" lang="en">
-          Stop and remove</button
-        ><button class="button secondary" (click)="remove.close()" lang="en">Cancel</button>
+        <button class="button" (click)="removeAudio()" [disabled]="busy()">
+          रोककर हटाएँ</button
+        ><button class="button secondary" (click)="remove.close()">रद्द करें</button>
       </div>
     </dialog>`,
 })

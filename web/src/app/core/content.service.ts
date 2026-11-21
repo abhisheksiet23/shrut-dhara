@@ -1,15 +1,41 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Chapter, FIXTURE_IDS } from './models';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { CALIBRATION_ID, Chapter, FIXTURE_IDS, Recording, parseNarrationManifest } from './models';
 import { UiService } from './ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   readonly chapter = signal<Chapter | null>(null);
+  readonly narration = signal<Recording | null>(null);
+  readonly narrationError = signal('');
+  /** Developer-only tone fixture for phone/browser audio checks. Never presented as study content. */
+  readonly calibration = computed<Recording | null>(() => {
+    const audio = this.chapter()?.audio;
+    return audio
+      ? { id: CALIBRATION_ID, kind: 'calibration', title: 'Audio calibration', label: 'Generated test tones · not speech or scripture', parts: audio }
+      : null;
+  });
+  recording(id: string): Recording | null {
+    return id === CALIBRATION_ID ? this.calibration() : this.narration();
+  }
   readonly loading = signal(false);
   readonly error = signal('');
   private ui = inject(UiService);
 
+  async loadNarration(): Promise<void> {
+    this.narrationError.set('');
+    try {
+      const response = await fetch('/narration/shastraparijna/manifest.json');
+      if (!response.ok) throw new Error('श्रवण सूची उपलब्ध नहीं है। ऑनलाइन होकर फिर कोशिश करें।');
+      this.narration.set(parseNarrationManifest(await response.json()));
+    } catch (error) {
+      this.narrationError.set(
+        error instanceof Error ? error.message : 'श्रवण सूची load नहीं हुई। फिर कोशिश करें।',
+      );
+    }
+  }
+
   async load(): Promise<void> {
+    await this.loadNarration();
     this.loading.set(true);
     this.error.set('');
     try {
