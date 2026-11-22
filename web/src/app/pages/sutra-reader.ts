@@ -63,16 +63,6 @@ import { Preferences } from '../shared/preferences';
             <button class="button secondary" (click)="showMeaning()">Show Hindi meaning</button>
           }
         }
-        <div class="read-listen-bridge">
-          @if (hasAudio()) {
-            <a class="button" [routerLink]="['/listen', current.id]"
-              ><app-icon name="headphones" />Listen to this sutra</a
-            >
-          } @else {
-            <span class="small-note">Audio for this sutra is not available yet.</span>
-          }
-          <span class="small-note">Reading and listening keep their own places.</span>
-        </div>
         @if (current.prakrit) {
           <section class="sutra-prakrit" data-block="prakrit">
             <h2>Original text · Prakrit</h2>
@@ -87,22 +77,16 @@ import { Preferences } from '../shared/preferences';
           }}</a>
         </details>
       </article>
-      <nav class="sutra-navigation" aria-label="Sutra navigation">
-        <button
-          class="button secondary"
-          [disabled]="!previous() || navigating()"
-          (click)="go(previous())"
-        >
-          <app-icon name="back" />Previous sutra
-        </button>
+      <nav class="sutra-navigation swipe-hint" aria-label="Sutra navigation">
+        @if (next()) {
+          <p class="small-note" role="status">
+            {{ navigating() ? 'Loading…' : 'Swipe up for the next sutra' }}
+          </p>
+        } @else {
+          <p class="boundary-note" role="status">End of the first book.</p>
+        }
         <a class="text-button" routerLink="/study">Contents</a>
-        <button class="button" [disabled]="!next() || navigating()" (click)="go(next())">
-          Next sutra<app-icon name="arrow" />
-        </button>
       </nav>
-      @if (!next()) {
-        <p class="boundary-note" role="status">End of the first book.</p>
-      }
     } @else {
       <section class="empty">
         <h1>This saved reference is unavailable</h1>
@@ -136,6 +120,7 @@ export class SutraReader implements AfterViewInit, OnDestroy {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly navigation = inject(StudyNavigationService);
   private readonly ui = inject(UiService);
+  private readonly preferences = () => this.host.nativeElement.querySelector('dialog') as HTMLDialogElement;
   readonly selectedId = signal(FIRST_SUTRA_ID);
   readonly navigating = signal(false);
   readonly sutra = computed(() => this.content.catalog()?.find(this.selectedId()) ?? null);
@@ -143,10 +128,6 @@ export class SutraReader implements AfterViewInit, OnDestroy {
     () => this.content.catalog()?.adjacent(this.selectedId(), -1) ?? null,
   );
   readonly next = computed(() => this.content.catalog()?.adjacent(this.selectedId(), 1) ?? null);
-  readonly hasAudio = computed(
-    () =>
-      (this.content.catalog()?.audioIndex(this.content.meanings(), this.selectedId()) ?? -1) >= 0,
-  );
   readonly bookmarked = computed(() =>
     this.study.state().bookmarks.some((item) => item.sutraId === this.selectedId()),
   );
@@ -208,6 +189,43 @@ export class SutraReader implements AfterViewInit, OnDestroy {
         void this.capture().catch((error) => this.ui.error(error));
       });
     });
+  }
+
+  private touchY = 0;
+  private touchAtBottom = false;
+  private touchAtTop = false;
+  private wheelPull = 0;
+
+  private atBottom(): boolean {
+    return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+  }
+
+  @HostListener('window:touchstart', ['$event'])
+  onTouchStart(event: TouchEvent): void {
+    this.touchY = event.touches[0].clientY;
+    this.touchAtBottom = this.atBottom();
+    this.touchAtTop = window.scrollY <= 0;
+  }
+
+  @HostListener('window:touchend', ['$event'])
+  onTouchEnd(event: TouchEvent): void {
+    if (this.preferences().open) return;
+    const dy = event.changedTouches[0].clientY - this.touchY;
+    if (dy < -70 && this.touchAtBottom) void this.go(this.next());
+    else if (dy > 90 && this.touchAtTop) void this.go(this.previous());
+  }
+
+  @HostListener('window:wheel', ['$event'])
+  onWheel(event: WheelEvent): void {
+    if (event.deltaY > 0 && this.atBottom()) {
+      this.wheelPull += event.deltaY;
+      if (this.wheelPull > 250) {
+        this.wheelPull = 0;
+        void this.go(this.next());
+      }
+    } else {
+      this.wheelPull = 0;
+    }
   }
 
   @HostListener('window:scroll')

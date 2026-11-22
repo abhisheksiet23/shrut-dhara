@@ -796,3 +796,12 @@ body:has(.mini-player) main {
 .study-contents .chapter-group > details {
   margin-left: 12px;
 }
+
+.swipe-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 0 3rem;
+  text-align: center;
+}
