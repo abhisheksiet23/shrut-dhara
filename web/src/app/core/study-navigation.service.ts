@@ -8,6 +8,7 @@ import { PlaybackService } from './playback.service';
 export class StudyNavigationService {
   private readonly content = inject(ContentService);
   private readonly playback = inject(PlaybackService);
+  readonly contentsChapter = signal(1);
   readonly contentsSection = signal(1);
   readonly listeningView = signal<string | null>(null);
   readonly contentsScroll = signal(0);
@@ -15,6 +16,7 @@ export class StudyNavigationService {
   readonly catalogueOpen = new Set<string>();
 
   remember(sutra: Sutra): void {
+    this.contentsChapter.set(sutra.chapter);
     this.contentsSection.set(sutra.section);
   }
 

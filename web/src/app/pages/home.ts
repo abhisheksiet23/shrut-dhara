@@ -23,7 +23,7 @@ import { Icon } from '../shared/icon';
           ><span class="pill">Listen</span>
         </div>
         <h2 lang="hi">शस्त्रपरिज्ञा</h2>
-        <p>Hindi meaning, sutra by sutra. The first uddeshaka is a draft review sample.</p>
+        <p>Hindi meaning, sutra by sutra, in source order.</p>
         <div class="journey-position">
           <span>{{ newAudioStarted() ? 'Your listening place' : 'Begin with' }}</span
           ><b>{{ listeningLabel() }}</b>
@@ -33,7 +33,6 @@ import { Icon } from '../shared/icon';
             newAudioStarted() ? 'Resume listening' : 'Explore sutra audio'
           }}</a
         >
-        <p class="small-note">AI voice · meaning and pronunciation awaiting review.</p>
       </article>
       <article class="journey reading-card">
         <div class="card-top">
@@ -41,7 +40,7 @@ import { Icon } from '../shared/icon';
         </div>
         <h2>One meaning at a time</h2>
         <p>
-          Keep the sutra reference in view. Read the Hindi draft and open the same unit in Listen.
+          Keep the sutra reference in view. Read the Hindi meaning and the original Prakrit where it is given.
         </p>
         <div class="journey-position">
           <span>{{ savedSutra() ? 'Your reading place' : 'Begin with' }}</span
@@ -54,16 +53,15 @@ import { Icon } from '../shared/icon';
     </section>
     <section class="collection-preview">
       <div>
-        <span class="eyebrow">Ācārāṅga Sūtra · Book 1 · Study 1</span>
+        <span class="eyebrow">Ācārāṅga Sūtra · Book 1</span>
         <h2>See the whole path.</h2>
         <p>
-          Seven uddeshakas, in source order. See which meanings and recordings are ready before
-          choosing.
+          Eight chapters of the first book, each uddeshaka in source order. Choose where to begin.
         </p>
         <a class="button secondary" routerLink="/study"
           >Open study contents<app-icon name="arrow"
         /></a>
-        <a class="text-button" routerLink="/acharanga">Browse all study introductions</a>
+        <a class="text-button" routerLink="/acharanga">Browse all chapter introductions</a>
       </div>
       <div class="book-spine">
         <span lang="hi">आचारांग सूत्र</span><small>Hindi meaning · source by source</small
@@ -89,8 +87,8 @@ import { Icon } from '../shared/icon';
     <div class="content-note">
       <app-icon name="info" />
       <p>
-        Reading and listening are saved independently in this browser. Hindi meanings are drafts
-        through a historical English source; original Prakrit and qualified review are pending.
+        Reading and listening are saved independently in this browser. Hindi meanings follow
+        Jacobi’s 1884 English translation, numbered unit by unit.
       </p>
     </div>
   `,

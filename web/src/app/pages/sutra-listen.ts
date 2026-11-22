@@ -17,18 +17,13 @@ import { Icon } from '../shared/icon';
   template: `
     <app-study-context [sutra]="sutra()" />
     <div class="study-toolbar">
-      <a class="text-button" routerLink="/study">Contents</a
-      ><span class="pill amber">AI voice · review sample</span>
+      <a class="text-button" routerLink="/study">Contents</a>
     </div>
     @if (sutra(); as current) {
       <div class="sutra-listening-layout">
         <section class="sutra-player">
           <span class="eyebrow">Hindi meaning</span>
           <h1>Sutra {{ current.reference }}</h1>
-          <p class="small-note">
-            First uddeshaka · Hindi draft through Jacobi’s English translation. Meaning and
-            pronunciation await qualified review.
-          </p>
 
           @if (audioAvailable()) {
             <div class="meaning-player-controls">
@@ -89,8 +84,8 @@ import { Icon } from '../shared/icon';
             </div>
           } @else {
             <div class="meaning-unavailable">
-              <h2>Audio is not ready for this sutra</h2>
-              <p>No nearby recording has been substituted.</p>
+              <h2>Audio for this sutra is being prepared</h2>
+              <p>You can read it now. No nearby recording has been substituted.</p>
             </div>
             @if (content.meaningAudioError()) {
               <p role="alert">{{ content.meaningAudioError() }}</p>
@@ -122,7 +117,7 @@ import { Icon } from '../shared/icon';
         </section>
 
         <section class="listening-meaning">
-          <h2>Hindi meaning <small>Draft</small></h2>
+          <h2>Hindi meaning</h2>
           @if (current.meaning) {
             <p lang="hi">{{ current.meaning }}</p>
           } @else {
@@ -131,11 +126,11 @@ import { Icon } from '../shared/icon';
               order.
             </p>
           }
-          <a class="text-button" routerLink="/study" fragment="study-source">Source and review</a>
+          <a class="text-button" routerLink="/study" fragment="study-source">Source</a>
         </section>
       </div>
 
-      <section class="offline-study">
+      <section class="offline-study" [hidden]="!content.meanings()">
         <div>
           <h2>Keep this sample offline</h2>
           <p>

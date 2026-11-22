@@ -29,12 +29,12 @@ import { Art } from '../shared/art';
           <app-art /><span lang="hi">आचारांग<br /><small>सूत्र</small></span>
         </div>
         <div class="scripture-details">
-          <span class="pill amber">Draft study material</span>
+          <span class="pill">Book 1 · all chapters</span>
           <h2 lang="hi">आचारांग सूत्र</h2>
           <p>Ācārāṅga Sūtra</p>
           <p>
-            Begin with Shastra-parijnā. The other studies currently have short introductions, not
-            full sutra meanings.
+            The whole first book, sutra by sutra, with Hindi meaning. Book 2 has short
+            introductions for now.
           </p>
           <a class="text-button" routerLink="/acharanga"
             >Browse the two books and 24 introductions<app-icon name="arrow"
@@ -45,10 +45,9 @@ import { Art } from '../shared/art';
         <span class="chapter-index">1</span>
         <div>
           <h2 lang="hi">शस्त्रपरिज्ञा</h2>
-          <p>Book 1 · Study 1 · seven uddeshakas</p>
+          <p>Book 1 · Chapter 1 · seven uddeshakas</p>
           <p>
-            {{ meaningCount() }} Hindi meaning drafts ·
-            {{ content.meanings()?.parts?.length ?? 0 }} audio samples · original Prakrit pending
+            {{ meaningCount() }} sutras with Hindi meaning in Book 1
           </p>
         </div>
         <a class="button" routerLink="/study">Choose a sutra<app-icon name="arrow" /></a>

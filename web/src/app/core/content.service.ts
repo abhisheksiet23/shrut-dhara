@@ -8,7 +8,7 @@ import {
   parseNarrationManifest,
 } from './models';
 import { UiService } from './ui.service';
-import { MEANING_RECORDING_ID, StudyCatalog, parseMeaningRecording } from './study-catalog';
+import { MEANING_RECORDING_ID, StudyCatalog } from './study-catalog';
 
 @Injectable({ providedIn: 'root' })
 export class ContentService {
@@ -45,22 +45,15 @@ export class ContentService {
     this.catalogError.set('');
     this.meaningAudioError.set('');
     try {
-      const response = await fetch('/content/shastraparijna-v2/study.json');
+      const response = await fetch('/content/acharanga-book1/book.json');
       if (!response.ok) throw new Error('The study contents are unavailable. Please try again.');
-      const catalog = StudyCatalog.parse(await response.json());
-      this.catalog.set(catalog);
-
-      const audio = await fetch('/narration/meaning-v1/manifest.json');
-      if (!audio.ok)
-        throw new Error(
-          'The sutra audio sample is not available yet. Your saved listening place is unchanged.',
-        );
-      this.meanings.set(parseMeaningRecording(await audio.json(), catalog));
+      this.catalog.set(StudyCatalog.parse(await response.json()));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Could not load the study.';
-      if (this.catalog()) this.meaningAudioError.set(message);
-      else this.catalogError.set(message);
+      this.catalogError.set(error instanceof Error ? error.message : 'Could not load the study.');
     }
+    // The earlier audio sample belonged to an older text revision and is retired until the
+    // meanings are recorded again. Its files stay in the repository as superseded evidence.
+    this.meanings.set(null);
   }
 
   async loadNarration(): Promise<void> {

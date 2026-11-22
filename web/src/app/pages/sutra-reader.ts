@@ -50,9 +50,7 @@ import { Preferences } from '../shared/preferences';
         </div>
       </div>
       <article class="sutra-paper" [style.--reading-size]="study.state().preferences.size + 'px'">
-        <div class="eyebrow">
-          Hindi meaning · {{ current.meaning ? 'Draft for review' : 'Not available yet' }}
-        </div>
+        <div class="eyebrow">Hindi meaning</div>
         <h1>Sutra {{ current.reference }}</h1>
         @if (current.meaning) {
           @if (study.state().preferences.meaning) {
@@ -64,14 +62,6 @@ import { Preferences } from '../shared/preferences';
             <p>Hindi meaning is hidden in your reading preferences.</p>
             <button class="button secondary" (click)="showMeaning()">Show Hindi meaning</button>
           }
-        } @else {
-          <section class="meaning-unavailable" data-block="meaning">
-            <h2>This meaning is still being prepared</h2>
-            <p>
-              This reference is kept in source order. No summary or different sutra has been
-              substituted.
-            </p>
-          </section>
         }
         <div class="read-listen-bridge">
           @if (hasAudio()) {
@@ -83,16 +73,18 @@ import { Preferences } from '../shared/preferences';
           }
           <span class="small-note">Reading and listening keep their own places.</span>
         </div>
+        @if (current.prakrit) {
+          <section class="sutra-prakrit" data-block="prakrit">
+            <h2>Original text · Prakrit</h2>
+            <p lang="hi">{{ current.prakrit }}</p>
+          </section>
+        }
         <details class="source-disclosure" data-block="source">
-          <summary>Source, original text and review</summary>
+          <summary>Source</summary>
           <p>{{ content.catalog()?.document?.source?.note }}</p>
-          <p>The original Prakrit is not included yet.</p>
-          @if (current.reviewNote) {
-            <p>{{ current.reviewNote }}</p>
-          }
-          <a [href]="content.catalog()?.document?.source?.url"
-            >Read the historical English source</a
-          >
+          <a [href]="content.catalog()?.document?.source?.url">{{
+            content.catalog()?.document?.source?.label
+          }}</a>
         </details>
       </article>
       <nav class="sutra-navigation" aria-label="Sutra navigation">
@@ -109,9 +101,7 @@ import { Preferences } from '../shared/preferences';
         </button>
       </nav>
       @if (!next()) {
-        <p class="boundary-note" role="status">
-          End of this study. No other chapter opens automatically.
-        </p>
+        <p class="boundary-note" role="status">End of the first book.</p>
       }
     } @else {
       <section class="empty">

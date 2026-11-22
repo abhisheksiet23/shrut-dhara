@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { ContentService } from '../core/content.service';
 import { StudyService } from '../core/study.service';
 import { StudyNavigationService } from '../core/study-navigation.service';
+import { Sutra } from '../core/study-catalog';
 import { StudyContext } from '../shared/study-context';
 
 @Component({
@@ -10,73 +11,83 @@ import { StudyContext } from '../shared/study-context';
   template: `
     <app-study-context />
     <header class="study-heading">
-      <span class="eyebrow">Book 1 · Study 1</span>
-      <h1 lang="hi">शस्त्रपरिज्ञा</h1>
-      <p>Hindi meaning, one sutra at a time.</p>
+      <span class="eyebrow">Book 1</span>
+      <h1 lang="hi">आचारांग सूत्र</h1>
+      <p>First book, in Hindi, one sutra at a time.</p>
       <p class="small-note">
-        References follow Jacobi’s numbered units. Hindi drafts for the first uddeshaka are ready to
-        review; the original Prakrit and scholarly review are still pending.
+        Each sutra has its Hindi meaning and, where available, the original Prakrit. References
+        follow Jacobi’s numbered units.
       </p>
     </header>
 
     @if (content.catalog(); as catalog) {
       <div class="study-readiness">
-        <span>{{ readyMeanings() }} of {{ catalog.sutras.length }} Hindi drafts</span>
-        <span>{{ content.meanings()?.parts?.length ?? 0 }} audio samples</span>
-        <a href="#study-source">Source and review</a>
+        <span>{{ chapterCount() }} chapters</span>
+        <span>{{ catalog.sutras.length }} sutras</span>
+        <a href="#study-source">Source</a>
       </div>
       <div class="study-contents">
-        @for (section of catalog.sections; track section.number) {
+        @for (chapter of catalog.chapters; track chapter.number) {
           <details
-            [open]="navigation.contentsSection() === section.number"
-            (toggle)="rememberSection(section.number, $event)"
+            class="chapter-group"
+            [open]="navigation.contentsChapter() === chapter.number"
+            (toggle)="rememberChapter(chapter.number, $event)"
           >
             <summary>
               <span
-                >Uddeshaka {{ section.number }} · <span lang="hi">{{ section.title }}</span></span
+                >Chapter {{ chapter.number }} · <span lang="hi">{{ chapter.title }}</span></span
               >
-              <small>{{ section.sutras.length }} sutras</small>
+              <small>{{
+                chapter.sections.length ? chapter.sections.length + ' uddeshakas' : 'Lost'
+              }}</small>
             </summary>
-            @for (sutra of section.sutras; track sutra.id) {
-              <article
-                class="sutra-row"
-                [class.saved-place]="study.state().reading.sutraId === sutra.id"
+            @if (chapter.note) {
+              <p class="small-note">{{ chapter.note }}</p>
+            }
+            @for (section of chapter.sections; track section.number) {
+              <details
+                [open]="
+                  navigation.contentsChapter() === chapter.number &&
+                  navigation.contentsSection() === section.number
+                "
+                (toggle)="rememberSection(chapter.number, section.number, $event)"
               >
-                <div>
-                  <strong>Sutra {{ sutra.reference }}</strong>
-                  <p>
-                    {{ sutra.meaning ? 'Hindi meaning · draft' : 'Hindi meaning pending' }}
-                    @if (hasAudio(sutra.id)) {
-                      <span> · AI audio sample</span>
-                    }
-                  </p>
-                  @if (study.state().reading.sutraId === sutra.id) {
-                    <small>Your reading place</small>
-                  }
-                </div>
-                <div class="sutra-actions">
-                  <a class="button secondary" [routerLink]="['/read', sutra.id]">{{
-                    sutra.meaning ? 'Read' : 'View reference'
-                  }}</a>
-                  @if (hasAudio(sutra.id)) {
-                    <a class="button" [routerLink]="['/listen', sutra.id]">Listen</a>
-                  }
-                </div>
-              </article>
+                <summary>
+                  <span
+                    >Uddeshaka {{ section.number }} ·
+                    <span lang="hi">{{ section.title }}</span></span
+                  >
+                  <small>{{ section.sutras.length }} sutras</small>
+                </summary>
+                @for (sutra of section.sutras; track sutra.id) {
+                  <article
+                    class="sutra-row"
+                    [class.saved-place]="study.state().reading.sutraId === sutra.id"
+                  >
+                    <div>
+                      <strong>Sutra {{ sutra.reference }}</strong>
+                      <p lang="hi">{{ excerpt(sutra) }}</p>
+                      @if (study.state().reading.sutraId === sutra.id) {
+                        <small>Your reading place</small>
+                      }
+                    </div>
+                    <div class="sutra-actions">
+                      <a class="button secondary" [routerLink]="['/read', sutra.id]">Read</a>
+                      @if (hasAudio(sutra.id)) {
+                        <a class="button" [routerLink]="['/listen', sutra.id]">Listen</a>
+                      }
+                    </div>
+                  </article>
+                }
+              </details>
             }
           </details>
         }
       </div>
       <section class="study-source" id="study-source">
-        <h2>Source and review</h2>
+        <h2>Source</h2>
         <p>{{ catalog.document.source.note }}</p>
         <a [href]="catalog.document.source.url">{{ catalog.document.source.label }}</a>
-        <a href="/narration/meaning-v1/credits.txt">Audio credits and noncommercial terms</a>
-        <a href="/narration/meaning-v1/transcript.txt">Exact spoken sample transcript</a>
-        <p>
-          The earlier chapter commentary is separate from these meanings. Its saved position is
-          retained.
-        </p>
         <a class="text-button" routerLink="/listen/commentary">Open earlier commentary</a>
       </section>
     } @else {
@@ -93,16 +104,27 @@ export class Study implements AfterViewInit, OnDestroy {
   readonly study = inject(StudyService);
   readonly navigation = inject(StudyNavigationService);
 
-  readyMeanings(): number {
-    return this.content.catalog()?.sutras.filter((sutra) => sutra.meaning).length ?? 0;
+  chapterCount(): number {
+    return this.content.catalog()?.chapters.filter((chapter) => chapter.sections.length).length ?? 0;
+  }
+
+  excerpt(sutra: Sutra): string {
+    const text = sutra.meaning ?? '';
+    return text.length > 90 ? text.slice(0, 90).trimEnd() + '…' : text;
   }
 
   hasAudio(id: string): boolean {
     return (this.content.catalog()?.audioIndex(this.content.meanings(), id) ?? -1) >= 0;
   }
 
-  rememberSection(section: number, event: Event): void {
-    if ((event.target as HTMLDetailsElement).open) this.navigation.contentsSection.set(section);
+  rememberChapter(chapter: number, event: Event): void {
+    if ((event.target as HTMLDetailsElement).open) this.navigation.contentsChapter.set(chapter);
+  }
+
+  rememberSection(chapter: number, section: number, event: Event): void {
+    if (!(event.target as HTMLDetailsElement).open) return;
+    this.navigation.contentsChapter.set(chapter);
+    this.navigation.contentsSection.set(section);
   }
 
   ngAfterViewInit(): void {

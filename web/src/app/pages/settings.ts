@@ -87,9 +87,8 @@ import { Icon } from '../shared/icon';
       }
       <h2>About this content</h2>
       <p>
-        The first uddeshaka has draft Hindi meanings with per-sutra AI audio samples. Original
-        Prakrit, meaning and pronunciation review are pending. Real-phone Firefox and Chrome checks
-        remain open.
+        Book 1 of the Ācārāṅga Sūtra is available to read in Hindi, sutra by sutra. Audio for the
+        meanings is being prepared.
       </p>
     </section>
     <dialog #preview aria-labelledby="restore-title">

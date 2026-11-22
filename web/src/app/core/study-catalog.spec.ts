@@ -1,56 +1,52 @@
 import { readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import {
-  FIRST_SUTRA_ID,
-  MEANING_RECORDING_ID,
-  StudyCatalog,
-  parseMeaningRecording,
-} from './study-catalog';
+import { FIRST_SUTRA_ID, MEANING_RECORDING_ID, StudyCatalog } from './study-catalog';
 import { initialPersonalState, validatePersonalState } from './models';
 
 const document = () =>
-  JSON.parse(readFileSync('public/content/shastraparijna-v2/study.json', 'utf8'));
-const manifest = () =>
-  JSON.parse(readFileSync('public/narration/meaning-v1/manifest.json', 'utf8'));
+  JSON.parse(readFileSync('public/content/acharanga-book1/book.json', 'utf8'));
 
 describe('source-aligned study', () => {
-  it('keeps all 48 source references, including pending meanings, in order across boundaries', () => {
+  it('keeps every unit in source order across uddeshaka and chapter boundaries', () => {
     const catalog = StudyCatalog.parse(document());
-    expect(catalog.sutras).toHaveLength(48);
-    expect(catalog.sutras.filter((sutra) => sutra.meaning)).toHaveLength(7);
     expect(catalog.find(FIRST_SUTRA_ID)?.reference).toBe('1.1.1');
     expect(catalog.adjacent(FIRST_SUTRA_ID, -1)).toBeNull();
     const last = catalog.sections[0].sutras.at(-1)!;
+    expect(last.reference).toBe('1.1.7');
     expect(catalog.adjacent(last.id, 1)?.reference).toBe('1.2.1');
-    expect(catalog.adjacent(last.id, 1)?.meaning).toBeNull();
     expect(catalog.adjacent('unknown', 1)).toBeNull();
     expect(catalog.adjacent(catalog.sutras.at(-1)!.id, 1)).toBeNull();
+    const ids = new Set(catalog.sutras.map((sutra) => sutra.id));
+    expect(ids.size).toBe(catalog.sutras.length);
+    expect(catalog.sutras.every((sutra) => sutra.meaning)).toBe(true);
   });
 
-  it('rejects duplicated meanings and changed edition boundaries', () => {
-    const duplicate = document();
-    duplicate.meanings.push(duplicate.meanings[0]);
-    expect(() => StudyCatalog.parse(duplicate)).toThrow();
-    const invalid = document();
-    invalid.sections[1].count = 7;
-    expect(() => StudyCatalog.parse(invalid)).toThrow();
+  it('carries chapter 1 with its seven uddeshakas of 7, 6, 8, 7, 7, 6 and 7 units', () => {
+    const chapter = StudyCatalog.parse(document()).chapters[0];
+    expect(chapter.number).toBe(1);
+    expect(chapter.sections.map((section) => section.sutras.length)).toEqual([7, 6, 8, 7, 7, 6, 7]);
   });
 
-  it('maps each audio asset to its exact source unit and rejects silent gaps', () => {
+  it('never shows editorial status and reads Prakrit only where it was matched', () => {
     const catalog = StudyCatalog.parse(document());
-    const recording = parseMeaningRecording(manifest(), catalog);
-    expect(recording.id).toBe(MEANING_RECORDING_ID);
-    expect(catalog.audioIndex(recording, FIRST_SUTRA_ID)).toBe(0);
-    expect(catalog.audioIndex(recording, catalog.sections[1].sutras[0].id)).toBe(-1);
-    const skipped = manifest();
-    skipped.parts.splice(2, 1);
-    expect(() => parseMeaningRecording(skipped, catalog)).toThrow();
-    for (const part of recording.parts) {
-      const bytes = readFileSync('public' + part.url);
-      expect(bytes.length).toBe(part.bytes);
-      expect(createHash('sha256').update(bytes).digest('hex')).toBe(part.sha256);
-    }
+    expect(JSON.stringify(catalog.sutras)).not.toMatch(/draft|status/i);
+    expect(catalog.find(FIRST_SUTRA_ID)?.prakrit).toContain('सुयं मे आउसं');
+  });
+
+  it('rejects broken numbering, empty meanings and foreign documents', () => {
+    const gap = document();
+    gap.chapters[0].sections[0].units[2].n = 9;
+    expect(() => StudyCatalog.parse(gap)).toThrow();
+    const empty = document();
+    empty.chapters[0].sections[0].units[0].meaning = ' ';
+    expect(() => StudyCatalog.parse(empty)).toThrow();
+    const foreign = document();
+    foreign.id = 'other';
+    expect(() => StudyCatalog.parse(foreign)).toThrow();
+    const unordered = document();
+    if (unordered.chapters.length > 1) unordered.chapters[1].number = 1;
+    else unordered.chapters.push({ number: 1, title: 'x', sections: [] });
+    expect(() => StudyCatalog.parse(unordered)).toThrow();
   });
 
   it('round-trips retained recording positions and accepts old backups without history', () => {

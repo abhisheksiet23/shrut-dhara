@@ -10,12 +10,16 @@ import { Sutra } from '../core/study-catalog';
       <a routerLink="/library">Library</a><span aria-hidden="true">/</span>
       <a routerLink="/acharanga"><span lang="hi">आचारांग</span></a
       ><span aria-hidden="true">/</span>
-      <a routerLink="/study"><span lang="hi">शस्त्रपरिज्ञा</span></a>
+      <a routerLink="/study">Contents</a>
+      @if (sutra(); as current) {
+        <span aria-hidden="true">/</span><span lang="hi">{{ current.chapterTitle }}</span>
+      }
     </nav>
     @if (sutra(); as current) {
       <div class="sutra-location">
         <span
-          >Uddeshaka {{ current.section }} · <span lang="hi">{{ current.sectionTitle }}</span></span
+          >Chapter {{ current.chapter }} · Uddeshaka {{ current.section }} ·
+          <span lang="hi">{{ current.sectionTitle }}</span></span
         >
         <strong>Sutra {{ current.reference }}</strong>
       </div>

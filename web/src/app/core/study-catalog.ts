@@ -1,22 +1,43 @@
 import { AudioAsset, Recording } from './models';
 
 export const MEANING_RECORDING_ID = 'shastraparijna:hindi-meaning:sample-v1';
+export const BOOK_ID = 'acharanga:1:jacobi1884';
 export const FIRST_SUTRA_ID = 'acharanga:1:1:jacobi1884:1:1';
 
 export interface Sutra {
   readonly id: string;
   readonly reference: string;
+  readonly chapter: number;
+  readonly chapterTitle: string;
   readonly section: number;
   readonly number: number;
   readonly sectionTitle: string;
   readonly meaning: string | null;
-  readonly reviewNote: string | null;
+  /** Original Prakrit in Devanagari, when it has been matched to this unit. */
+  readonly prakrit: string | null;
 }
 
 export interface StudySection {
+  readonly chapter: number;
   readonly number: number;
   readonly title: string;
   readonly sutras: readonly Sutra[];
+}
+
+export interface StudyChapter {
+  readonly number: number;
+  readonly title: string;
+  /** A chapter that has not survived has no units. */
+  readonly note: string | null;
+  readonly sections: readonly StudySection[];
+}
+
+interface UnitRecord {
+  n: number;
+  meaning: string;
+  prakrit?: string;
+  /** Internal editorial state. Never shown to readers. */
+  status?: string;
 }
 
 interface StudyDocument {
@@ -24,82 +45,100 @@ interface StudyDocument {
   revision: string;
   title: string;
   source: { label: string; url: string; note: string };
-  sections: Array<{ number: number; title: string; count: number }>;
-  meanings: Array<{ reference: string; text: string; reviewNote?: string }>;
+  chapters: Array<{
+    number: number;
+    title: string;
+    note?: string;
+    sections: Array<{ number: number; title: string; units: UnitRecord[] }>;
+  }>;
 }
+
+const SOURCE_PREFIX = 'https://en.wikisource.org/';
 
 /** Source order and identity belong here, never in a page's list index or URL parser. */
 export class StudyCatalog {
+  readonly chapters: readonly StudyChapter[];
   readonly sections: readonly StudySection[];
   readonly sutras: readonly Sutra[];
   private readonly byId: ReadonlyMap<string, Sutra>;
 
   private constructor(readonly document: StudyDocument) {
-    const meanings = new Map(document.meanings.map((item) => [item.reference, item]));
-
-    this.sections = document.sections.map((section) => ({
-      number: section.number,
-      title: section.title,
-      sutras: Array.from({ length: section.count }, (_, index) => {
-        const number = index + 1;
-        const reference = `1.${section.number}.${number}`;
-        const meaning = meanings.get(reference);
-
-        return {
-          id: `${document.id}:${section.number}:${number}`,
-          reference,
+    this.chapters = document.chapters.map((chapter) => ({
+      number: chapter.number,
+      title: chapter.title,
+      note: chapter.note ?? null,
+      sections: chapter.sections.map((section) => ({
+        chapter: chapter.number,
+        number: section.number,
+        title: section.title,
+        sutras: section.units.map((unit) => ({
+          id: `acharanga:1:${chapter.number}:jacobi1884:${section.number}:${unit.n}`,
+          reference: `${chapter.number}.${section.number}.${unit.n}`,
+          chapter: chapter.number,
+          chapterTitle: chapter.title,
           section: section.number,
-          number,
+          number: unit.n,
           sectionTitle: section.title,
-          meaning: meaning?.text ?? null,
-          reviewNote: meaning?.reviewNote ?? null,
-        };
-      }),
+          meaning: unit.meaning,
+          prakrit: unit.prakrit ?? null,
+        })),
+      })),
     }));
-
+    this.sections = this.chapters.flatMap((chapter) => chapter.sections);
     this.sutras = this.sections.flatMap((section) => section.sutras);
     this.byId = new Map(this.sutras.map((sutra) => [sutra.id, sutra]));
   }
 
   static parse(value: unknown): StudyCatalog {
     const data = value as StudyDocument;
-    const counts = [7, 6, 8, 7, 7, 6, 7];
+    const fail = (): never => {
+      throw new Error('The study contents could not be read. Please try again.');
+    };
     if (
       !data ||
-      data.id !== 'acharanga:1:1:jacobi1884' ||
-      data.revision !== 'hindi-meaning-draft-v1' ||
+      data.id !== BOOK_ID ||
+      typeof data.revision !== 'string' ||
+      !data.revision ||
       typeof data.title !== 'string' ||
       typeof data.source?.label !== 'string' ||
       typeof data.source?.note !== 'string' ||
       typeof data.source?.url !== 'string' ||
-      !data.source.url.startsWith('https://en.wikisource.org/') ||
-      !Array.isArray(data.sections) ||
-      data.sections.length !== counts.length ||
-      data.sections.some(
-        (section, index) =>
-          section.number !== index + 1 ||
-          section.count !== counts[index] ||
-          typeof section.title !== 'string',
-      ) ||
-      !Array.isArray(data.meanings)
-    ) {
-      throw new Error('The study contents could not be read. Please try again.');
-    }
+      !data.source.url.startsWith(SOURCE_PREFIX) ||
+      !Array.isArray(data.chapters) ||
+      !data.chapters.length
+    )
+      return fail();
 
-    const references = new Set<string>();
-    for (const meaning of data.meanings) {
-      const match = /^1\.([1-7])\.([1-8])$/.exec(meaning.reference);
+    let previousChapter = 0;
+    for (const chapter of data.chapters) {
       if (
-        !match ||
-        Number(match[2]) > counts[Number(match[1]) - 1] ||
-        references.has(meaning.reference) ||
-        typeof meaning.text !== 'string' ||
-        !meaning.text.trim() ||
-        (meaning.reviewNote !== undefined && typeof meaning.reviewNote !== 'string')
-      ) {
-        throw new Error('A sutra meaning has an invalid or repeated reference.');
-      }
-      references.add(meaning.reference);
+        !Number.isInteger(chapter.number) ||
+        chapter.number <= previousChapter ||
+        typeof chapter.title !== 'string' ||
+        !chapter.title ||
+        !Array.isArray(chapter.sections) ||
+        (chapter.note !== undefined && typeof chapter.note !== 'string')
+      )
+        return fail();
+      previousChapter = chapter.number;
+      chapter.sections.forEach((section, sectionIndex) => {
+        if (
+          section.number !== sectionIndex + 1 ||
+          typeof section.title !== 'string' ||
+          !Array.isArray(section.units) ||
+          !section.units.length
+        )
+          fail();
+        section.units.forEach((unit, unitIndex) => {
+          if (
+            unit.n !== unitIndex + 1 ||
+            typeof unit.meaning !== 'string' ||
+            !unit.meaning.trim() ||
+            (unit.prakrit !== undefined && (typeof unit.prakrit !== 'string' || !unit.prakrit.trim()))
+          )
+            throw new Error('A sutra meaning has an invalid or repeated reference.');
+        });
+      });
     }
 
     return new StudyCatalog(data);
