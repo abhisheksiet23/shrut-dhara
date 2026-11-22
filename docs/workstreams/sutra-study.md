@@ -1,15 +1,15 @@
 # Workstream: sutra-by-sutra study (Śastraparijñā)
 
-As of 22 Nov 2026, evening. Update when the candidate, decisions or blockers change.
+As of 22 Nov 2026, night. Update when the candidate, decisions or blockers change.
 
 | Item | Current fact |
 | --- | --- |
 | Objective / boundary | Read and Listen share sutra identity; audio gives Hindi meaning per sutra. First chapter only; all seven uddeshakas catalogued. |
-| Candidate | `f71ccb2` plus uncommitted working tree; build `main-TTCKKONS.js`. Not committed, not deployed. |
-| Accepted decisions | SJ-D1 (owner, 22 Nov): sutra-by-sutra Hindi meaning replaces storification. English chrome, Hindi content. Source: Jacobi 1884, 48 units. Links: [change plan](../sutra-journey-change-plan.md), [design](../sutra-journey-design.md) |
-| Provisional (recommendations, not decided) | SJ-G2 Prakrit recitation; SJ-G3 keep audio on Read-this-sutra; SJ-G6 continuous vs pause per sutra |
-| Proof (this candidate) | 20 web + 5 prototype tests; 12 Chrome headless journeys at 390 and 1440 px. See [checks](../implementation-checks.md) |
-| Not proved | Real Android (Firefox, Chrome), screen-off, lock screen, calls, offline reopen on phone, old-install update recovery, screen reader, dark theme, listening by ear |
-| Content | Uddeshaka 1: 7 AI-voice drafts, English-intermediary, unreviewed. Other 41 units pending. No Prakrit, no qualified reviewer, no rights evidence yet |
-| Next | 1) owner commits tree. 2) owner listens to sample on phone. 3) settle edition, reviewer, SJ-G2/3/6. 4) real-phone test. 5) then remaining 41 units. |
-| Context gaps found | No agent map before this file; superseded narration docs lack banners; per-sutra editorial status exists only in prose |
+| Candidate | `042bf75` plus uncommitted docs from the content-sourcing session; build `main-TTCKKONS.js`. Not deployed. |
+| Accepted decisions | SJ-D1 (22 Nov): sutra-by-sutra Hindi meaning replaces storification; English chrome, Hindi content. Owner (22 Nov): public-domain sources only, no contact with Padma Prakashan; owner is not a Prakrit reviewer. Links: [change plan](../sutra-journey-change-plan.md), [design](../sutra-journey-design.md), [source ledger](../sources/README.md) |
+| Provisional | SJ-G2 Prakrit recitation; SJ-G3 audio on Read-this-sutra; SJ-G6 continuous vs pause; Agamodaya 1916 as primary source (rights likely PD, unconfirmed) |
+| Proof | App: 20 web + 5 prototype tests, 12 headless Chrome journeys ([checks](../implementation-checks.md)). Content: 1916 Prakrit and commentary extracted by OCR, concordance to app units built, not proofread against scans |
+| Content findings | Revision 1 (live, with audio) has two errors: 1.1.2 "बहुत से" should be "कुछ"; 1.1.4 "जानना चाहिए" should be "जान लेता है". Unit numbering differs by edition. Revision 2 drafts: [docs/content](../content/acharanga-1-1.draft-r2.md), status draft, not wired in |
+| Not proved | Real Android, screen-off, offline, screen reader, dark theme; Prakrit proofreading; any qualified review; rights confirmation |
+| Next | 1) owner commits docs. 2) proofread OCR doubts against scan pages. 3) compare each unit with Śīlāṅka, Jacobi, 1999 (check only). 4) owner decides: replace revision 1 text and re-record (new recording ID, old audio kept superseded). 5) scholar reviews flagged differences. 6) then remaining 41 units. |
+| Context gaps | Codex loading of AGENTS.md unverified (start in this folder); per-sutra status not yet a field in study.json |

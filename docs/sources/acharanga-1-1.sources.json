@@ -1,0 +1,202 @@
+{
+  "id": "acharanga:1:1:agamodaya1916",
+  "title": "आचारांग प्रथम श्रुतस्कन्ध, शस्त्रपरिज्ञा, प्रथम उद्देशक: स्रोत-पाठ",
+  "status": "working extraction from scanned-text (OCR); not proofread against the scan; not reviewed by a qualified person",
+  "edition": {
+    "name": "Agamodaya Samiti 1916, Śīlāṅka's Ācārāṅga-vṛtti with the mūla text",
+    "catalogue": "Jain eLibrary SR 600216",
+    "url": "https://jainqq.org/explore/600216/1",
+    "rights": "likely out of copyright in India (ninth-century commentary, 1916 print); not legally confirmed; the host site's notice covers the site"
+  },
+  "numbering_note": "Agamodaya numbers this lesson as sutras 1 to 13. The app's units 1.1.1 to 1.1.7 follow Jacobi's 1884 English numbering. Jacobi's 1882 Prakrit divides the lesson into sections 1 to 7. The concordance is in the app field below and in docs/sources/README.md.",
+  "agamodaya_sutras": [
+    {
+      "id": "ag-1",
+      "page": 28,
+      "prakrit_ocr": "सुयं मे आउसं ! तेणं भगवया एवमक्खायं - इहमेगेसिं णो सण्णा भवइ",
+      "ocr_notes": "Page heading reads आउ !; the commentary on the same page prints आउसं!",
+      "sanskrit": "श्रुतं मया आयुष्मन् ! तेन भगवता एवमाख्यातम्-इह एकेषां नो संज्ञा भवति",
+      "gloss": "Commentary: Sudharma tells Jambu; एकेषां = some beings (ज्ञानावरणीयावृतानां प्राणिनाम्)",
+      "jacobi1882": "§1",
+      "app": [
+        "1.1.1",
+        "1.1.2"
+      ],
+      "scan": "https://jainqq.org/explore/600216/28"
+    },
+    {
+      "id": "ag-2",
+      "page": 31,
+      "prakrit_ocr": "तंजहा-पुरथिमाओ वा दिसाओ आगओ अहमंसि, दाहिणाओ वा दिसाओ आगओ अहमंसि, पञ्चत्थिमाओ वा दिसाओ आगओ अहमंसि, उत्तराओ वा दिसाओ आगओ अहमंसि, उड्डाओ वा दिसाओ आगओ अहमंसि, अहोदिसाओ वा आगओ अहमंसि, अण्णयरीओ वा दिसाओ अणुदिसाओ वा आगओ अहमंसि, एवमेगेसिं णो णायं भवति",
+      "ocr_notes": "OCR पुरथिमाओ: the commentary quotes पुरत्थिमा; likely पुरत्थिमाओ. OCR पञ्चत्थिमाओ and उड्डाओ: check against scan (पच्चत्थिमाओ, उड्ढाओ likely).",
+      "sanskrit": null,
+      "gloss": "Commentary: अणुदिशा = intermediate directions; the list is a statement of 'where from did I come'",
+      "jacobi1882": "§2",
+      "app": [
+        "1.1.2",
+        "1.1.3"
+      ],
+      "scan": "https://jainqq.org/explore/600216/31"
+    },
+    {
+      "id": "ag-3",
+      "page": 37,
+      "prakrit_ocr": "अत्थि मे आया उववाइए, नत्थि मे आया उववाइए, के अहं आसी ? के वा इओ चुए इह पेच्चा भविस्सामि ?",
+      "ocr_notes": "Check इह before पेच्चा against scan; Jacobi 1882 has no इह here.",
+      "sanskrit": null,
+      "gloss": "Commentary: औपपातिक = one that passes from one birth to another (उपपात = जन्मान्तरसंक्रान्ति); the question is whether such a soul exists for me; को अहं = who was I in the previous birth; इतः च्युतः = after passing from here",
+      "jacobi1882": "§3",
+      "app": [
+        "1.1.3"
+      ],
+      "scan": "https://jainqq.org/explore/600216/37"
+    },
+    {
+      "id": "ag-4",
+      "page": 44,
+      "prakrit_ocr": "से जं पुण जाणेज्जा सह संमइयाए परवागरणेणं अण्णेसिं अंतिए वा सोच्चा तंजहा-पुरथिमाओ वा दिसाओ आगओ अहमंसि जाव अण्णयरीओ दिसाओ अणुदिसाओ वा आगओ अहमंसि, एवमेगेसिं जं णायं भवति-अस्थि मे आया उववाइए, जो इमाओ (दिसाओ) अणुदिसाओ वा अणुसंचरेइ, सव्वाओ दिसाओ अ-. दिसाओ, सोऽहं",
+      "ocr_notes": "OCR अस्थि (read अत्थि). Line break leaves अ-.दिसाओ (read अणुदिसाओ). The commentary quotes the opening as सह सम्मइए; the sutra line prints सह संमइयाए.",
+      "sanskrit": null,
+      "gloss": "Commentary: जानीयात् = 'one might come to know' (potential, not 'should know'); सह सम्मइए = by the mind that is with the self (includes avadhi, manah-paryaya, kevala, jati-smarana) or by one's own mind; परव्याकरण = taught by the Tirthankara; अन्येषां अन्तिके = from other, specially knowing, persons",
+      "jacobi1882": "§4",
+      "app": [
+        "1.1.4"
+      ],
+      "scan": "https://jainqq.org/explore/600216/44"
+    },
+    {
+      "id": "ag-5",
+      "page": 49,
+      "prakrit_ocr": "से आयावादी लोयावादी कम्मावादी किरियावादी",
+      "ocr_notes": "",
+      "sanskrit": null,
+      "gloss": "Commentary: one who, by the knowledge 'सोऽहम्', knows the self as coming from a direction is आत्मवादी",
+      "jacobi1882": "§5",
+      "app": [
+        "1.1.5"
+      ],
+      "scan": "https://jainqq.org/explore/600216/49"
+    },
+    {
+      "id": "ag-6",
+      "page": 51,
+      "prakrit_ocr": "अकरिस्सं चऽहं, कारवेसुं चऽहं, करओ आवि समणुन्ने भविस्सामि",
+      "ocr_notes": "Reading differs from Jacobi 1882 (अकरिस्सं च अहं, कारावेस्सं च अहं, करओ यावि समणुन्ने भविस्सामि): Agamodaya has a past कारवेसुं, Jacobi a future form. Record both; owner/reviewer to choose.",
+      "sanskrit": null,
+      "gloss": "Commentary (p52): past and future are taken, the present between them, and caused and approved doing, so all nine kinds arise (3 times x 3 ways)",
+      "jacobi1882": "§5",
+      "app": [
+        "1.1.5"
+      ],
+      "scan": "https://jainqq.org/explore/600216/51"
+    },
+    {
+      "id": "ag-7",
+      "page": 52,
+      "prakrit_ocr": "एयावंति सव्वावंति लोगंसि कम्मसमारंभा परिजाणियव्वा भवंति",
+      "ocr_notes": "",
+      "sanskrit": null,
+      "gloss": "Commentary: 'these are all the kinds of action' (एताः एव क्रियाः)",
+      "jacobi1882": "§5",
+      "app": [
+        "1.1.5"
+      ],
+      "scan": "https://jainqq.org/explore/600216/52"
+    },
+    {
+      "id": "ag-8",
+      "page": 52,
+      "prakrit_ocr": "अपरिण्णायकम्मा खलु अयं पुरिसे जो इमाओ दिसाओ अणुदिसाओ अणुसंचरइ, सव्वाओ दिसाओ सव्वाओ अणुदिसाओ साहेति",
+      "ocr_notes": "Jacobi 1882 has अपरिन्नायकम्मो (nominative -o); verify the printed ending.",
+      "sanskrit": null,
+      "gloss": "Commentary: साहेति = wanders together with his own self-made karma (स्वयंकृतेन कर्मणा सहानुसञ्चरति)",
+      "jacobi1882": "§6",
+      "app": [
+        "1.1.6"
+      ],
+      "scan": "https://jainqq.org/explore/600216/52"
+    },
+    {
+      "id": "ag-9",
+      "page": 53,
+      "prakrit_ocr": "अणेगरूवाओ जोणीओ संधेइ, विरूवरूवे फासे पडिसंवेदेइ",
+      "ocr_notes": "Jacobi 1882 OCR reads पडिसंवेचि; Agamodaya form is the clearer one.",
+      "sanskrit": null,
+      "gloss": "Commentary: connects with many kinds of birth-states and experiences many kinds of touch (विरूपरूपस्पर्शानुभव)",
+      "jacobi1882": "§6",
+      "app": [
+        "1.1.6"
+      ],
+      "scan": "https://jainqq.org/explore/600216/53"
+    },
+    {
+      "id": "ag-10",
+      "page": 56,
+      "prakrit_ocr": "तत्थ खलु भगवता परिण्णा पवेइआ",
+      "ocr_notes": "",
+      "sanskrit": null,
+      "gloss": "Commentary: 'there, regarding karma-bondage, the Lord taught परिज्ञा'",
+      "jacobi1882": "§7",
+      "app": [
+        "1.1.7"
+      ],
+      "scan": "https://jainqq.org/explore/600216/56"
+    },
+    {
+      "id": "ag-11",
+      "page": 57,
+      "prakrit_ocr": "इमस्स चेव जीवियस्स परिवंदणमाणणपूयणाए जाईमरणमोयणाए दुक्खपडिघायहेडं",
+      "ocr_notes": "OCR हेडं: read हेउं.",
+      "sanskrit": null,
+      "gloss": "Commentary: why does he engage in these actions? for this life's veneration, honour and worship, for release from birth and death, and to remove suffering",
+      "jacobi1882": "§7",
+      "app": [
+        "1.1.7"
+      ],
+      "scan": "https://jainqq.org/explore/600216/57"
+    },
+    {
+      "id": "ag-12",
+      "page": 59,
+      "prakrit_ocr": "एयावंति सव्वावंति लोगसि कम्मसमारंभा परिजाणियव्वा भवंति",
+      "ocr_notes": "OCR लोगसि: read लोगंसि.",
+      "sanskrit": null,
+      "gloss": "Commentary: these are exactly all the kinds of action",
+      "jacobi1882": "§7",
+      "app": [
+        "1.1.7"
+      ],
+      "scan": "https://jainqq.org/explore/600216/59"
+    },
+    {
+      "id": "ag-13",
+      "page": 60,
+      "prakrit_ocr": "जस्सेते लोगंसि कम्मसमारंभा परिणाया भवंति से हु मुणी परिणायकम्मे त्तिबेमि",
+      "ocr_notes": "OCR परिणाया/परिणायकम्मे: the earlier lines use ण्ण (परिण्णा); read परिण्णाया, परिण्णायकम्मे.",
+      "sanskrit": null,
+      "gloss": "Commentary: the sage who has understood (परिज्ञया) and given up (प्रत्याख्यानपरिज्ञया) the causes of karma-bondage; इति = 'this I say' (एतदहं ब्रवीमि)",
+      "jacobi1882": "§7",
+      "app": [
+        "1.1.7"
+      ],
+      "scan": "https://jainqq.org/explore/600216/60"
+    }
+  ],
+  "jacobi1882_roman": {
+    "edition": "Hermann Jacobi, Âyâraṃga Sutta, Pali Text Society, London 1882, Book 1 Lecture 1 First Lesson",
+    "scan_pages": [
+      "https://jainqq.org/explore/011127/15",
+      "https://jainqq.org/explore/011127/16"
+    ],
+    "status": "OCR transcription, footnote numerals removed, diacritics normalised; † marks unconfirmed readings",
+    "sections": {
+      "§1": "Suyam me, âusam! tena bhagavayâ evam akkhâyam: iham egesim no sannâ bhavati;",
+      "§2": "tam jahâ: puratthimâo vâ disâo âgao aham amsi, dâhinâo vâ disâo âgao aham amsi, paccatthimâo vâ disâo âgao aham amsi, uttarâo vâ disâo âgao aham amsi, uddhâo vâ disâo âgao aham amsi, ahedisâo vâ âgao aham amsi, annatarîo vâ disâo vâ aṇudisâo vâ âgao aham amsi. evam egesim no nâtam bhavati:",
+      "§3": "atthi me âyâ ovavâie, n’atthi me âyâ ovavâie, ke aham asi, ke vâ io cue peccâ bhavissâmi?",
+      "§4": "se jam puna jâṇejjâ sahasammudiyâe paravâgaraṇenam annesim vâ amtie soccâ, tam jahâ: puratthimâo vâ disâo âgao aham amsi jûra† annatarîo vâ disâo vâ aṇudisâo vâ âgao aham amsi; evam egesim nâtam bhavati: atthi me âyâ ovavâie, jo imâo disâo aṇudisâo anusamcarai, savvâo disâo, savvâo aṇudisâo, so ’ham.",
+      "§5": "se âyâvâî loyâvâî kammâvâî kiriyâvâî: akarissam c’ aham, kârâvissam c’ aham, karao yâvi samaṇunne bhavissâmi; eyâvamti savvâvamti logamsi kammasamârambhâ parijâṇiyavvâ bhavamti.",
+      "§6": "aparinnâyakammo khalu ayam purise, jo imâo disâo aṇudisâo vâ anusamcarai, savvâo disâo aṇudisâo saheti†, anegarûvâo jonîo samdhei, virûvarûve phâse ya paḍisamveci†.",
+      "§7": "tattha khalu bhagavatâ parinnâ paveiyâ: imassa c’ eva jîviyassa parivamdaṇamâṇaṇapûyaṇâe jâimaraṇamoyaṇâe dukkhaparighâyaheum eyâvamti savvâvamti logamsi kammasamârambhâ parijâṇiyavvâ bhavamti. jass’ ete kammasamârambhâ parinnâyâ bhavamti, se hu munî parinnâyakamme tti bemi."
+    }
+  }
+}

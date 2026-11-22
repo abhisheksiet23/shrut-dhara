@@ -1,6 +1,6 @@
 # ShrutDhara — agent instructions
 
-Hindi web app for reading and listening to Jain shastras. Chrome (UI text) is English; only scripture content is Hindi. Owner: Abhishek. Skill library: use the skill-os / SkillMesh skills; they are read-only from this project (never edit the skill-os repo from here).
+Hindi web app for reading and listening to Jain shastras. Chrome (UI text) is English; only scripture content is Hindi. Owner: Abhishek. Start Codex and other agents with this folder as the working root, otherwise another AGENTS.md may be loaded. Skill library: use the skill-os / SkillMesh skills; they are read-only from this project (never edit the skill-os repo from here).
 
 ## Project context
 
@@ -10,6 +10,7 @@ Maintain project context automatically within authorized local work. At start/re
 - Requirements and open gaps: docs/use-case-specification.md (G-01..G-14)
 - Current checkpoint: docs/workstreams/sutra-study.md (use only this task's record)
 - Verification evidence (candidate-bound, newest first): docs/implementation-checks.md
+- Content sources and method: docs/sources/README.md (ledger, rights, numbering concordance), docs/sources/acharanga-1-1.sources.json (extraction); Hindi drafts: docs/content/
 - Session assessments: docs/session-assessments.md (closeout/resumption only)
 
 Superseded: the connected-chapter / storified narration direction in docs/analysis-findings.md, docs/shastraparijna-narration-brief.md and docs/shastraparijna-hindi-narration.md. Historical evidence only; do not resume it.
@@ -28,6 +29,8 @@ Fresh reviewers get only the target, selected evidence and constraints, with no 
 - UI microcopy is English, content is Hindi (docs/microcopy.md; `core/microcopy.spec.ts` enforces it).
 - Content is sutra by sutra, source order, Hindi meaning; no invented stories, reorderings or chapter summaries as meaning. Original-Prakrit recitation is an open choice (SJ-G2).
 - A timestamp is valid only within its recording revision; a sutra ID only within its source edition. New content needs a new recording ID/URL. No guessed timestamp migration.
-- Never generate or publish the other 41 meanings/audio before the sample is reviewed and a source edition and qualified reviewer are settled.
+- Source policy (owner, 22 Nov): the owner reads no Prakrit and is not the content reviewer. Use public-domain sources only (Agamodaya 1916 Prakrit and commentary, Jacobi 1882 and 1884). The 1999 Padma Prakashan book is comparison-only: copy none of its text and do not contact the publisher. Write Hindi in our own words; Prakrit shown in Devanagari. Sutra numbering is edition-specific (see docs/sources/README.md).
+- Each sutra carries a status: draft, compared, reviewed, approved. Only a qualified reader sets reviewed. Ask scholars only about flagged differences.
+- Never generate or publish the other 41 meanings/audio, or re-record audio, before the first-lesson sample is compared and the owner decides. Revision 2 drafts in docs/content/ are not wired into study.json.
 - Local-only, never publish or stage in other tooling: `.env.local`, `.audio-env/`, `.audio-work/` (63 MB voice model).
 - Commands: see README.md (`npm --prefix web ci`, `npm run build`, `npm start`, `npm test`, `npm --prefix web run e2e`).
