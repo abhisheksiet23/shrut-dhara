@@ -1,17 +1,19 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { StudyService } from '../core/study.service';
 import { ContentService } from '../core/content.service';
-import { NARRATION_ID, formatTime, recordingProgress } from '../core/models';
+import { StudyService } from '../core/study.service';
+import { FIRST_SUTRA_ID, MEANING_RECORDING_ID } from '../core/study-catalog';
+import { NARRATION_ID, formatTime } from '../core/models';
 import { Icon } from '../shared/icon';
 
 @Component({
   imports: [RouterLink, Icon],
-  template: ` <section class="welcome">
+  template: `
+    <section class="welcome">
       <div>
-        <div class="eyebrow">{{ listeningStarted() ? 'Welcome back' : 'Welcome' }}</div>
-        <h1>{{ listeningStarted() ? 'Pick up where you left off.' : 'A quiet place to listen and read.' }}</h1>
-        <p>Jain Āgamas in Hindi. Go at your own pace.</p>
+        <span class="eyebrow">Your study, at your pace</span>
+        <h1>A sutra. Its meaning.<br />A little more understanding.</h1>
+        <p>Read and hear Hindi meaning in source order. Return to the exact place you chose.</p>
       </div>
     </section>
     <section class="journey-grid home-first">
@@ -20,90 +22,111 @@ import { Icon } from '../shared/icon';
           <span class="square-icon"><app-icon name="headphones" /></span
           ><span class="pill">Listen</span>
         </div>
-        <h3 lang="hi">शस्त्रपरिज्ञा</h3>
-        <p class="gloss">Ācārāṅga Sūtra · Study 1 · seven sections, about ten minutes in all</p>
+        <h2 lang="hi">शस्त्रपरिज्ञा</h2>
+        <p>Hindi meaning, sutra by sutra. The first uddeshaka is a draft review sample.</p>
         <div class="journey-position">
-          <span>{{ listeningStarted() ? 'Up next' : 'Not started' }}</span
-          ><b lang="hi">{{ listeningLabel() }}</b>
+          <span>{{ newAudioStarted() ? 'Your listening place' : 'Begin with' }}</span
+          ><b>{{ listeningLabel() }}</b>
         </div>
-        <div class="progress-track"><i [style.width.%]="listeningPercent()"></i></div>
         <a class="button" routerLink="/listen"
-          ><app-icon name="play" />{{ listeningStarted() ? 'Resume listening' : 'Start listening' }}</a
+          ><app-icon name="play" />{{
+            newAudioStarted() ? 'Resume listening' : 'Explore sutra audio'
+          }}</a
         >
-        <p class="small-note">AI voice, not yet reviewed by a scholar.</p>
+        <p class="small-note">AI voice · meaning and pronunciation awaiting review.</p>
       </article>
       <article class="journey reading-card">
         <div class="card-top">
-          <span class="square-icon"><app-icon name="book" /></span
-          ><span class="pill">Read</span>
+          <span class="square-icon"><app-icon name="book" /></span><span class="pill">Read</span>
         </div>
-        <h3>Reading preview</h3>
-        <p>Original text, meaning and a simple explanation, one passage at a time. Placeholder text for now.</p>
+        <h2>One meaning at a time</h2>
+        <p>
+          Keep the sutra reference in view. Read the Hindi draft and open the same unit in Listen.
+        </p>
         <div class="journey-position">
-          <span>Passage</span><b>{{ passageLabel() }}</b>
+          <span>{{ savedSutra() ? 'Your reading place' : 'Begin with' }}</span
+          ><b>Sutra {{ savedSutra()?.reference ?? '1.1.1' }}</b>
         </div>
-        <div class="progress-track"><i [style.width.%]="readingPercent()"></i></div>
-        <a class="text-button" routerLink="/read"
-          >Continue reading <app-icon name="arrow"
+        <a class="button secondary" [routerLink]="['/read', savedSutra()?.id ?? firstId]"
+          >{{ savedSutra() ? 'Continue reading' : 'Start reading' }}<app-icon name="arrow"
         /></a>
       </article>
     </section>
     <section class="collection-preview">
       <div>
-        <div class="eyebrow">Your library</div>
-        <h2>One chapter to begin with.</h2>
+        <span class="eyebrow">Ācārāṅga Sūtra · Book 1 · Study 1</span>
+        <h2>See the whole path.</h2>
         <p>
-          We’re starting with the Ācārāṅga Sūtra. More Āgamas will be added once their sources are chosen and
-          reviewed.
+          Seven uddeshakas, in source order. See which meanings and recordings are ready before
+          choosing.
         </p>
-        <a class="text-button" routerLink="/library"
-          >Browse the library <app-icon name="arrow"
+        <a class="button secondary" routerLink="/study"
+          >Open study contents<app-icon name="arrow"
         /></a>
+        <a class="text-button" routerLink="/acharanga">Browse all study introductions</a>
       </div>
       <div class="book-spine">
-        <span lang="hi">आचारांग सूत्र</span><small>Ācārāṅga Sūtra</small><app-icon name="leaf" />
+        <span lang="hi">आचारांग सूत्र</span><small>Hindi meaning · source by source</small
+        ><app-icon name="leaf" />
       </div>
     </section>
+    @if (hasEarlierProgress()) {
+      <section class="earlier-progress">
+        <h2>Your earlier places are kept</h2>
+        <p>
+          Sample reading and chapter commentary have not been mapped onto the new sutra meanings.
+        </p>
+        @if (hasCommentary()) {
+          <a class="text-button" routerLink="/listen/commentary">Resume earlier commentary</a>
+        }
+        @if (study.state().reading.sutraId.startsWith('fixture:')) {
+          <a class="text-button" [routerLink]="['/preview/read', study.state().reading.sutraId]"
+            >Open earlier reading preview</a
+          >
+        }
+      </section>
+    }
     <div class="content-note">
       <app-icon name="info" />
       <p>
-        Your place in Read and Listen is saved separately, in this browser only. The reading text is a placeholder,
-        and the narration is an AI voice awaiting review.
+        Reading and listening are saved independently in this browser. Hindi meanings are drafts
+        through a historical English source; original Prakrit and qualified review are pending.
       </p>
-    </div>`,
+    </div>
+  `,
 })
 export class Home {
+  readonly content = inject(ContentService);
   readonly study = inject(StudyService);
-  private content = inject(ContentService);
-  readonly time = formatTime;
-  readonly readingIndex = computed(
+  readonly firstId = FIRST_SUTRA_ID;
+  readonly savedSutra = computed(() =>
+    this.content.catalog()?.find(this.study.state().reading.sutraId),
+  );
+  readonly savedListening = computed(() => {
+    const state = this.study.state();
+    return state.listening.recordingId === MEANING_RECORDING_ID
+      ? state.listening
+      : state.listeningHistory?.[MEANING_RECORDING_ID];
+  });
+  readonly newAudioStarted = computed(
     () =>
-      this.content
-        .chapter()
-        ?.passages.findIndex((item) => item.id === this.study.state().reading.sutraId) ?? -1,
+      !!this.savedListening() &&
+      (this.savedListening()!.part > 0 || this.savedListening()!.seconds > 0),
   );
-  readonly passageLabel = computed(() =>
-    this.readingIndex() >= 0 ? `${this.readingIndex() + 1} of 3` : 'Saved place unavailable',
-  );
-  readonly narration = computed(() => this.content.narration());
-  readonly listeningStarted = computed(() => {
-    const saved = this.study.state().listening;
-    return saved.recordingId === NARRATION_ID && (saved.part > 0 || saved.seconds > 0);
-  });
   readonly listeningLabel = computed(() => {
-    const saved = this.study.state().listening;
-    const part = this.narration()?.parts[saved.part];
-    if (!this.listeningStarted() || !part) return 'Section 1 of 7';
-    return `${part.title} · ${formatTime(saved.seconds)}`;
+    const saved = this.savedListening();
+    const part = saved && this.content.meanings()?.parts[saved.part];
+    return part ? `Sutra ${part.reference} · ${formatTime(saved!.seconds)}` : 'Sutra 1.1.1';
   });
-  readonly listeningPercent = computed(() => {
-    const rec = this.narration();
-    const saved = this.study.state().listening;
-    return rec && this.listeningStarted()
-      ? recordingProgress(rec, saved.part, saved.seconds) * 100
-      : 0;
+  readonly hasCommentary = computed(() => {
+    const state = this.study.state();
+    const position =
+      state.listening.recordingId === NARRATION_ID
+        ? state.listening
+        : state.listeningHistory?.[NARRATION_ID];
+    return !!position && (position.part > 0 || position.seconds > 0);
   });
-  readonly readingPercent = computed(() =>
-    this.readingIndex() >= 0 ? ((this.readingIndex() + 1) / 3) * 100 : 0,
+  readonly hasEarlierProgress = computed(
+    () => this.hasCommentary() || this.study.state().reading.sutraId.startsWith('fixture:'),
   );
 }

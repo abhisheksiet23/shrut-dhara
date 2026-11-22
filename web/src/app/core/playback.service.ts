@@ -4,7 +4,8 @@ import { OfflineService } from './offline.service';
 import { SessionService } from './session.service';
 import { StudyService } from './study.service';
 import { UiService } from './ui.service';
-import { ListeningPosition, NARRATION_ID, resolveListeningStart } from './models';
+import { ListeningPosition, resolveListeningStart } from './models';
+import { MEANING_RECORDING_ID } from './study-catalog';
 
 @Injectable({ providedIn: 'root' })
 export class PlaybackService {
@@ -20,7 +21,7 @@ export class PlaybackService {
   readonly part = signal(0);
   readonly position = signal(0);
   readonly duration = signal(0);
-  readonly selectedId = signal(NARRATION_ID);
+  readonly selectedId = signal(MEANING_RECORDING_ID);
   readonly recording = computed(() => this.content.recording(this.selectedId()));
   readonly parts = computed(() => this.recording()?.parts ?? []);
   readonly streaming = signal(false);
@@ -38,7 +39,9 @@ export class PlaybackService {
       this.running.set(true);
       this.status.set('Loading…');
     });
-    this.audio.addEventListener('playing', () => this.status.set(this.streaming() ? 'Playing · streaming' : 'Playing'));
+    this.audio.addEventListener('playing', () =>
+      this.status.set(this.streaming() ? 'Playing · streaming' : 'Playing'),
+    );
     this.audio.addEventListener('waiting', () => this.status.set('Buffering…'));
     this.audio.addEventListener('pause', () => {
       this.running.set(false);
@@ -66,7 +69,9 @@ export class PlaybackService {
     this.audio.addEventListener('error', () => {
       this.running.set(false);
       this.status.set('Couldn’t play audio');
-      this.ui.notify('Couldn’t play this audio. Check your connection or save it for offline, then try again.');
+      this.ui.notify(
+        'Couldn’t play this audio. Check your connection or save it for offline, then try again.',
+      );
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden' && this.prepared() && !this.session.maintenance()) {
@@ -88,7 +93,12 @@ export class PlaybackService {
       this.status.set('Listening list unavailable');
       return;
     }
-    const start = resolveListeningStart(this.study.state().listening, recording);
+    const state = this.study.state();
+    const saved =
+      state.listening.recordingId === recording.id
+        ? state.listening
+        : (state.listeningHistory?.[recording.id] ?? state.listening);
+    const start = resolveListeningStart(saved, recording);
     if (start.kind === 'unavailable') {
       this.referenceUnavailable.set(true);
       this.status.set('Your saved place is no longer available · choose “Start over”');
@@ -104,12 +114,16 @@ export class PlaybackService {
   async useRecording(id: string): Promise<void> {
     this.session.assertOwner();
     if (this.selectedId() === id) return;
+    if (!this.content.recording(id))
+      throw new Error('This recording is unavailable. Your saved place is unchanged.');
+    await this.offline.cancel();
     this.audio.pause();
     await this.checkpoint();
     this.detach();
     this.selectedId.set(id);
     this.offline.activeId.set(id);
     this.restorePosition();
+    await this.offline.reconcile();
   }
 
   playChapter(player: HTMLAudioElement): void {
@@ -174,10 +188,12 @@ export class PlaybackService {
     // Tone fixture keeps the strict rule (every part saved before it runs). The real narration
     // may also stream online; Driving mode still requires every part to be saved offline.
     await this.offline.reconcile();
-    this.streaming.set(this.offline.saved().length !== assets.length);
+    const savedAssets = await Promise.all(assets.map((asset) => this.offline.isSaved(asset)));
+    this.streaming.set(savedAssets.some((saved) => !saved));
     if (this.recording()?.kind === 'calibration')
       for (const asset of assets) await this.offline.assertSaved(asset);
-    if (generation !== this.generation) throw new Error('Playback was interrupted by a newer request.');
+    if (generation !== this.generation)
+      throw new Error('Playback was interrupted by a newer request.');
     this.session.assertOwner();
     this.audio.pause();
     this.prepared.set(false);
@@ -206,7 +222,8 @@ export class PlaybackService {
       this.audio.addEventListener('error', failed);
       this.audio.load();
     });
-    if (generation !== this.generation) throw new Error('Playback was interrupted by a newer request.');
+    if (generation !== this.generation)
+      throw new Error('Playback was interrupted by a newer request.');
     if (!Number.isFinite(this.audio.duration) || seconds > this.audio.duration + 2) {
       throw new Error('Your saved place doesn’t match this recording. Choose “Start over”.');
     }
@@ -251,8 +268,12 @@ export class PlaybackService {
     await this.checkpoint();
     const next = this.part() + 1;
     if (next >= this.parts().length) {
-      this.status.set('All sections finished');
-      this.ui.notify('All sections finished. Nothing else will play on its own.');
+      const message =
+        this.recording()?.kind === 'meaning'
+          ? 'End of the audio sample · further sutra meanings are pending'
+          : 'All sections finished';
+      this.status.set(message);
+      this.ui.notify(message + '. Nothing else will play on its own.');
       return;
     }
     try {

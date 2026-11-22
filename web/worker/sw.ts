@@ -16,7 +16,7 @@ cleanupOutdatedCaches();
 registerRoute(
   new NavigationRoute(createHandlerBoundToURL('/index.html'), {
     allowlist: [
-      /^\/(?:read(?:\/[^.]*)?|listen(?:\/shastraparijna)?|library|acharanga|bookmarks|settings)?\/?$/,
+      /^\/(?:read(?:\/[^.]*)?|preview\/read\/[^.]*|listen(?:\/[^.]*)?|study|library|acharanga|bookmarks|settings)?\/?$/,
     ],
   }),
 );
@@ -24,7 +24,8 @@ registerRoute(
 const isMedia = (url: URL, request: Request) =>
   url.origin === self.location.origin &&
   (request.destination === 'audio' || request.headers.has('range')) &&
-  (url.pathname.startsWith('/audio/') || /^\/narration\/shastraparijna\/s\d+\.mp3$/.test(url.pathname));
+  (url.pathname.startsWith('/audio/') ||
+    /^\/narration\/(?:shastraparijna\/s\d+|meaning-v1\/u\d+-s\d+)\.mp3$/.test(url.pathname));
 
 registerRoute(
   ({ url, request }) => isMedia(url, request),

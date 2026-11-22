@@ -1,0 +1,19 @@
+ShrutDhara · Shastra-parijna Hindi meaning review sample · 22 November 2026
+
+Source: Hermann Jacobi, Gaina Sutras, Part I, Sacred Books of the East XXII,
+Clarendon Press, Oxford, 1884; Acaranga Book I, Lecture I, First Lesson.
+Historical English source: https://en.wikisource.org/w/index.php?title=Sacred_Books_of_the_East/Volume_22/Âkârâṅga_Sûtra/Book_1/Lecture_1&oldid=9540870
+The 1884 English work is public domain. Wikisource transcription is attributed
+to its contributors; see the revision above and the site's CC BY-SA terms.
+Hindi meanings are newly drafted through the English intermediary.
+They have not been checked against the original Prakrit by a qualified reviewer.
+No modern Hindi edition or digital Prakrit transcription is reproduced.
+
+Synthetic voice: Piper hi_IN-pratham-medium, trained by PravalX.
+Model: https://huggingface.co/rhasspy/piper-voices/tree/main/hi/hi_IN/pratham/medium
+The model card identifies AI4Bharat indicnlp_corpus and CC BY-NC-SA 4.0
+training material. Retain attribution, noncommercial use and share-alike
+restrictions for this review audio. No paid synthesis service is used.
+Model digest and source revision: manifest.json.
+Exact spoken text, including references/disclosure: transcript.txt.
+This sample is for review, not an approved scripture translation or final narration.

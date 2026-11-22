@@ -240,7 +240,7 @@ export class Reader implements AfterViewInit, OnDestroy {
         offset: 0,
         revision: 'fixture-v1',
       });
-      await this.router.navigate(['/read', next.id]);
+      await this.router.navigate(['/preview/read', next.id]);
     } catch (error) {
       this.ui.error(error);
     }

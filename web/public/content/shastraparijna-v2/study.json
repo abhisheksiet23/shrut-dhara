@@ -1,0 +1,51 @@
+{
+  "id": "acharanga:1:1:jacobi1884",
+  "revision": "hindi-meaning-draft-v1",
+  "title": "शस्त्रपरिज्ञा",
+  "source": {
+    "label": "Hermann Jacobi, 1884 · Book 1, Lecture 1",
+    "url": "https://en.wikisource.org/w/index.php?title=Sacred_Books_of_the_East/Volume_22/Âkârâṅga_Sûtra/Book_1/Lecture_1&oldid=9540870",
+    "note": "References follow the numbered units in Jacobi’s English translation. These are newly drafted Hindi meanings through that intermediary, not a verified translation from Prakrit. Original Prakrit and qualified editorial review are not available yet."
+  },
+  "sections": [
+    { "number": 1, "title": "जीव और कर्म", "count": 7 },
+    { "number": 2, "title": "पृथ्वीकाय", "count": 6 },
+    { "number": 3, "title": "अप्काय", "count": 8 },
+    { "number": 4, "title": "अग्निकाय", "count": 7 },
+    { "number": 5, "title": "वनस्पतिकाय", "count": 7 },
+    { "number": 6, "title": "त्रस जीव", "count": 6 },
+    { "number": 7, "title": "वायुकाय", "count": 7 }
+  ],
+  "meanings": [
+    {
+      "reference": "1.1.1",
+      "text": "हे आयुष्मान जम्बू! मैंने, सुधर्मा ने, भगवान महावीर से यह उपदेश सुना है।",
+      "reviewNote": "The opening is unit (1) in the Sacred Texts transcription of Jacobi. Wikisource omits that first marker. Numbered boundaries were compared across both transcriptions; alignment to an original Prakrit edition is pending."
+    },
+    {
+      "reference": "1.1.2",
+      "text": "इस संसार में बहुत से लोग यह याद नहीं करते कि जन्म लेते समय वे पूर्व दिशा से आए, दक्षिण से, पश्चिम से, उत्तर से, ऊपर से, नीचे से, दिशाओं के बीच से अथवा उनके भी बीच की दिशा से।"
+    },
+    {
+      "reference": "1.1.3",
+      "text": "इसी प्रकार कुछ लोग यह नहीं जानते कि उनका जीव बार-बार जन्म लेता है या नहीं। वे यह भी नहीं जानते कि पहले वे क्या थे, और मृत्यु के बाद इस संसार को छोड़कर क्या होंगे।"
+    },
+    {
+      "reference": "1.1.4",
+      "text": "यह जानना चाहिए कि जीव किस दिशा से आया है। यह ज्ञान अपने ज्ञान से, तीर्थंकर के उपदेश से अथवा दूसरों से सुनकर प्राप्त हो सकता है। वह पूर्व दिशा से आया हो सकता है, या पहले बताई गई किसी अन्य दिशा से। इसी प्रकार कुछ लोग जानते हैं कि उनका जीव बार-बार जन्म लेता है और किसी-न-किसी दिशा से आता है।"
+    },
+    {
+      "reference": "1.1.5",
+      "text": "वह जीव को मानता है, लोक को मानता है, कर्मफल को मानता है और कर्म को अपना किया हुआ स्वीकार करता है। मैंने किया, मैं दूसरे से करवाऊँगा अथवा दूसरे के करने का अनुमोदन करूँगा, इन रूपों में कर्म में अपनी भागीदारी पहचानता है। संसार में ये सभी पाप-कर्म के आरम्भ के कारण हैं। इन्हें समझना और छोड़ना चाहिए।"
+    },
+    {
+      "reference": "1.1.6",
+      "text": "जो मनुष्य पाप-कर्म के इन कारणों को नहीं समझता और नहीं छोड़ता, वह मुख्य या बीच की दिशाओं में जाता है और सभी दिशाओं में भटकता है। वह अनेक प्रकार के जन्मों में बार-बार जन्म लेता है और सभी प्रकार की पीड़ादायक अनुभूतियाँ करता है।"
+    },
+    {
+      "reference": "1.1.7",
+      "text": "इस विषय में भगवान ने सत्य का उपदेश दिया है। पाप-कर्म के कारणों को समझना और उनका त्याग करना चाहिए। इस जीवन की समृद्धि, सम्मान और यश के लिए, जन्म, मृत्यु और अंतिम मुक्ति के लिए, तथा दुःख दूर करने के लिए पाप-कर्म के ये सभी आरम्भ होते हैं। संसार में इन्हें समझना और छोड़ना चाहिए। जो इन्हें समझता और छोड़ता है, वह कर्मफल का जानकार मुनि कहलाता है। ऐसा मैं कहता हूँ।",
+      "reviewNote": "The English parenthetical gloss ‘comprehension and renunciation’ is made explicit in the second Hindi sentence. Review with the original."
+    }
+  ]
+}

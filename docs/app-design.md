@@ -1,5 +1,7 @@
 # ShrutDhara — web application design
 
+Revision 0.6 (2026-11-22): owner authorized the sutra-centred redesign. [Implementation design](sutra-journey-design.md) owns source identity, navigation/player responsibilities, bounded first-uddeshaka content, independent per-recording checkpoints, backup v2 and the data-preserving IndexedDB v1→v2 writer fence. The single-position limitation in revision 0.5 below is superseded. [Local verification](implementation-checks.md) records proof; content and phone release gates remain open.
+
 Draft 0.4 · 2026-11-21 · Design only, no production implementation or publication
 
 Implementation status lives in the [local verification report](implementation-checks.md). The `web/` Angular development build now runs alongside the original prototype. Firefox Android on the owner's CMF Phone 1 is the primary target, with Chrome Android also required.

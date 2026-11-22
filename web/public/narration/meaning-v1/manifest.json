@@ -1,0 +1,57 @@
+{
+  "recordingId": "shastraparijna:hindi-meaning:sample-v1",
+  "status": "draft-review-sample",
+  "sourceRevision": "hindi-meaning-draft-v1",
+  "voiceModelSha256": "169964b0871667f6793416d4b35e97357a68ba1ad01df8580c28048989ee7693",
+  "parts": [
+    {
+      "id": "acharanga:1:1:jacobi1884:1:1",
+      "url": "/narration/meaning-v1/u1-s1.mp3",
+      "duration": 11.72607709750567,
+      "bytes": 94249,
+      "sha256": "41b405d3e7d41d3d162ebed55c59a31ee4209232c3004893ba62eefca951fa45"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:2",
+      "url": "/narration/meaning-v1/u1-s2.mp3",
+      "duration": 15.928888888888888,
+      "bytes": 127895,
+      "sha256": "e50fa3a7575d1abefd558c27949ea17042adc0321ee882ce085deac6409b9bdc"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:3",
+      "url": "/narration/meaning-v1/u1-s3.mp3",
+      "duration": 13.653333333333334,
+      "bytes": 109714,
+      "sha256": "74fa42ef9a16cdb88655319db202badee69c610c88f839642edb6d1c99fb2047"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:4",
+      "url": "/narration/meaning-v1/u1-s4.mp3",
+      "duration": 22.569795918367348,
+      "bytes": 180976,
+      "sha256": "bff4bc448eaa8144493b7e5bbc62cecb3791578c6a4b83b2a58bd0b303abd5b6"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:5",
+      "url": "/narration/meaning-v1/u1-s5.mp3",
+      "duration": 23.45215419501134,
+      "bytes": 188081,
+      "sha256": "36098ce6de99026a8a262cf63b1928d855d7953f59a39a28d83e04e1559e1d6e"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:6",
+      "url": "/narration/meaning-v1/u1-s6.mp3",
+      "duration": 18.04190476190476,
+      "bytes": 144822,
+      "sha256": "f5b38c14729a958577745ba499787769384255fd50175e3524a8377bc0e36c45"
+    },
+    {
+      "id": "acharanga:1:1:jacobi1884:1:7",
+      "url": "/narration/meaning-v1/u1-s7.mp3",
+      "duration": 29.175873015873016,
+      "bytes": 233848,
+      "sha256": "d96983da7030649e97981d8912028cb4b0c29bf5d97a1dbb09c519239447e1f3"
+    }
+  ]
+}

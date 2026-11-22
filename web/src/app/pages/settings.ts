@@ -21,16 +21,12 @@ import { Icon } from '../shared/icon';
       <app-preferences />
       <h2>Your progress stays with you</h2>
       <p>
-        Your reading place, listening place and bookmarks are saved in this browser only. Firefox and Chrome keep
-        separate progress, so make a backup to move between them. If you clear site data or lose this device,
-        progress can’t be recovered without a backup.
+        Your reading place, listening place and bookmarks are saved in this browser only. Firefox
+        and Chrome keep separate progress, so make a backup to move between them. If you clear site
+        data or lose this device, progress can’t be recovered without a backup.
       </p>
       <div class="settings-actions">
-        <button
-          class="button"
-          (click)="exportBackup()"
-          [disabled]="!session.owned() || busy()"
-        >
+        <button class="button" (click)="exportBackup()" [disabled]="!session.owned() || busy()">
           <app-icon name="down" />Save a backup</button
         ><button
           class="button secondary"
@@ -48,23 +44,24 @@ import { Icon } from '../shared/icon';
           (change)="selectBackup($event)"
       /></label>
       <p class="small-note">
-        Use a backup file made by ShrutDhara (up to 5 MB). You’ll see a preview before anything changes.
+        Use a backup file made by ShrutDhara (up to 5 MB). You’ll see a preview before anything
+        changes.
       </p>
       @if (importError()) {
         <p class="field-error" role="alert">{{ importError() }}</p>
       }
       <h2>Offline audio</h2>
       <p>
-        {{ offline.saved().length }} of {{ offline.assets().length }} sections saved on this device. Offline
-        mode: {{ offline.shellReady() ? 'ready' : 'not ready yet' }}.
+        Selected recording:
+        {{ content.recording(offline.activeId())?.label ?? 'No recording available' }}.
+      </p>
+      <p>
+        {{ offline.saved().length }} of {{ offline.assets().length }} sections saved on this device.
+        Offline mode: {{ offline.shellReady() ? 'ready' : 'not ready yet' }}.
       </p>
       <p class="small-note">{{ offline.storageStatus() }}</p>
       <div class="settings-actions">
-        <button
-          class="button secondary"
-          (click)="persist()"
-          [disabled]="!session.owned()"
-        >
+        <button class="button secondary" (click)="persist()" [disabled]="!session.owned()">
           Protect saved audio</button
         ><button
           class="button secondary"
@@ -90,8 +87,9 @@ import { Icon } from '../shared/icon';
       }
       <h2>About this content</h2>
       <p>
-        The original sūtras aren’t included yet. Listen has Hindi explanations in an AI voice, awaiting review.
-        Read has placeholder text. We still need to test on real phones in Firefox and Chrome.
+        The first uddeshaka has draft Hindi meanings with per-sutra AI audio samples. Original
+        Prakrit, meaning and pronunciation review are pending. Real-phone Firefox and Chrome checks
+        remain open.
       </p>
     </section>
     <dialog #preview aria-labelledby="restore-title">
@@ -108,8 +106,8 @@ import { Icon } from '../shared/icon';
       </div>
       @if (pending(); as incoming) {
         <p>
-          This backup will replace the reading and listening places, bookmarks and reading settings in this
-          browser. Saved audio isn’t affected.
+          This backup will replace the reading and listening places, bookmarks and reading settings
+          in this browser. Saved audio isn’t affected.
         </p>
         <dl class="source-list">
           <div>
@@ -156,12 +154,11 @@ import { Icon } from '../shared/icon';
         </button>
       </div>
       <p>
-        Playback will stop and all saved sections will be removed from this device. Your places and bookmarks stay.
-        You’ll need to save the audio again to listen offline.
+        Playback will stop and all saved sections will be removed from this device. Your places and
+        bookmarks stay. You’ll need to save the audio again to listen offline.
       </p>
       <div class="settings-actions">
-        <button class="button" (click)="removeAudio()" [disabled]="busy()">
-          Stop and remove</button
+        <button class="button" (click)="removeAudio()" [disabled]="busy()">Stop and remove</button
         ><button class="button secondary" (click)="remove.close()">Cancel</button>
       </div>
     </dialog>`,
@@ -206,7 +203,8 @@ export class Settings {
     this.importError.set('');
     try {
       this.session.assertOwner();
-      if (file.size > MAX_BACKUP_BYTES) throw new Error('This file is larger than 5 MB, so it can’t be a ShrutDhara backup.');
+      if (file.size > MAX_BACKUP_BYTES)
+        throw new Error('This file is larger than 5 MB, so it can’t be a ShrutDhara backup.');
       this.pending.set(parseBackup(await file.text()));
       this.preview?.nativeElement.showModal();
     } catch (error) {
@@ -221,7 +219,10 @@ export class Settings {
   unresolved(): number {
     const incoming = this.pending();
     if (!incoming) return 0;
-    const available = this.content.chapter()?.passages.map((item) => item.id) ?? [];
+    const available = [
+      ...(this.content.chapter()?.passages.map((item) => item.id) ?? []),
+      ...(this.content.catalog()?.sutras.map((item) => item.id) ?? []),
+    ];
     return [
       incoming.data.reading.sutraId,
       ...incoming.data.bookmarks.map((item) => item.sutraId),

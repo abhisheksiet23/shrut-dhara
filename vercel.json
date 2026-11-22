@@ -4,12 +4,15 @@
   "buildCommand": "npm --prefix web run build",
   "outputDirectory": "web/dist/shrutdhara/browser",
   "rewrites": [
+    { "source": "/study", "destination": "/index.html" },
+    { "source": "/preview/read/:id", "destination": "/index.html" },
     { "source": "/library", "destination": "/index.html" },
     { "source": "/acharanga", "destination": "/index.html" },
     { "source": "/read", "destination": "/index.html" },
     { "source": "/read/:id", "destination": "/index.html" },
     { "source": "/listen", "destination": "/index.html" },
     { "source": "/listen/shastraparijna", "destination": "/index.html" },
+    { "source": "/listen/:id", "destination": "/index.html" },
     { "source": "/bookmarks", "destination": "/index.html" },
     { "source": "/settings", "destination": "/index.html" }
   ],

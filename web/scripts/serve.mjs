@@ -35,7 +35,7 @@ const server = http.createServer(async (request, response) => {
     const url = new URL(request.url, 'http://localhost');
     let pathname = decodeURIComponent(url.pathname);
     if (
-      /^\/(?:read(?:\/[^.]*)?|listen(?:\/shastraparijna)?|library|acharanga|bookmarks|settings)?\/?$/.test(
+      /^\/(?:read(?:\/[^.]*)?|preview\/read\/[^.]*|listen(?:\/[^.]*)?|study|library|acharanga|bookmarks|settings)?\/?$/.test(
         pathname,
       )
     )

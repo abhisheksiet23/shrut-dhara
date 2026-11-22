@@ -1,5 +1,7 @@
 # ShrutDhara — analysis findings
 
+Owner correction, 2026-11-22: the connected/storified chapter narration direction below is superseded. Audio must deliver Hindi meaning sutra by sutra in source order. Current journey evidence and feeling hypotheses: [journey review](user-journey-review-2026-11-22.md). Proposed behaviour and task sequence: [change plan](sutra-journey-change-plan.md). Implementation is not authorized in this review.
+
 Date: 2026-11-20 · Status: requirements evaluation, no implementation
 
 Subsequent owner decision, 2026-11-20: deliver a web app/PWA without an APK or app-store dependency, retaining Android phones as the primary device audience. See D-02 in the specification and the separate [technical design](app-design.md). Earlier Android references identify devices; native delivery is not accepted scope.

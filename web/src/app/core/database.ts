@@ -9,9 +9,13 @@ export class StudyDatabaseStore {
   private database: Promise<IDBPDatabase<StudyDatabase>>;
 
   constructor(name = 'shrutdhara-v1', onBlocked: () => void = () => {}) {
-    this.database = openDB<StudyDatabase>(name, 1, {
+    // Version 2 fences older app writers, whose validator would drop retained recording positions.
+    // The personal store and every existing record stay in place.
+    this.database = openDB<StudyDatabase>(name, 2, {
       upgrade(database) {
-        database.createObjectStore('personal', { keyPath: 'id' });
+        if (!database.objectStoreNames.contains('personal')) {
+          database.createObjectStore('personal', { keyPath: 'id' });
+        }
       },
       blocked: onBlocked,
       blocking: () => {
@@ -32,7 +36,9 @@ export class StudyDatabaseStore {
       !Number.isSafeInteger(stored.revision) ||
       stored.revision < 0
     ) {
-      throw new Error('Couldn’t read your saved data, so nothing was changed. Your original data is untouched.');
+      throw new Error(
+        'Couldn’t read your saved data, so nothing was changed. Your original data is untouched.',
+      );
     }
     return { ...stored, data: validatePersonalState(stored.data) };
   }
@@ -52,7 +58,9 @@ export class StudyDatabaseStore {
     if (stored.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
-      throw new Error('Your progress changed in another window, so this save was skipped. Reopen ShrutDhara and try again.');
+      throw new Error(
+        'Your progress changed in another window, so this save was skipped. Reopen ShrutDhara and try again.',
+      );
     }
     let updated: Envelope;
     try {
@@ -88,7 +96,9 @@ export class StudyDatabaseStore {
     if (previous.epoch !== expectedEpoch) {
       transaction.abort();
       await transaction.done.catch(() => {});
-      throw new Error('Your progress changed before the restore finished, so nothing was replaced. Please try again.');
+      throw new Error(
+        'Your progress changed before the restore finished, so nothing was replaced. Please try again.',
+      );
     }
     const next: Envelope = {
       id: 'personal',

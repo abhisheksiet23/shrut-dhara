@@ -54,9 +54,14 @@
       } @else {
         <div>
           <strong>{{
-            session.supported() ? 'ShrutDhara is open in another window' : 'This browser isn’t supported'
+            session.supported()
+              ? 'ShrutDhara is open in another window'
+              : 'This browser isn’t supported'
           }}</strong>
-          <p>To keep your place safe, ShrutDhara works in one window at a time. Your progress stays in this browser.</p>
+          <p>
+            To keep your place safe, ShrutDhara works in one window at a time. Your progress stays
+            in this browser.
+          </p>
         </div>
       }
       <button
@@ -77,6 +82,17 @@
       <button class="button secondary" (click)="retryStorage()">Try again</button>
     </div>
   }
+  @if (app.offline.updateWaiting() && !app.updatePrepared()) {
+    <section class="session-banner" aria-label="App update available">
+      <div>
+        <strong>An app update is ready</strong>
+        <p>
+          Your current study can continue. Open Settings to save your place and prepare the update.
+        </p>
+      </div>
+      <a class="button secondary" routerLink="/settings">Update options</a>
+    </section>
+  }
   <main id="main" tabindex="-1"><router-outlet /></main>
   <footer class="page-footer">
     <span>ShrutDhara · Knowledge at your own pace.</span
@@ -95,9 +111,12 @@
 </nav>
 @if (playback.prepared() && !isListening()) {
   <section class="mini-player" aria-label="Now playing">
-    <app-icon name="headphones" /><button class="mini-title" routerLink="/listen">
-      <span>{{ playback.parts()[playback.part()]?.title ?? playback.recording()?.title }}</span
-      ><small>{{ playback.recording()?.title }} · Section {{ playback.part() + 1 }} · {{ time(playback.position()) }}</small></button
+    <app-icon name="headphones" /><button class="mini-title" [routerLink]="playerLink()">
+      <span>{{
+        playback.parts()[playback.part()]?.title ?? playback.recording()?.title
+      }}</span><small
+        >{{ playback.recording()?.title }} · {{ time(playback.position()) }}</small
+      ></button
     ><button
       class="icon-button"
       (click)="togglePlayback()"
@@ -116,22 +135,27 @@
   </div>
   <span class="pill amber">Work in progress</span>
   <p>
-    ShrutDhara doesn’t yet include a verified original text or Hindi translation. The Listen section has an AI-voiced
-    Hindi explanation of Shastra-parijnā. The voice is a machine, not a monk or scholar. The Read section uses
-    placeholder text to test the layout, so please don’t treat it as Āgama teaching.
+    Study 1 now has draft Hindi meanings for the first uddeshaka, one source unit at a time, through
+    Jacobi’s historical English translation. Original Prakrit and scholarly review are pending.
+    Audio samples use an AI voice. The earlier connected chapter commentary and reading preview
+    remain separate from these sutra meanings.
   </p>
   <dl class="source-list">
     <div>
       <dt>Original text and references</dt>
-      <dd>Source edition not chosen yet</dd>
+      <dd>Jacobi 1884 numbered units; Prakrit edition and cross-edition mapping pending</dd>
     </div>
     <div>
       <dt>Hindi meaning and explanation</dt>
-      <dd>Placeholder text · awaiting review by a qualified reader</dd>
+      <dd>
+        First-uddeshaka Hindi drafts through the English intermediary · awaiting qualified review
+      </dd>
     </div>
     <div>
       <dt>Listen · Shastra-parijnā</dt>
-      <dd>Original Hindi explanation in an AI voice · awaiting review by a qualified reader, and a check of Prakrit pronunciation</dd>
+      <dd>
+        Per-sutra Hindi meaning samples in an AI voice · pronunciation and meaning review pending
+      </dd>
     </div>
     <div>
       <dt>Fonts</dt>
@@ -139,8 +163,8 @@
     </div>
   </dl>
   <p class="small-note">
-    We haven’t yet tested screen-off and call interruptions on real phones in Firefox and Chrome, so background
-    playback isn’t guaranteed on every device.
+    We haven’t yet tested screen-off and call interruptions on real phones in Firefox and Chrome, so
+    background playback isn’t guaranteed on every device.
   </p>
 </dialog>
 <div id="toast" role="status" aria-live="polite" [class.visible]="!!ui.message()">

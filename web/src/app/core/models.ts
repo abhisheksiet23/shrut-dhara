@@ -35,6 +35,8 @@ export interface Preferences {
 export interface PersonalState {
   reading: ReadingPosition;
   listening: ListeningPosition;
+  /** Retained positions for recordings deliberately opened by the learner. Optional in v1 backups. */
+  listeningHistory?: Record<string, ListeningPosition>;
   bookmarks: Bookmark[];
   preferences: Preferences;
 }
@@ -48,7 +50,7 @@ export interface Envelope {
 
 export interface Backup {
   format: 'shrutdhara-progress';
-  version: 1;
+  version: 1 | 2;
   exportedAt: string;
   data: PersonalState;
 }
@@ -75,7 +77,7 @@ export interface NarrationPart extends AudioAsset {
   paragraphs: string[];
 }
 
-export type RecordingKind = 'narration' | 'calibration';
+export type RecordingKind = 'narration' | 'calibration' | 'meaning';
 
 /** One ordered, prepared sequence of audio parts that the shared player can run. */
 export interface Recording {
@@ -98,8 +100,13 @@ export interface Chapter {
 
 export function initialPersonalState(): PersonalState {
   return {
-    reading: { sutraId: FIXTURE_IDS[0], blockId: 'meaning', offset: 0, revision: 'fixture-v1' },
-    listening: { recordingId: NARRATION_ID, part: 0, seconds: 0 },
+    reading: {
+      sutraId: 'acharanga:1:1:jacobi1884:1:1',
+      blockId: 'meaning',
+      offset: 0,
+      revision: 'hindi-meaning-draft-v1',
+    },
+    listening: { recordingId: 'shastraparijna:hindi-meaning:sample-v1', part: 0, seconds: 0 },
     bookmarks: [],
     preferences: {
       font: 'noto',
@@ -155,6 +162,23 @@ export function validatePersonalState(value: unknown): PersonalState {
   }
 
   const bookmarks = value['bookmarks'];
+  const history = value['listeningHistory'];
+  if (
+    history !== undefined &&
+    (!isRecord(history) ||
+      Object.keys(history).length > 100 ||
+      Object.entries(history).some(
+        ([id, position]) =>
+          !isIdentifier(id) ||
+          !isRecord(position) ||
+          position['recordingId'] !== id ||
+          !Number.isInteger(position['part']) ||
+          (position['part'] as number) < 0 ||
+          !finitePosition(position['seconds']),
+      ))
+  ) {
+    throw new Error('The retained listening places in this backup could not be understood.');
+  }
   if (
     !Array.isArray(bookmarks) ||
     bookmarks.some(
@@ -184,6 +208,16 @@ export function validatePersonalState(value: unknown): PersonalState {
 
   // Rebuild the payload: never copy imported epochs, locks or unknown properties.
   return {
+    ...(history === undefined
+      ? {}
+      : {
+          listeningHistory: Object.fromEntries(
+            Object.entries(history as Record<string, ListeningPosition>).map(([id, position]) => [
+              id,
+              { recordingId: id, part: position.part, seconds: position.seconds },
+            ]),
+          ),
+        }),
     reading: {
       sutraId: reading['sutraId'],
       blockId: reading['blockId'],
@@ -224,15 +258,17 @@ export function parseBackup(text: string): Backup {
   if (
     !isRecord(value) ||
     value['format'] !== 'shrutdhara-progress' ||
-    value['version'] !== 1 ||
+    ![1, 2].includes(value['version'] as number) ||
     typeof value['exportedAt'] !== 'string' ||
     !Number.isFinite(Date.parse(value['exportedAt']))
   ) {
-    throw new Error('This backup comes from a different version of ShrutDhara and can’t be restored here.');
+    throw new Error(
+      'This backup comes from a different version of ShrutDhara and can’t be restored here.',
+    );
   }
   return {
     format: 'shrutdhara-progress',
-    version: 1,
+    version: value['version'] as 1 | 2,
     exportedAt: value['exportedAt'],
     data: validatePersonalState(value['data']),
   };
@@ -244,7 +280,8 @@ export function formatTime(seconds: number): string {
 
 /** Validate the narration manifest at the trust boundary; throws a Hindi message on any defect. */
 export function parseNarrationManifest(value: unknown): Recording {
-  const bad = () => new Error('The listening list couldn’t be read. Connect to the internet and try again.');
+  const bad = () =>
+    new Error('The listening list couldn’t be read. Connect to the internet and try again.');
   if (!isRecord(value) || value['recordingId'] !== NARRATION_ID || !Array.isArray(value['parts']))
     throw bad();
   const parts = value['parts'];
@@ -300,7 +337,10 @@ export type ListeningStart =
  * reused (no timestamp inheritance); the recording simply starts at its beginning.
  * Same recording with a part that no longer exists is reported, never silently reset.
  */
-export function resolveListeningStart(saved: ListeningPosition, recording: Recording): ListeningStart {
+export function resolveListeningStart(
+  saved: ListeningPosition,
+  recording: Recording,
+): ListeningStart {
   if (saved.recordingId !== recording.id) return { kind: 'start', part: 0, seconds: 0 };
   if (saved.part >= recording.parts.length) return { kind: 'unavailable' };
   return { kind: 'resume', part: saved.part, seconds: saved.seconds };

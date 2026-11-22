@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { AudioAsset, NARRATION_ID } from './models';
+import { AudioAsset } from './models';
 import { ContentService } from './content.service';
 import { SessionService } from './session.service';
 import { UiService } from './ui.service';
+import { MEANING_RECORDING_ID } from './study-catalog';
 
 export const MEDIA_CACHE = 'shrutdhara-media-v1';
 
@@ -12,8 +13,10 @@ export class OfflineService {
   private session = inject(SessionService);
   private ui = inject(UiService);
   /** Which recording the Save / Remove controls act on. The playback service keeps this in step. */
-  readonly activeId = signal(NARRATION_ID);
-  readonly assets = computed<AudioAsset[]>(() => this.content.recording(this.activeId())?.parts ?? []);
+  readonly activeId = signal(MEANING_RECORDING_ID);
+  readonly assets = computed<AudioAsset[]>(
+    () => this.content.recording(this.activeId())?.parts ?? [],
+  );
   readonly totalBytes = computed(() => this.assets().reduce((sum, asset) => sum + asset.bytes, 0));
   readonly saved = signal<string[]>([]);
   readonly downloading = signal(false);
@@ -44,6 +47,7 @@ export class OfflineService {
   }
 
   async reconcile(): Promise<void> {
+    const recordingId = this.activeId();
     if (!('caches' in window)) return;
     const cache = await caches.open(MEDIA_CACHE);
     const ready: string[] = [];
@@ -56,12 +60,23 @@ export class OfflineService {
       )
         ready.push(asset.id);
     }
-    this.saved.set(ready);
+    if (recordingId === this.activeId()) this.saved.set(ready);
+  }
+
+  /** Asset readiness is independent of which recording the download UI currently displays. */
+  async isSaved(asset: AudioAsset): Promise<boolean> {
+    if (!('caches' in window)) return false;
+    const cache = await caches.open(MEDIA_CACHE);
+    const cached = await cache.match(asset.url);
+    return (
+      cached?.status === 200 &&
+      cached.headers.get('x-content-sha256') === asset.sha256 &&
+      Number(cached.headers.get('content-length')) === asset.bytes
+    );
   }
 
   async assertSaved(asset: AudioAsset): Promise<void> {
-    await this.reconcile();
-    if (!this.saved().includes(asset.id))
+    if (!(await this.isSaved(asset)))
       throw new Error('This section isn’t saved for offline yet. Choose “Save for offline” first.');
   }
 
@@ -91,7 +106,8 @@ export class OfflineService {
       await this.reconcile();
       if (this.saved().includes(asset.id)) continue;
       const response = await fetch(asset.url, { signal, cache: 'no-store' });
-      if (response.status !== 200) throw new Error('Couldn’t download the full section. Please try again.');
+      if (response.status !== 200)
+        throw new Error('Couldn’t download the full section. Please try again.');
       const bytes = await response.arrayBuffer();
       if (bytes.byteLength !== asset.bytes)
         throw new Error('The download was incomplete. Sections you already saved are safe.');
@@ -99,7 +115,10 @@ export class OfflineService {
         new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
         (item) => item.toString(16).padStart(2, '0'),
       ).join('');
-      if (digest !== asset.sha256) throw new Error('The downloaded audio didn’t match what was expected, so it wasn’t saved. Please try again.');
+      if (digest !== asset.sha256)
+        throw new Error(
+          'The downloaded audio didn’t match what was expected, so it wasn’t saved. Please try again.',
+        );
       signal.throwIfAborted();
       this.session.assertOwner(true);
       await cache.put(

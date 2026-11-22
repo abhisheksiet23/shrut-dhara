@@ -12,3 +12,5 @@ web/shrutdhara-preview.jpg
 
 .vercel
 .env*
+.audio-env/
+.audio-work/

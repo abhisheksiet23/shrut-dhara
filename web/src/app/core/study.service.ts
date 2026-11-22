@@ -25,7 +25,9 @@ export class StudyService {
 
   async load(): Promise<void> {
     this.database ??= new StudyDatabaseStore('shrutdhara-v1', () =>
-      this.ui.notify('An older ShrutDhara window is still open. Close it and reopen the app to finish updating.'),
+      this.ui.notify(
+        'An older ShrutDhara window is still open. Close it and reopen the app to finish updating.',
+      ),
     );
     try {
       this.apply(await this.database.read());
@@ -60,7 +62,18 @@ export class StudyService {
   }
 
   saveListening(listening: ListeningPosition, internal = false): Promise<void> {
-    return this.mutate((state) => ({ ...state, listening }), internal);
+    return this.mutate(
+      (state) => ({
+        ...state,
+        listening,
+        listeningHistory: {
+          ...state.listeningHistory,
+          [state.listening.recordingId]: state.listening,
+          [listening.recordingId]: listening,
+        },
+      }),
+      internal,
+    );
   }
 
   setPreferences(patch: Partial<Preferences>): Promise<void> {
@@ -82,7 +95,7 @@ export class StudyService {
     const envelope = await this.database!.read();
     return {
       format: 'shrutdhara-progress',
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       data: envelope.data,
     };

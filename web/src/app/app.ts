@@ -7,6 +7,8 @@ import { PlaybackService } from './core/playback.service';
 import { UiService } from './core/ui.service';
 import { formatTime } from './core/models';
 import { Icon } from './shared/icon';
+import { MEANING_RECORDING_ID } from './core/study-catalog';
+import { StudyNavigationService } from './core/study-navigation.service';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +20,22 @@ export class App {
   readonly study = inject(StudyService);
   readonly session = inject(SessionService);
   readonly playback = inject(PlaybackService);
+  private readonly navigation = inject(StudyNavigationService);
   readonly ui = inject(UiService);
   private router = inject(Router);
   readonly url = signal('/');
-  readonly isListening = computed(() => this.url().startsWith('/listen'));
+  readonly playerLink = computed(() =>
+    this.playback.selectedId() === MEANING_RECORDING_ID ? '/listen' : '/listen/commentary',
+  );
+  readonly isListening = computed(() => {
+    if (this.playback.selectedId() !== MEANING_RECORDING_ID)
+      return this.url() === '/listen/commentary';
+    const currentId = this.playback.parts()[this.playback.part()]?.id;
+    return this.url().startsWith('/listen') && this.navigation.listeningView() === currentId;
+  });
   readonly title = computed(() => {
     if (this.url() === '/acharanga') return 'Ācārāṅga Sūtra';
+    if (this.url().startsWith('/study')) return 'Study contents';
     if (this.url().startsWith('/read')) return 'Read';
     if (this.url().startsWith('/listen')) return 'Listen';
     return this.links.find((link) => link.path === this.url())?.label ?? 'Settings';

@@ -32,7 +32,7 @@ after(async () => {
   server?.kill();
 });
 
-async function open(path = '/listen') {
+async function open(path = '/listen/commentary') {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const errors = [];
@@ -52,9 +52,9 @@ async function seekToEnd(page, margin = 3) {
 }
 
 describe('listening journey', () => {
-  it('lists seven sections and redirects the older chapter link', async () => {
-    const { context, page, errors } = await open('/listen/shastraparijna');
-    assert.equal(new URL(page.url()).pathname, '/listen');
+  it('retains the earlier seven-section commentary as a separate journey', async () => {
+    const { context, page, errors } = await open();
+    assert.equal(new URL(page.url()).pathname, '/listen/commentary');
     assert.equal(await page.locator('.queue-item').count(), 7);
     assert.deepEqual(errors, []);
     await context.close();

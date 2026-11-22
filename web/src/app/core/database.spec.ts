@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 import { afterEach, describe, expect, it } from 'vitest';
-import { deleteDB } from 'idb';
+import { deleteDB, openDB } from 'idb';
 import { OperationCoordinator, StudyDatabaseStore } from './database';
 import {
   Backup,
@@ -25,6 +25,29 @@ afterEach(async () => {
 });
 
 describe('durable personal state', () => {
+  it('upgrades a version-1 database without rewriting old positions and fences old writers', async () => {
+    name = `test-${crypto.randomUUID()}`;
+    const legacy = await openDB(name, 1, {
+      upgrade(database) {
+        database.createObjectStore('personal', { keyPath: 'id' });
+      },
+    });
+    const data = initialPersonalState();
+    data.reading = {
+      sutraId: 'fixture:reflection:2',
+      blockId: 'meaning',
+      offset: 135,
+      revision: 'fixture-v1',
+    };
+    data.listening = { recordingId: 'shastraparijna:hi:v1', part: 4, seconds: 27 };
+    await legacy.put('personal', { id: 'personal', epoch: 2, revision: 7, data });
+    legacy.close();
+
+    store = new StudyDatabaseStore(name);
+    const migrated = await store.read();
+    expect(migrated).toEqual({ id: 'personal', epoch: 2, revision: 7, data });
+    await expect(openDB(name, 1)).rejects.toMatchObject({ name: 'VersionError' });
+  });
   it('persists independent reading/listening changes across connection reopen', async () => {
     const db = database();
     await db.update(0, (state) => ({
@@ -105,7 +128,7 @@ describe('untrusted portable backups', () => {
   it('rejects malformed, future, prototype, oversized and unsafe positions', () => {
     for (const text of [
       '{',
-      JSON.stringify({ ...backup(), version: 2 }),
+      JSON.stringify({ ...backup(), version: 3 }),
       JSON.stringify({ version: 1 }),
       ' '.repeat(MAX_BACKUP_BYTES + 1),
     ])

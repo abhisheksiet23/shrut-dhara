@@ -1,5 +1,9 @@
 # ShrutDhara — use-case specification
 
+Implementation authorization, 2026-11-22: owner requested app changes per the journey plan, delegating detailed object and UX design. [Implementation design](sutra-journey-design.md) records selected mechanisms and the first-uddeshaka draft boundary. Proposed defaults now used: continuous playback through consecutive available sutras; reading a matching sutra leaves playback running; explicit previous/next audio selection preserves playing/paused intent; missing units stop progression; no original-Prakrit recitation is implied. [Verification](implementation-checks.md) owns candidate-bound results. Editorial approval, physical-device evidence and deployment are not established by implementation.
+
+Change 2026-11-22: owner requires Hindi meaning in audio sutra by sutra, replacing the storified/connected chapter treatment. This changes the content acceptance basis of UC-01/UC-04; the seven-section review recording below is historical implementation evidence, not acceptance of the new direction. [Journey review](user-journey-review-2026-11-22.md) records observations; [proposed flows and backlog](sutra-journey-change-plan.md) define the next planning increment and open choices. No implementation or release was requested.
+
 Version: draft 0.4 · Date: 2026-11-21 · Platform decision: Angular web app/PWA, Android phones first
 
 Change 2026-11-21 (b): listening flows UC-04/UC-05 now run the AI-voice review narration of शस्त्रपरिज्ञा as seven sections with transcripts; the tone fixture is a developer-only check. R-02 and R-06 still govern, and the narration is unreviewed (G-03). Streaming while unsaved is allowed for ordinary listening; hands-free (Driving) use still requires the whole sequence saved locally. Observed only on desktop Chrome headless; G-01/G-14 remain open.

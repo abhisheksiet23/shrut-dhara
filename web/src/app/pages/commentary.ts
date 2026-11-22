@@ -50,8 +50,13 @@ import { Art } from '../shared/art';
     }
   `,
   template: ` <div class="page-title">
-      <div class="eyebrow">Listen</div>
-      <h1>Shastra-parijnā</h1>
+      <a class="text-button" routerLink="/study">← Study contents</a>
+      <div class="eyebrow">Earlier commentary</div>
+      <h1>Chapter commentary</h1>
+      <p>
+        This earlier recording is a connected explanation, not sutra-by-sutra Hindi meaning. Its
+        saved place is retained separately.
+      </p>
       <p>Ācārāṅga Sūtra, Study 1 · a Hindi explanation in seven sections</p>
       <p class="small-note">AI voice, not yet reviewed by a scholar.</p>
       <a class="button secondary" routerLink="/acharanga">See all 24 studies</a>
@@ -69,7 +74,9 @@ import { Art } from '../shared/art';
           <div class="audio-art">
             <app-art />
             <div class="audio-art-title">
-              <span>{{ rec.kind === 'narration' ? 'Ācārāṅga Sūtra · Study 1' : 'Test tones' }}</span>
+              <span>{{
+                rec.kind === 'narration' ? 'Ācārāṅga Sūtra · Study 1' : 'Test tones'
+              }}</span>
               <h2 lang="hi">{{ rec.title }}</h2>
               <p>{{ rec.label }}</p>
             </div>
@@ -77,7 +84,9 @@ import { Art } from '../shared/art';
           <div class="player-body">
             <div class="player-title">
               <div>
-                <span class="eyebrow">{{ part()?.reference ?? 'Section ' + (player.part() + 1) }}</span>
+                <span class="eyebrow">{{
+                  part()?.reference ?? 'Section ' + (player.part() + 1)
+                }}</span>
                 <h2 lang="hi">{{ part()?.title ?? 'Section ' + (player.part() + 1) }}</h2>
               </div>
               <app-icon name="headphones" />
@@ -98,11 +107,18 @@ import { Art } from '../shared/art';
               (change)="seekInput($event)"
             />
             <div class="time-labels">
-              <span>{{ time(player.position()) }}</span
-              ><span>{{ time(player.duration() - player.position()) }} left</span>
+              <span>{{ time(player.position()) }}</span><span
+                >{{ time(player.duration() - player.position()) }} left</span
+              >
             </div>
             <div class="playback-controls">
-              <button class="icon-button speed" [attr.aria-label]="'Playback speed ' + study.state().preferences.speed + '×. Tap to change.'" (click)="speed()">
+              <button
+                class="icon-button speed"
+                [attr.aria-label]="
+                  'Playback speed ' + study.state().preferences.speed + '×. Tap to change.'
+                "
+                (click)="speed()"
+              >
                 {{ study.state().preferences.speed }}×
               </button>
               <button
@@ -133,10 +149,13 @@ import { Art } from '../shared/art';
             </div>
             @if (rec.kind === 'narration') {
               <p class="small-note">
-                This is an AI voice and hasn’t been reviewed yet. Pronunciation and meaning haven’t been checked against the Prakrit original.
+                This is an AI voice and hasn’t been reviewed yet. Pronunciation and meaning haven’t
+                been checked against the Prakrit original.
               </p>
             }
-            <div class="player-footer"><app-icon name="lock" /> Your listening place is saved separately from reading.</div>
+            <div class="player-footer">
+              <app-icon name="lock" /> Your listening place is saved separately from reading.
+            </div>
           </div>
         </section>
         <aside class="listening-aside">
@@ -153,15 +172,23 @@ import { Art } from '../shared/art';
                   <p>
                     {{ item.reference ? item.reference + ' · ' : '' }}{{ time(item.duration) }} ·
                     <span class="queue-status"
-                      ><app-icon [name]="offline.saved().includes(item.id) ? 'saved' : 'stream'" />{{
-                        offline.saved().includes(item.id) ? 'Saved on this device' : 'Streams online'
+                      ><app-icon
+                        [name]="offline.saved().includes(item.id) ? 'saved' : 'stream'"
+                      />{{
+                        offline.saved().includes(item.id)
+                          ? 'Saved on this device'
+                          : 'Streams online'
                       }}</span
                     >
                   </p>
                 </div>
                 <button
                   class="icon-button"
-                  [attr.aria-label]="(player.running() && player.part() === i ? 'Pause' : 'Play') + ' section ' + (i + 1)"
+                  [attr.aria-label]="
+                    (player.running() && player.part() === i ? 'Pause' : 'Play') +
+                    ' section ' +
+                    (i + 1)
+                  "
                   (click)="playPart(i)"
                   [disabled]="busy() || (rec.kind === 'calibration' && !allSaved())"
                 >
@@ -202,8 +229,8 @@ import { Art } from '../shared/art';
             <app-icon name="car" />
             <h2>Get ready for the road.</h2>
             <p>
-              Save every section for offline, then open Driving mode. Before you rely on it, try it with the
-              screen off in Firefox or Chrome on your phone.
+              Save every section for offline, then open Driving mode. Before you rely on it, try it
+              with the screen off in Firefox or Chrome on your phone.
             </p>
             <button class="button secondary" (click)="openDriving()">
               Driving mode <app-icon name="arrow" /></button
@@ -221,19 +248,18 @@ import { Art } from '../shared/art';
     }
 
     @if (devTools) {
-    <details class="dev-tools">
-      <summary>Developer tools</summary>
-      <p class="small-note">
-        Generated test tones, not a voice or an Āgama. For screen-off and offline checks on a phone.
-      </p>
-      <button class="button secondary" (click)="swapRecording()" [disabled]="busy()">
-        {{
-          player.selectedId() === NARRATION
-            ? 'Switch to test tones'
-            : 'Back to Shastra-parijnā'
-        }}
-      </button>
-    </details>
+      <details class="dev-tools">
+        <summary>Developer tools</summary>
+        <p class="small-note">
+          Generated test tones, not a voice or an Āgama. For screen-off and offline checks on a
+          phone.
+        </p>
+        <button class="button secondary" (click)="swapRecording()" [disabled]="busy()">
+          {{
+            player.selectedId() === NARRATION ? 'Switch to test tones' : 'Back to Shastra-parijnā'
+          }}
+        </button>
+      </details>
     }
 
     <dialog #driving aria-labelledby="driving-title">
@@ -244,7 +270,9 @@ import { Art } from '../shared/art';
         </button>
       </div>
       <div class="drive-view">
-        <app-icon name="car" /><span class="eyebrow">Set up while parked · all sections offline</span>
+        <app-icon name="car" /><span class="eyebrow"
+          >Set up while parked · all sections offline</span
+        >
         <h3 lang="hi">{{ part()?.title ?? recording()?.title }}</h3>
         <p>{{ recording()?.label }}</p>
         <span id="drive-time">{{ time(player.position()) }} / {{ time(player.duration()) }}</span>
@@ -271,7 +299,8 @@ import { Art } from '../shared/art';
           </button>
         </div>
         <p class="small-note">
-          Screen-off and incoming-call behaviour hasn’t been tested on real phones yet. Lock-screen controls depend on your browser.
+          Screen-off and incoming-call behaviour hasn’t been tested on real phones yet. Lock-screen
+          controls depend on your browser.
         </p>
       </div>
     </dialog>`,
@@ -284,15 +313,22 @@ export class Listen {
   private ui = inject(UiService);
   readonly time = formatTime;
   readonly NARRATION = NARRATION_ID;
-  readonly devTools = ['localhost', '127.0.0.1'].includes(location.hostname) || location.search.includes('dev');
+  readonly devTools =
+    ['localhost', '127.0.0.1'].includes(location.hostname) || location.search.includes('dev');
   readonly busy = signal(false);
   readonly recording = this.player.recording;
   readonly part = computed(() => this.player.parts()[this.player.part()]);
   readonly allSaved = computed(
-    () => this.offline.assets().length > 0 && this.offline.saved().length === this.offline.assets().length,
+    () =>
+      this.offline.assets().length > 0 &&
+      this.offline.saved().length === this.offline.assets().length,
   );
   readonly megabytes = computed(() => (this.offline.totalBytes() / 1_000_000).toFixed(1));
   @ViewChild('driving') private driving?: ElementRef<HTMLDialogElement>;
+
+  constructor() {
+    void this.run(() => this.player.useRecording(NARRATION_ID));
+  }
 
   private async run(operation: () => Promise<void>): Promise<void> {
     if (this.busy()) return;

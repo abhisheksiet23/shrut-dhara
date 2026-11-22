@@ -43,9 +43,9 @@ describe('narration recording', () => {
 
 describe('listening start', () => {
   const rec = parseNarrationManifest(manifest());
-  it('new installs open the narration at its beginning', () => {
+  it('new installs never apply the new meaning position to earlier commentary', () => {
     expect(resolveListeningStart(initialPersonalState().listening, rec)).toEqual({
-      kind: 'resume',
+      kind: 'start',
       part: 0,
       seconds: 0,
     });

@@ -2,18 +2,19 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../core/content.service';
-import { OfflineService } from '../core/offline.service';
 import { Icon } from '../shared/icon';
 import { Art } from '../shared/art';
 
 @Component({
   imports: [FormsModule, RouterLink, Icon, Art],
-  template: ` <div class="page-title">
-      <div class="eyebrow">Read and listen</div>
+  template: `
+    <header class="page-title">
+      <span class="eyebrow">Read and listen</span>
       <h1>Library</h1>
-      <p>Here’s what’s available today. More will arrive as sources are reviewed.</p>
-      <a class="button" routerLink="/acharanga">See all 24 studies of the Ācārāṅga</a>
-    </div>
+      <p>
+        Choose a study, then a sutra. Text, meaning and audio availability are shown separately.
+      </p>
+    </header>
     <label class="search-box"
       ><app-icon name="search" /><input
         type="search"
@@ -22,90 +23,62 @@ import { Art } from '../shared/art';
         [ngModel]="query()"
         (ngModelChange)="query.set($event)"
     /></label>
-    <div class="library-tabs">
-      <span class="selected">Starting with the Ācārāṅga</span><span>Goal: all 32 Āgamas</span>
-    </div>
-    @if (content.error()) {
-      <div class="empty">
-        <h2>Couldn’t load the library</h2>
-        <p>{{ content.error() }}</p>
-        <button class="button secondary" (click)="content.load()">Try again</button>
-      </div>
-    } @else if (!matches()) {
-      <div class="empty">
-        <app-icon name="search" />
-        <h2>Nothing found for “{{ query().trim() }}”</h2>
-        <p>For now the library holds only the Ācārāṅga Sūtra and a reading preview.</p>
-        <button class="button secondary" (click)="query.set('')">Clear search</button>
-      </div>
-    } @else {
+    @if (matches()) {
       <article class="scripture-card">
         <div class="scripture-art">
           <app-art /><span lang="hi">आचारांग<br /><small>सूत्र</small></span>
         </div>
         <div class="scripture-details">
-          <span class="pill amber">Awaiting source and review</span>
-          <h2><span lang="hi">आचारांग सूत्र</span></h2>
-          <p class="gloss">Ācārāṅga Sūtra · the proposed first Āgama</p>
-          <p>The original text and a reviewed translation aren’t published here yet.</p>
-          <div class="availability">
-            <span><app-icon name="book" />3 reading passages</span
-            ><span><app-icon name="headphones" />Study 1 narration</span>
-          </div>
+          <span class="pill amber">Draft study material</span>
+          <h2 lang="hi">आचारांग सूत्र</h2>
+          <p>Ācārāṅga Sūtra</p>
+          <p>
+            Begin with Shastra-parijnā. The other studies currently have short introductions, not
+            full sutra meanings.
+          </p>
+          <a class="text-button" routerLink="/acharanga"
+            >Browse the two books and 24 introductions<app-icon name="arrow"
+          /></a>
         </div>
       </article>
-      <div class="section-heading">
-        <h2>What you can try</h2>
-      </div>
       <article class="chapter-row">
         <span class="chapter-index">1</span>
         <div>
-          <h3><span lang="hi">शस्त्रपरिज्ञा</span> · Listen</h3>
-          <p>Seven sections of Hindi explanation in an AI voice.</p>
-          <div class="availability">
-            <span>{{
-              offline.assets().length && offline.saved().length === offline.assets().length
-                ? 'Saved for offline'
-                : 'Not saved for offline yet'
-            }}</span>
-          </div>
+          <h2 lang="hi">शस्त्रपरिज्ञा</h2>
+          <p>Book 1 · Study 1 · seven uddeshakas</p>
+          <p>
+            {{ meaningCount() }} Hindi meaning drafts ·
+            {{ content.meanings()?.parts?.length ?? 0 }} audio samples · original Prakrit pending
+          </p>
         </div>
-        <div class="chapter-actions">
-          <a class="button" routerLink="/listen"><app-icon name="headphones" />Listen</a>
-        </div>
+        <a class="button" routerLink="/study">Choose a sutra<app-icon name="arrow" /></a>
       </article>
-      <article class="chapter-row">
-        <span class="chapter-index">2</span>
-        <div>
-          <h3>Reading preview</h3>
-          <p>Placeholder text for testing the reading layout. Not scripture.</p>
-        </div>
-        <div class="chapter-actions">
-          <a class="button secondary" routerLink="/read"><app-icon name="book" />Read</a>
-        </div>
-      </article>
-      <article class="chapter-row unavailable">
-        <span class="chapter-index">—</span>
-        <div>
-          <h3>Verified chapters</h3>
-          <p>Coming once the source, redistribution rights and a qualified review are in place.</p>
-        </div>
-        <span class="pill amber">Not available yet</span>
-      </article>
+      <div class="content-note">
+        <app-icon name="info" />
+        <p>
+          Meanings follow numbered units in Jacobi’s 1884 English translation. Source and editorial
+          limits are available inside the study.
+        </p>
+      </div>
+    } @else {
+      <section class="empty">
+        <h2>Nothing found for “{{ query().trim() }}”</h2>
+        <p>Search currently covers the Ācārāṅga and Shastra-parijnā.</p>
+        <button class="button secondary" (click)="query.set('')">Clear search</button>
+      </section>
     }
-    <div class="content-note">
-      <app-icon name="info" />
-      <p>We haven’t yet verified the source edition or chapter order. Nothing is skipped silently.</p>
-    </div>`,
+  `,
 })
 export class Library {
   readonly content = inject(ContentService);
-  readonly offline = inject(OfflineService);
   readonly query = signal('');
+  readonly meaningCount = computed(
+    () => this.content.catalog()?.sutras.filter((sutra) => sutra.meaning).length ?? 0,
+  );
   readonly matches = computed(
     () =>
       !this.query().trim() ||
-      'आचारांग acharanga ācārāṅga sutra sūtra shastraparijna शस्त्रपरिज्ञा reading preview listen read library'.includes(
+      'आचारांग acharanga ācārāṅga sutra sūtra shastraparijna शस्त्रपरिज्ञा hindi meaning'.includes(
         this.query().trim().toLowerCase(),
       ),
   );

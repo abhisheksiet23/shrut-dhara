@@ -1,5 +1,7 @@
 .git
 .vercel
+.audio-env
+.audio-work
 .env*
 **/.env*
 docs
